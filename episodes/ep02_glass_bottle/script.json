@@ -1,0 +1,22 @@
+{
+ "ep": "EP. 02",
+ "title": "How Sand Becomes a Glass Bottle",
+ "lang": "en",
+ "lines": [
+  {"id": 1, "say": "How does sand become a bottle?"},
+  {"id": 2, "say": "Sand, soda ash, limestone, and lots of crushed old glass."},
+  {"id": 3, "say": "Into the furnace. Fifteen fifty degrees Celsius.", "caption": "1,550 °C"},
+  {"id": 4, "say": "But how do you shape a river of fire?"},
+  {"id": 5, "say": "At eleven hundred degrees, shears cut it into glowing lumps. One lump, one bottle.", "caption": "1,100 °C"},
+  {"id": 6, "say": "A puff of air makes a small, thick preform."},
+  {"id": 7, "say": "It flips upside down. A second blast inflates it to full size."},
+  {"id": 8, "say": "Done? No. Now it goes back into an oven."},
+  {"id": 9, "say": "Five eighty degrees Celsius, then cooled slowly, so it won't crack.", "caption": "580 °C"},
+  {"id": 10, "say": "Every bottle is checked. Rejects get crushed and melted again."},
+  {"id": 11, "say": "One machine can make over six hundred a minute.", "caption": "600+ A MINUTE"},
+  {"id": 12, "say": "Gummy bear, or pencil? Comment below."}
+ ],
+ "tail": 2.4,
+ "min_gap": 0.26,
+ "gaps": {"3": 0.1, "4": 0.1, "5": 0.15, "6": 0.1, "8": 0.15, "9": 0.1, "10": 0.15, "11": 0.25, "12": 0.2}
+}
