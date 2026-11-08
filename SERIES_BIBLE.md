@@ -13,9 +13,16 @@ Every episode stands alone. On-screen text and narration in English. Always "Sim
 Material rotation: food, plastic, metal, glass, paper, textile, electronics, rubber, ceramics, everyday gadgets.
 EP 03 should not be glass or metal (gummy bear = food, pencil = wood/graphite; decided by comments).
 
+## Shorts safe area (since EP 02)
+iPhone crops ~50 px per side; the top bar covers ~230 px; the action icons cover x > 870 between y ≈ 900 and 1870;
+channel name + title sit below ~1600. Everything that must be read lives in x 70–870, y 250–1560 (`SAFE` in js/overlay.js).
+The 3D camera is shifted 70 px left (`setViewOffset`) so the subject sits in the safe centre (x ≈ 470).
+Check with `python tools/safe_preview.py out.jpg still1.jpg ...` before rendering.
+Render in two layers: `tools/render.py render plate`, `tools/render.py render over`, then `tools/composite.sh`.
+
 ## Fixed channel language (never changes)
 
-- **HUD**: JetBrains Mono, top-left, cream text `#F3E9D2` at 90% on a 40% navy plate.
+- **HUD**: JetBrains Mono, top-left at (70, 250), cream text `#F3E9D2` at 90% on a 40% navy plate.
   - line 1: `EP. 01`
   - line 2: `STEP 3/6 · TILT`
   - line 3: one live readout (EP 01: `TEETH LOCKED 042/104`)
@@ -23,7 +30,7 @@ EP 03 should not be glass or metal (gummy bear = food, pencil = wood/graphite; d
 - **Step sticker**: cream `#F3E9D2` card, 6 px near-black outline `#101418`, tilted −6°, hard offset shadow (10 px, 35% black).
   Small mono label `STEP 3` + huge Anton title with full stop: `TILT.` Slides in with overshoot, holds ~1.6 s.
 - **Captions**: Archivo Black, 1–3 words, uppercase, cream with 10 px dark outline; key word in the episode accent colour.
-  Pop-in scale 0.85 → 1.0 in 0.12 s. Lower-middle of frame (y ≈ 68%). Min 0.6 s on screen.
+  Pop-in scale 0.85 → 1.0 in 0.12 s. Centred on x = 470, max 790 px wide, y ≈ 1290. Min 0.6 s on screen.
 - **Hook**: tight on the finished object, giant 2-line caption, snap cut at ~2 s.
 - **End card**: "NEXT EPISODE?" title, two pedestals with real 3D objects, green rim light (left) vs red rim light (right),
   "COMMENT BELOW", then "FOLLOW FOR EP. N+1". Last frame = first frame (clean hook plate) for a seamless loop.

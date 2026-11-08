@@ -71,6 +71,8 @@ export function makeRenderer() {
   const pm = new THREE.PMREMGenerator(renderer);
   scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
   const camera = new THREE.PerspectiveCamera(40, W / H, 1, 5000);
+  // shift the picture left so the subject sits in the Shorts safe centre (x ~ 470), clear of the right-hand icons
+  camera.setViewOffset(W, H, 70, 0, W, H);
   const composer = new EffectComposer(renderer);
   composer.setPixelRatio(1); composer.setSize(W, H);
   composer.addPass(new RenderPass(scene, camera));

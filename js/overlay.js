@@ -2,6 +2,9 @@
 import { W, H, clamp, E, lerp } from './core.js';
 
 export const C = { cream: '#F3E9D2', ink: '#101418', navy: 'rgba(14,26,43,0.55)', accent: '#FF5A1F', green: '#2BD67B', red: '#FF3B3B', cyan: '#5EC8E5' };
+// Shorts safe area (1080x1920 frame). iPhone crops ~50 px per side; the top bar covers ~230 px;
+// the action icons cover x > 870 between y 900 and 1870; channel name + title sit below ~1600.
+export const SAFE = { top: 250, left: 70, right: 870, bottom: 1560, cx: 470, maxW: 790 };
 // per-episode accent (the fixed channel language stays, only the accent colour changes)
 export function setAccent(c) { C.accent = c; }
 const F = { mono: '"JBMono"', title: '"Anton"', cap: '"Archivo Black"' };
@@ -11,7 +14,7 @@ function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w
 export function hud(g, { ep, step, nSteps, stepName, label, value, total, text, flag, progress, from, to, alpha = 1 }) {
   if (alpha <= 0) return;
   g.save(); g.globalAlpha = alpha;
-  const x = 44, y = 64;
+  const x = SAFE.left, y = SAFE.top;
   g.fillStyle = C.navy; rr(g, x, y, 520, 214, 16); g.fill();
   g.strokeStyle = 'rgba(243,233,210,0.18)'; g.lineWidth = 2; g.stroke();
   g.textBaseline = 'top'; g.fillStyle = C.cream;
@@ -43,7 +46,7 @@ export function hud(g, { ep, step, nSteps, stepName, label, value, total, text, 
 }
 
 // words: [{t:'BUMP', a:false, at: time}], one line, auto-fit
-export function caption(g, t, { at, until, words, y = 1290, size = 104 }) {
+export function caption(g, t, { at, until, words, y = 1290, size = 104, cx = SAFE.cx, maxW = SAFE.maxW }) {
   if (t < at || t > until) return;
   const age = t - at, left = until - t;
   const s = lerp(0.82, 1, E.back(clamp(age / 0.14))) * (left < 0.08 ? lerp(0.9, 1, left / 0.08) : 1);
@@ -52,10 +55,10 @@ export function caption(g, t, { at, until, words, y = 1290, size = 104 }) {
   g.save(); g.textBaseline = 'middle';
   let fs = size; g.font = `400 ${fs}px ${F.cap}`;
   const full = words.map(w => w.t).join(' ');
-  while (g.measureText(full).width > 960 && fs > 50) { fs -= 4; g.font = `400 ${fs}px ${F.cap}`; }
+  while (g.measureText(full).width > maxW && fs > 44) { fs -= 4; g.font = `400 ${fs}px ${F.cap}`; }
   const sp = g.measureText(' ').width, widths = words.map(w => g.measureText(w.t).width);
   const tot = widths.reduce((a, b) => a + b, 0) + sp * (words.length - 1);
-  g.translate(W / 2, y); g.scale(s, s);
+  g.translate(cx, y); g.scale(s, s);
   let xx = -tot / 2;
   g.lineJoin = 'round'; g.miterLimit = 2;
   words.forEach((w, i) => {
@@ -76,7 +79,7 @@ export function sticker(g, t, { at, n, word, hold = 1.7 }) {
   const age = t - at; if (age < 0 || age > hold + 0.25) return;
   const inU = E.back(clamp(age / 0.26)), outU = E.i(clamp((age - hold) / 0.22));
   g.save();
-  g.translate(lerp(-700, 540, inU) + outU * 30, 470 - outU * 700);
+  g.translate(lerp(-700, SAFE.cx, inU) + outU * 30, 650 - outU * 900);
   g.rotate((-6 + (1 - inU) * -10) * Math.PI / 180);
   g.font = `400 168px ${F.title}`; const tw = g.measureText(word).width;
   const w = Math.max(430, tw + 100), h = 250;
@@ -92,10 +95,12 @@ export function sticker(g, t, { at, n, word, hold = 1.7 }) {
 export function hookTitle(g, t, { at, until, l1, l2 }) {
   if (t < at || t > until) return;
   const u = E.back(clamp((t - at) / 0.18)), o = clamp((until - t) / 0.08);
-  g.save(); g.translate(W / 2, 1180); g.scale(lerp(0.8, 1, u) * o, lerp(0.8, 1, u) * o);
+  g.save(); g.translate(SAFE.cx, 1080); g.scale(lerp(0.8, 1, u) * o, lerp(0.8, 1, u) * o);
   g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.lineJoin = 'round';
-  g.font = `400 96px ${F.cap}`; g.lineWidth = 22; g.strokeStyle = C.ink; g.strokeText(l1, 0, 0); g.fillStyle = C.cream; g.fillText(l1, 0, 0);
-  g.font = `400 300px ${F.title}`; g.lineWidth = 30; g.strokeText(l2, 0, 290); g.fillStyle = C.accent; g.fillText(l2, 0, 290);
+  let f1 = 96; g.font = `400 ${f1}px ${F.cap}`; while (g.measureText(l1).width > SAFE.maxW && f1 > 40) { f1 -= 4; g.font = `400 ${f1}px ${F.cap}`; }
+  g.lineWidth = f1 * 0.23; g.strokeStyle = C.ink; g.strokeText(l1, 0, 0); g.fillStyle = C.cream; g.fillText(l1, 0, 0);
+  let f2 = 300; g.font = `400 ${f2}px ${F.title}`; while (g.measureText(l2).width > SAFE.maxW && f2 > 80) { f2 -= 6; g.font = `400 ${f2}px ${F.title}`; }
+  g.lineWidth = f2 * 0.1; g.strokeText(l2, 0, f2 * 0.97); g.fillStyle = C.accent; g.fillText(l2, 0, f2 * 0.97);
   g.restore();
 }
 
@@ -115,17 +120,17 @@ export function endCard(g, t, { at, comment, follow, until, left, right, next })
   g.save(); g.globalAlpha = fade;
   const u = E.back(clamp((t - at) / 0.25));
   g.textAlign = 'center'; g.lineJoin = 'round';
-  g.save(); g.translate(W / 2, 420); g.scale(lerp(0.7, 1, u), lerp(0.7, 1, u));
-  g.font = `400 170px ${F.title}`; g.lineWidth = 24; g.strokeStyle = C.ink; g.strokeText('NEXT EPISODE?', 0, 0); g.fillStyle = C.cream; g.fillText('NEXT EPISODE?', 0, 0);
+  g.save(); g.translate(540, 470); g.scale(lerp(0.7, 1, u), lerp(0.7, 1, u));
+  let ft = 170; g.font = `400 ${ft}px ${F.title}`; while (g.measureText('NEXT EPISODE?').width > 860) { ft -= 4; g.font = `400 ${ft}px ${F.title}`; } g.lineWidth = 24; g.strokeStyle = C.ink; g.strokeText('NEXT EPISODE?', 0, 0); g.fillStyle = C.cream; g.fillText('NEXT EPISODE?', 0, 0);
   g.restore();
   g.textAlign = 'left';
-  pill(g, 268, 1235, left, C.green, (t - at - 0.25) / 0.2);
-  pill(g, 812, 1235, right, C.red, (t - at - 0.4) / 0.2);
+  pill(g, 255, 1235, left, C.green, (t - at - 0.25) / 0.2);
+  pill(g, 690, 1235, right, C.red, (t - at - 0.4) / 0.2);
   g.textAlign = 'left';
-  if (t >= comment) caption(g, t, { at: comment, until: until + 1, words: [{ t: 'COMMENT' }, { t: 'BELOW', a: true }], y: 1400, size: 90 });
+  if (t >= comment) caption(g, t, { at: comment, until: until + 1, words: [{ t: 'COMMENT' }, { t: 'BELOW', a: true }], y: 1375, size: 90 });
   if (t >= follow) {
     const v = E.back(clamp((t - follow) / 0.2));
-    g.save(); g.translate(W / 2, 1530); g.scale(lerp(0.7, 1, v), lerp(0.7, 1, v)); g.textAlign = 'center';
+    g.save(); g.translate(SAFE.cx, 1490); g.scale(lerp(0.7, 1, v), lerp(0.7, 1, v)); g.textAlign = 'center';
     g.font = `800 50px ${F.mono}`; const txt = `FOLLOW FOR ${next}`; const tw = g.measureText(txt).width;
     g.fillStyle = C.accent; rr(g, -tw / 2 - 34, -50, tw + 68, 88, 16); g.fill(); g.lineWidth = 6; g.strokeStyle = C.ink; g.stroke();
     g.fillStyle = C.ink; g.textBaseline = 'middle'; g.fillText(txt, 0, -4);

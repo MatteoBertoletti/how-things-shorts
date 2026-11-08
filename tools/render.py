@@ -1,5 +1,6 @@
-"""Full render: one encoded file per shot (JPEG frames piped to ffmpeg), resumable, then concat with -c copy.
-usage: python tools/render.py out_dir [first_shot last_shot]"""
+"""Full render, resumable. Layers: the 3D plate (one encoded file per shot) and the overlay (PNG with alpha per frame),
+so captions / HUD can be moved later without re-rendering the 3D.
+usage: python tools/render.py out_dir plate|over|all [first_shot last_shot]"""
 import asyncio, sys, base64, json, os, subprocess, time, math
 from playwright.async_api import async_playwright
 ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist']
@@ -17,7 +18,16 @@ async def main():
         bounds = sorted(set([0] + [min(NF, round(a * FPS)) for a, b_ in info['shots'] if a < END] + [NF]))
         segs = [(bounds[i], bounds[i + 1]) for i in range(len(bounds) - 1) if bounds[i + 1] > bounds[i]]
         json.dump({'END': END, 'NF': NF, 'segs': segs}, open(f'{out}/segs.json', 'w'))
-        lo, hi = (int(sys.argv[2]), int(sys.argv[3])) if len(sys.argv) > 3 else (0, len(segs) - 1)
+        MODE = sys.argv[2] if len(sys.argv) > 2 else 'all'
+        lo, hi = (int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 else (0, len(segs) - 1)
+        if MODE == 'over':
+            os.makedirs(f'{out}/over', exist_ok=True); t0 = time.time()
+            for f in range(NF):
+                fn = f'{out}/over/{f:05d}.png'
+                if os.path.exists(fn): continue
+                d = await pg.evaluate(f"frame({f / FPS:.6f}, 0.9, 'over')")
+                open(fn + '.tmp', 'wb').write(base64.b64decode(d.split(',')[1])); os.rename(fn + '.tmp', fn)
+            print(f'overlay {NF} frames in {time.time() - t0:.0f}s', flush=True); await b.close(); return
         t0 = time.time(); done = 0
         for k, (f0, f1) in enumerate(segs):
             if k < lo or k > hi: continue
@@ -27,7 +37,7 @@ async def main():
             ff = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'image2pipe', '-framerate', str(FPS), '-c:v', 'mjpeg', '-i', '-',
                                    '-c:v', 'libx264', '-crf', '15', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', '-r', str(FPS), '-g', '30', tmp], stdin=subprocess.PIPE)
             for f in range(f0, f1):
-                d = await pg.evaluate(f'frame({f / FPS:.6f}, 0.93)')
+                d = await pg.evaluate(f"frame({f / FPS:.6f}, 0.93, '{MODE}')")
                 ff.stdin.write(base64.b64decode(d.split(',')[1])); done += 1
             ff.stdin.close(); rc = ff.wait()
             if rc == 0: os.rename(tmp, fn)

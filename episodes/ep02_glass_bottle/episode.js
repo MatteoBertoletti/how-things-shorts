@@ -282,7 +282,7 @@ export async function build(ctx, script, timing) {
   }
   // the hero glass: state machine through the IS section
   const SET = parisonProfile(0), PAR = parisonProfile(1), BOT = bottleProfile(), GOB = gobProfile(100, 19, 240);
-  const tDrop = Ls(6) - 0.05, tLand = tDrop + 0.5, tSettle = Wd(6, 'puff') - 0.05, tCounter = Wd(6, 'small') - 0.1, tParison = Wd(6, 'preform') + 0.2;
+  const tLand = Ls(6) + 0.3, tDrop = tLand - Math.sqrt(2 * 900 / 9810), tSettle = Wd(6, 'puff') - 0.05, tCounter = Wd(6, 'small') - 0.1, tParison = Wd(6, 'preform') + 0.2;
   const tOpen = Ls(7) - 0.05, tFlip0 = Wd(7, 'flips') - 0.05, tFlip1 = Wd(7, 'down') + 0.15, tBlowClose = tFlip1 + 0.1, tBlast = Wd(7, 'blast') - 0.05, tBlown = Wd(7, 'full') + 0.1, tOpen2 = Le(7) + 0.05;
   function isSet(t) {
     // profile
@@ -293,7 +293,7 @@ export async function build(ctx, script, timing) {
     T = t < tCounter ? 1100 : (t < tBlast ? lerp(1100, 1000, clamp((t - tCounter) / 1.5)) : lerp(1000, 760, clamp((t - tBlast) / 2)));
     hero.update(P); hero.setT(T);
     carrier.add(hero.group);
-    const drop = t < tLand ? 900 * (1 - E.i(clamp((t - tDrop) / (tLand - tDrop)))) : 0;
+    const drop = t < tLand ? Math.max(0, 900 - 0.5 * 9810 * Math.max(0, t - tDrop) ** 2) : 0;
     hero.group.position.set(0, -240 - drop, 0); hero.group.rotation.set(0, 0, 0);
     const flip = E.io(clamp((t - tFlip0) / (tFlip1 - tFlip0)));
     arm.rotation.z = -Math.PI * flip;
@@ -381,7 +381,7 @@ export async function build(ctx, script, timing) {
   S(Wd(8, 'No') - 0.05, Wd(8, 'goes') - 0.05, (u, t) => { show(LE); lehrSet(t, 540); lehr.userData.roof.visible = true; glowAt(LL(600, 350, 0), 900, 2500); cam(LL(-1500, 700, 1500).lerp(LL(-1300, 650, 1300), E.io(u)), LL(600, 250, 0), 40); rig(LL(500, 0, 0), 1600); });
   S(Wd(8, 'goes') - 0.05, Ls(9), (u, t) => { show(LE); lehrSet(t, 560); lehr.userData.roof.visible = true; glowAt(LL(900, 350, 0), 900, 2500); cam(LL(300 + 300 * E.io(u), 330, 420), LL(900 + 300 * E.io(u), 160, 0), 40); rig(LL(900, 0, 0), 1000); });
   S(Ls(9), Wd(9, 'then') - 0.05, (u, t) => { show(LE); lehrSet(t, ThL(t)); glowAt(LL(1900, 500, 0), 800, 2500); cam(LL(1300, 900, 600).lerp(LL(1380, 860, 560), u), LL(1900, 120, 0), 40); rig(LL(1900, 0, 0), 1200); });
-  S(Wd(9, 'then') - 0.05, Wd(9, 'so') - 0.05, (u, t) => { show(LE); lehrSet(t, ThL(t)); glowAt(LL(2500, 500, 0), 400 * clamp((ThL(t) - 100) / 480), 2500); cam(LL(1900 + 200 * u, 380, 800), LL(2200 + 200 * u, 140, 0), 38); rig(LL(2200, 0, 0), 900); });
+  S(Wd(9, 'then') - 0.05, Wd(9, 'so') - 0.05, (u, t) => { show(LE); lehrSet(t, ThL(t)); glowAt(LL(2500, 500, 0), 400 * clamp((ThL(t) - 100) / 480), 2500); cam(LL(1850 + 200 * u, 520, 470), LL(2250 + 200 * u, 120, 0), 38); rig(LL(2200, 0, 0), 900); });
   S(Wd(9, 'so') - 0.05, Ls(10), (u, t) => { show(LE); lehrSet(t, ThL(t)); cam(LL(1950, 200, 330), LL(2150, 140, 0), 36); rig(LL(2150, 0, 0), 600); });
   // STEP 6 CHECK
   const INL = (x, y, z) => L(IN, x, y, z);
@@ -453,7 +453,8 @@ export async function build(ctx, script, timing) {
 
   // ---------------- seek ----------------
   let flashA = 0, air = false;
-  function seek(t, g) {
+  function seek(t, g, opts = {}) {
+    const plate = opts.plate !== false, over = opts.over !== false;
     TT = t; key.intensity = 2.2; shake = 0; flashA = 0; air = false; glow.intensity = 0; spotG.intensity = spotR.intensity = 0;
     all.forEach(o => o.visible = false); hero.group.visible = false; hero.setCut(false);
     const sh = shots.find(s => t >= s.t0 && t < s.t1) || shots[shots.length - 1];
@@ -461,15 +462,15 @@ export async function build(ctx, script, timing) {
     hero.updatePlane();
     glow.visible = glow.intensity > 0; spotG.visible = spotG.intensity > 0; spotR.visible = spotR.intensity > 0;
     lens.uniforms.uSeed.value = Math.floor(t * 30) % 1000; lens.uniforms.uFlash.value.set(1, 0.92, 0.75, flashA);
-    ctx.composer.render();
-    g.drawImage(ctx.canvas3d, 0, 0, W, H);
+    if (plate) { ctx.composer.render(); g.drawImage(ctx.canvas3d, 0, 0, W, H); }
+    if (!over) return;
     const cur = steps.filter(s => t >= s.at).pop();
     const hudA = smooth(0.08, 0.3, t) * (1 - smooth(Ls(12), Ls(12) + 0.25, t));
     const r = readout(t);
     hud(g, { ep: EP, step: cur ? cur.n : 0, nSteps: 6, stepName: cur ? cur.word.replace('.', '') : 'SAND', label: r.label, text: r.text, flag: r.flag, progress: t / (END - LOOP), from: 'SAND', to: 'BOTTLE', alpha: hudA });
     for (const s of steps) sticker(g, t, s);
     for (const c of caps) caption(g, t, c);
-    stamp(g, t, { at: tCheck, until: tKick + 0.5, x: 700, y: 760, text: 'REJECT' });
+    stamp(g, t, { at: tCheck, until: tKick + 0.5, x: 560, y: 1010, text: 'REJECT' });
     endCard(g, t, { at: Ls(12), comment: Wd(12, 'Comment'), follow: Le(12) + 0.25, until: END - LOOP, left: 'GUMMY BEAR', right: 'PENCIL', next: 'EP. 03' });
   }
   return { seek, END, sfx, lines, shots: shots.map(s => [s.t0, s.t1]), caps: caps.map(c => [c.at, c.until, c.words.map(w => w.t).join(' ')]), lockTicks: () => [] };

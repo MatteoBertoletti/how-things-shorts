@@ -403,7 +403,8 @@ export async function build(ctx, script, timing) {
   { let lastVy = 0; for (let f = 1; f < popSim.frames.length; f++) { const vy = popSim.frames[f][0][1] - popSim.frames[f - 1][0][1]; if (lastVy < -0.3 && vy > -0.05) sfx.push({ t: tPop + f / 30, n: 'tink' }); lastVy = vy; } }
 
   // ---------------- seek ----------------
-  function seek(t, g) {
+  function seek(t, g, opts = {}) {
+    const plate = opts.plate !== false, over = opts.over !== false;
     TT = t; shake = 0; key.intensity = 2.3; flashA = 0; whiteA = 0; accent.intensity = 0; spotG.intensity = spotR.intensity = 0;
     hideAll();
     const sh = shots.find(s => t >= s.t0 && t < s.t1) || shots[shots.length - 1];
@@ -411,8 +412,8 @@ export async function build(ctx, script, timing) {
     accent.visible = accent.intensity > 0; spotG.visible = spotG.intensity > 0; spotR.visible = spotR.intensity > 0;
     lens.uniforms.uSeed.value = Math.floor(t * 30) % 1000;
     lens.uniforms.uFlash.value.set(1, 0.92, 0.85, whiteA);
-    ctx.composer.render();
-    g.drawImage(ctx.canvas3d, 0, 0, W, H);
+    if (plate) { ctx.composer.render(); g.drawImage(ctx.canvas3d, 0, 0, W, H); }
+    if (!over) return;
     // overlay
     flash(g, flashA);
     const cur = steps.filter(s => t >= s.at).pop();
