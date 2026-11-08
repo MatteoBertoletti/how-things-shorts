@@ -25,7 +25,7 @@ jobs:
         env: { ELEVENLABS_API_KEY: '${{ secrets.ELEVENLABS_API_KEY }}' }
         run: |
           EP="${{ inputs.ep }}"; [ -z "$EP" ] && EP=$(cat episodes/CURRENT 2>/dev/null || echo ep01_zipper)
-          python tools/voice_el.py episodes/$EP out cache 2>&1 | tee out/log.txt || (mkdir -p out && false)
+          mkdir -p out; set -o pipefail; python tools/voice_el.py episodes/$EP out cache 2>&1 | tee out/log.txt
       - name: Save cache + publish output
         if: always()
         run: |
