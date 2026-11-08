@@ -25,6 +25,22 @@ out, t, report = [], 0.25, []
 wav = np.zeros(int(SR * 80), np.float32)
 for k, L in enumerate(S['lines']):
     x = load(f'{AD}/raw/{L["id"]:02d}.mp3'); y, off = trim(x)
+    MP = S.get('max_pause')
+    if MP:  # shorten long pauses inside the line, cutting only where it is really silent
+        w = int(SR * 0.01); n = len(y) // w; db = 20 * np.log10(np.sqrt((y[:n * w].reshape(n, w) ** 2).mean(1)) + 1e-12)
+        quiet = db < max(-50, db.max() - 40); cuts = []; i = 0
+        while i < n:
+            if quiet[i]:
+                j = i
+                while j < n and quiet[j]: j += 1
+                L_ = (j - i) * 0.01
+                if L_ > MP + 0.05 and i > 0 and j < n:
+                    keep = MP; a = int((i * 0.01 + keep / 2) * SR); b = int((j * 0.01 - keep / 2) * SR); cuts.append((a, b))
+                i = j
+            else: i += 1
+        for a, b in reversed(cuts):
+            f = int(0.01 * SR); y = np.concatenate([y[:a], y[b:]]); y[a - f:a + f] *= np.concatenate([np.linspace(1, 0.5, f), np.linspace(0.5, 1, f)]) if a > f else 1
+        if cuts: print('line', L['id'], 'pauses cut', [round((b - a) / SR, 2) for a, b in cuts])
     sf.write(f'{AD}/line_{L["id"]:02d}.wav', y, SR)
     a16 = np.frombuffer(subprocess.run(['ffmpeg', '-v', 'error', '-i', f'{AD}/line_{L["id"]:02d}.wav', '-ac', '1', '-ar', '16000', '-f', 'f32le', '-'], capture_output=True, check=True).stdout, np.float32).copy()
     segs, _ = model.transcribe(a16, word_timestamps=True, language='en', beam_size=5,

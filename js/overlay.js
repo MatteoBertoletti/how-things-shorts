@@ -2,11 +2,13 @@
 import { W, H, clamp, E, lerp } from './core.js';
 
 export const C = { cream: '#F3E9D2', ink: '#101418', navy: 'rgba(14,26,43,0.55)', accent: '#FF5A1F', green: '#2BD67B', red: '#FF3B3B', cyan: '#5EC8E5' };
+// per-episode accent (the fixed channel language stays, only the accent colour changes)
+export function setAccent(c) { C.accent = c; }
 const F = { mono: '"JBMono"', title: '"Anton"', cap: '"Archivo Black"' };
 
 function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 
-export function hud(g, { ep, step, nSteps, stepName, label, value, total, progress, from, to, alpha = 1 }) {
+export function hud(g, { ep, step, nSteps, stepName, label, value, total, text, flag, progress, from, to, alpha = 1 }) {
   if (alpha <= 0) return;
   g.save(); g.globalAlpha = alpha;
   const x = 44, y = 64;
@@ -18,9 +20,18 @@ export function hud(g, { ep, step, nSteps, stepName, label, value, total, progre
   g.fillStyle = C.cream; g.font = `700 29px ${F.mono}`;
   g.fillText(step > 0 ? `STEP ${step}/${nSteps} · ${stepName}` : `STEP -/${nSteps} · ${stepName}`, x + 24, y + 68);
   g.font = `400 27px ${F.mono}`; const lab = `${label} `; g.fillText(lab, x + 24, y + 112);
-  const lw = g.measureText(lab).width; g.font = `800 27px ${F.mono}`; g.fillStyle = C.accent;
-  const vs = String(Math.round(value)).padStart(3, '0'); g.fillText(vs, x + 24 + lw, y + 112);
-  const vw = g.measureText(vs).width; g.fillStyle = C.cream; g.font = `400 27px ${F.mono}`; g.fillText(`/${total}`, x + 24 + lw + vw, y + 112);
+  const lw = g.measureText(lab).width;
+  if (text !== undefined) { g.font = `800 27px ${F.mono}`; g.fillStyle = C.accent; g.fillText(text, x + 24 + lw, y + 112); }
+  else {
+    g.font = `800 27px ${F.mono}`; g.fillStyle = C.accent;
+    const vs = String(Math.round(value)).padStart(3, '0'); g.fillText(vs, x + 24 + lw, y + 112);
+    const vw = g.measureText(vs).width; g.fillStyle = C.cream; g.font = `400 27px ${F.mono}`; g.fillText(`/${total}`, x + 24 + lw + vw, y + 112);
+  }
+  if (flag) {
+    g.font = `800 22px ${F.mono}`; const fw = g.measureText(flag).width;
+    g.fillStyle = C.accent; rr(g, x + 520 + 14, y + 104, fw + 24, 40, 8); g.fill(); g.lineWidth = 3; g.strokeStyle = C.ink; g.stroke();
+    g.fillStyle = C.ink; g.fillText(flag, x + 520 + 26, y + 113);
+  }
   // progress bar
   const bx = x + 24, by = y + 168, bw = 472;
   g.fillStyle = 'rgba(243,233,210,0.22)'; g.fillRect(bx, by, bw, 6);
@@ -124,3 +135,14 @@ export function endCard(g, t, { at, comment, follow, until, left, right, next })
 }
 
 export function flash(g, a, color = 'rgba(255,59,59,') { if (a <= 0) return; g.fillStyle = color + a + ')'; g.fillRect(0, 0, W, H); }
+
+// rubber stamp (e.g. REJECT) at a screen point, slams in
+export function stamp(g, t, { at, x, y, text, color = '#FF3B3B', until }) {
+  if (t < at || t > until) return;
+  const u = clamp((t - at) / 0.12); const s = lerp(2.2, 1, E.o(u));
+  g.save(); g.translate(x, y); g.rotate(-0.16); g.scale(s, s); g.globalAlpha = clamp(u * 2) * clamp((until - t) / 0.1);
+  g.font = `400 92px ${F.title}`; const tw = g.measureText(text).width;
+  g.lineWidth = 9; g.strokeStyle = color; rr(g, -tw / 2 - 26, -62, tw + 52, 116, 12); g.stroke();
+  g.fillStyle = color; g.textBaseline = 'middle'; g.fillText(text, -tw / 2, 4);
+  g.restore();
+}

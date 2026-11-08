@@ -62,3 +62,22 @@ export function simPop({ x = 0, y = 1.6, z = 0, dur = 2.5 } = {}) {
   const b = toothBody(m); b.position.set(x, y, z); b.velocity.set(-120, 520, 60); b.angularVelocity.set(14, 4, 22); world.addBody(b);
   return { frames: rec(world, [b], dur, 1 / 600) };
 }
+
+// generic: n small box bodies released over time into a set of static boxes. Recorded at 30 fps.
+// bodies: [{ half:[x,y,z], pos:[x,y,z], vel:[x,y,z], spin:[x,y,z], at }], statics: [{ half:[..], pos:[..], rot:[x,y,z] }]
+export function simBodies({ bodies, statics, dur = 3, dt = 1 / 480, mass = 0.02, friction = 0.4, restitution = 0.3, g = -9810 }) {
+  const world = new CANNON.World({ gravity: new CANNON.Vec3(0, g, 0) });
+  world.broadphase = new CANNON.SAPBroadphase(world); world.allowSleep = true; world.solver.iterations = 10;
+  const m = new CANNON.Material('m'); world.addContactMaterial(new CANNON.ContactMaterial(m, m, { friction, restitution }));
+  for (const s of statics) { const b = new CANNON.Body({ mass: 0, material: m }); b.addShape(new CANNON.Box(new CANNON.Vec3(...s.half))); b.position.set(...s.pos); if (s.rot) b.quaternion.setFromEuler(...s.rot); world.addBody(b); }
+  const B = bodies.map(d => { const b = new CANNON.Body({ mass, material: m, linearDamping: 0.02, angularDamping: 0.05 }); b.addShape(new CANNON.Box(new CANNON.Vec3(...d.half))); b.position.set(...d.pos); if (d.rot) b.quaternion.setFromEuler(...d.rot); b.type = CANNON.Body.KINEMATIC; world.addBody(b); return b; });
+  const frames = [], per = Math.round(1 / (30 * dt)), n = Math.round(dur / dt);
+  const snap = () => frames.push(B.map(b => [b.position.x, b.position.y, b.position.z, b.quaternion.x, b.quaternion.y, b.quaternion.z, b.quaternion.w]));
+  snap();
+  for (let s = 1; s <= n; s++) {
+    const t = s * dt;
+    B.forEach((b, i) => { const d = bodies[i]; if (b.type === CANNON.Body.KINEMATIC && t >= d.at) { b.type = CANNON.Body.DYNAMIC; b.mass = mass; b.updateMassProperties(); b.velocity.set(...d.vel); b.angularVelocity.set(...(d.spin || [0, 0, 0])); } });
+    world.step(dt); if (s % per === 0) snap();
+  }
+  return { frames, spawn: bodies.map(d => d.at) };
+}

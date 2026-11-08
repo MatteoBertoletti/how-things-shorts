@@ -1,0 +1,220 @@
+{
+ "map": {
+  "whoosh_soft": [
+   1489,
+   -13,
+   "peak",
+   null
+  ],
+  "cut_whoosh": [
+   1490,
+   -7,
+   "peak",
+   null
+  ],
+  "whoosh": [
+   [
+    1490,
+    -8,
+    "peak",
+    null
+   ],
+   [
+    3115,
+    -9,
+    "peak",
+    null
+   ],
+   [
+    166,
+    -9,
+    "peak",
+    null
+   ]
+  ],
+  "tick": [
+   2577,
+   -13,
+   "onset",
+   0.15
+  ],
+  "glass_ding": [
+   2936,
+   -8,
+   "onset",
+   null
+  ],
+  "sand_pour": [
+   1494,
+   -9,
+   "onset",
+   null
+  ],
+  "sand_pour2": [
+   2494,
+   -11,
+   "onset",
+   1.6
+  ],
+  "gravel": [
+   1273,
+   -9,
+   "onset",
+   null
+  ],
+  "glass_pour": [
+   172,
+   -8,
+   "onset",
+   2.0
+  ],
+  "fire_roar": [
+   1331,
+   -10,
+   "onset",
+   2.6
+  ],
+  "fire_whoosh": [
+   1345,
+   -7,
+   "onset",
+   null
+  ],
+  "low_whoosh": [
+   3120,
+   -10,
+   "onset",
+   null
+  ],
+  "shear": [
+   2152,
+   -5,
+   "onset",
+   null
+  ],
+  "thud": [
+   2498,
+   -9,
+   "onset",
+   null
+  ],
+  "clank": [
+   2980,
+   -6,
+   "onset",
+   1.0
+  ],
+  "clank2": [
+   2983,
+   -8,
+   "onset",
+   1.2
+  ],
+  "air_puff": [
+   1458,
+   -8,
+   "onset",
+   null
+  ],
+  "air_hiss": [
+   2447,
+   -8,
+   "onset",
+   null
+  ],
+  "air_blast": [
+   3220,
+   -6,
+   "onset",
+   null
+  ],
+  "mech_move": [
+   3117,
+   -11,
+   "onset",
+   null
+  ],
+  "glass_clink": [
+   525,
+   -9,
+   "onset",
+   null
+  ],
+  "bass_hit": [
+   2299,
+   -3,
+   "onset",
+   null
+  ],
+  "oven_hum": [
+   1831,
+   -15,
+   "onset",
+   3.6
+  ],
+  "scan_beep": [
+   2521,
+   -14,
+   "onset",
+   null
+  ],
+  "buzzer": [
+   2964,
+   -10,
+   "onset",
+   null
+  ],
+  "pneumatic": [
+   817,
+   -9,
+   "onset",
+   0.6
+  ],
+  "glass_break": [
+   759,
+   -4,
+   "onset",
+   null
+  ],
+  "tink": [
+   2183,
+   -15,
+   "onset",
+   null
+  ],
+  "swell": [
+   2626,
+   -9,
+   "onset",
+   null
+  ],
+  "bottles": [
+   154,
+   -9,
+   "onset",
+   null
+  ],
+  "click_ui": [
+   2568,
+   -9,
+   "onset",
+   null
+  ]
+ },
+ "bed": 2504,
+ "ticks": false,
+ "repeat": {
+  "bottles": [
+   [
+    0.35,
+    -3
+   ]
+  ],
+  "gravel": [
+   [
+    0.5,
+    -5
+   ]
+  ]
+ }
+}

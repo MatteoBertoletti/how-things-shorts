@@ -5,7 +5,7 @@
 </head><body><canvas id="out" width="1080" height="1920"></canvas>
 <script type="module">
 import { makeRenderer, W, H } from './js/core.js';
-const q = new URLSearchParams(location.search); const ep = q.get('ep') || 'ep01_zipper';
+const q = new URLSearchParams(location.search); const ep = q.get('ep') || (await (await fetch('./episodes/CURRENT')).text()).trim();
 const fonts = [['JBMono', 'jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2', '400'], ['JBMono', 'jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2', '700'], ['JBMono', 'jetbrains-mono/files/jetbrains-mono-latin-800-normal.woff2', '800'], ['Anton', 'anton/files/anton-latin-400-normal.woff2', '400'], ['Archivo Black', 'archivo-black/files/archivo-black-latin-400-normal.woff2', '400']];
 await Promise.all(fonts.map(async ([n, f, w]) => { const ff = new FontFace(n, `url(./node_modules/@fontsource/${f})`, { weight: w }); await ff.load(); document.fonts.add(ff); }));
 const script = await (await fetch(`./episodes/${ep}/script.json`)).json();

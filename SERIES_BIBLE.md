@@ -7,10 +7,11 @@ Every episode stands alone. On-screen text and narration in English. Always "Sim
 
 | EP | Object | Angle | Material family | Length | Audio | Palette | Next-episode choice (green / red) |
 |----|--------|-------|-----------------|--------|-------|---------|------------------------------------|
-| 01 | Zipper (#5 metal, generic) | How it works inside | Metal + textile | ~46 s | ElevenLabs narrator (EN) | Brass & Blueprint | Glass bottle / Ballpoint pen |
+| 01 | Zipper (#5 metal, generic) | How it works inside | Metal + textile | ~49 s | ElevenLabs narrator (EN) | Brass & Blueprint | Glass bottle / Ballpoint pen |
+| 02 | Glass bottle (generic long-neck) | How it's made (sand → bottle) | Glass | ~45 s | ElevenLabs "Brian" (EN) | Ember & Slate | Gummy bear / Pencil |
 
 Material rotation: food, plastic, metal, glass, paper, textile, electronics, rubber, ceramics, everyday gadgets.
-Next up should NOT be metal again (EP 02 = glass bottle or ballpoint pen, decided by comments).
+EP 03 should not be glass or metal (gummy bear = food, pencil = wood/graphite; decided by comments).
 
 ## Fixed channel language (never changes)
 
@@ -35,8 +36,12 @@ Next up should NOT be metal again (EP 02 = glass bottle or ballpoint pen, decide
 | EP | Background | Warm key | Cold fill | Accent | Hero material |
 |----|------------|----------|-----------|--------|---------------|
 | 01 | Navy `#0E1A2B` | Brass lamp `#FFC777` | Cyan `#5EC8E5` | Safety orange `#FF5A1F` | Brass teeth `#D9A441`, nickel slider `#C9CED6`, denim tape `#2E4A6B` |
+| 02 | Slate `#0F1A21` | Furnace ember `#FF8A2B` | Cyan `#6FD0E6` | Molten gold `#FFB62E` | Soda-lime glass `#9ADBC0`; hot ramp `#FFE9A8` (1,550 °C) → `#FF8A2B` (1,100 °C) → `#B8330F` (~580 °C) → clear |
 
 ## Reusable parts library (js/parts.js)
 
 workbench, cutting mat (mm grid), tray, conveyor + rollers, pedestal, desk lamp, pegboard wall, shelf + bins, generic coin, dimension line, gauge.
+EP 02 added: brick/refractory material, factory floor, hopper, furnace mouth, forehearth channel (+ feeder, plunger), shear blades, CSG moulds (blank / blow), invert arm, lehr belt + tunnel, stylised hand, gummy bear, pencil.
+js/glass.js: glass material (fresnel rim + temperature glow), morphing lathe gob → parison → bottle with capped cutaway, molten-glass shader.
+The HUD readout can be a value/total (EP 01) or label + text with an optional flag pill (EP 02). Accent colour is per episode (setAccent).
 Episode-specific: js/zipper.js (tooth via CSG, chain layout from a gap function, slider with cutaway caps, tape sweep).
