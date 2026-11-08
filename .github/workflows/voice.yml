@@ -1,0 +1,35 @@
+name: voice
+# ElevenLabs narration. Triggered by a push that changes an episode's voice_request.json (or this tooling).
+# Output (voices.json + one mp3 per line) is force-pushed to the branch voice-out. The key never leaves the secret.
+on:
+  push:
+    branches: [main]
+    paths: ['episodes/*/voice_request.json', 'episodes/*/script.json', 'tools/voice_el.py', '.github/workflows/voice.yml']
+  workflow_dispatch:
+    inputs:
+      ep: { description: 'Episode folder', default: 'ep01_zipper' }
+permissions:
+  contents: write
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Restore cache (never pay twice for the same line)
+        run: |
+          mkdir -p cache
+          if git fetch -q --depth 1 origin +voice-cache:refs/remotes/origin/voice-cache 2>/dev/null; then git --work-tree=cache checkout origin/voice-cache -- . && git reset -q; fi
+          ls cache | wc -l
+      - name: Narrate
+        env: { ELEVENLABS_API_KEY: '${{ secrets.ELEVENLABS_API_KEY }}' }
+        run: |
+          EP="${{ inputs.ep }}"; [ -z "$EP" ] && EP=$(cat episodes/CURRENT 2>/dev/null || echo ep01_zipper)
+          python tools/voice_el.py episodes/$EP out cache 2>&1 | tee out/log.txt || (mkdir -p out && false)
+      - name: Save cache + publish output
+        if: always()
+        run: |
+          git config --global user.name "github-actions[bot]"; git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          (cd cache && git init -q && git checkout -q -b voice-cache && git add -A && git commit -qm "voice cache ${{ github.run_id }}" && git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" voice-cache) || true
+          mkdir -p out && echo "${{ github.sha }} run ${{ github.run_id }} ${{ job.status }}" > out/RUN.txt
+          cd out && git init -q && git checkout -q -b voice-out && git add -A && git commit -qm "voice ${{ github.run_id }}" && git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" voice-out

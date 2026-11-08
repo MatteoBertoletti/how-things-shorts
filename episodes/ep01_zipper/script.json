@@ -1,0 +1,23 @@
+{
+  "ep": "EP. 01",
+  "title": "How Two Rows of Teeth Become One Zipper",
+  "lang": "en",
+  "lines": [
+    {"id": 1,  "say": "What's really inside a zipper?"},
+    {"id": 2,  "say": "Two tapes. Hundreds of teeth. One slider."},
+    {"id": 3,  "say": "The rows never line up. One is shifted by half a tooth."},
+    {"id": 4,  "say": "The whole chain? Five millimetres wide. So how do they grab?"},
+    {"id": 5,  "say": "Every tooth has a bump on top... and a hollow underneath."},
+    {"id": 6,  "say": "Push them straight together, and they jam."},
+    {"id": 7,  "say": "Inside the slider: a Y-shaped channel."},
+    {"id": 8,  "say": "It tilts each tooth just enough to clear the next."},
+    {"id": 9,  "say": "Bump into hollow. Click. Over and over."},
+    {"id": 10, "say": "But here's the catch: no zipper is ever fully closed. The wedge has to stay between the last teeth."},
+    {"id": 11, "say": "Pull down, and that wedge pries them apart."},
+    {"id": 12, "say": "Lose one tooth, and the whole chain gives way."},
+    {"id": 13, "say": "The biggest maker builds over seven billion a year."},
+    {"id": 14, "say": "Glass bottle, or ballpoint pen? Comment below."}
+  ],
+  "placeholder_starts": [0.25, 2.0, 4.5, 7.2, 9.7, 12.4, 14.3, 16.7, 19.7, 23.4, 29.7, 32.6, 36.0, 39.6],
+  "tail": 2.4
+}
