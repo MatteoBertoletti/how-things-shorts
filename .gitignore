@@ -1,0 +1,8 @@
+node_modules/
+render/
+audio/
+deliver/
+out/
+cache/
+*.mp4
+*.wav
