@@ -1,0 +1,62 @@
+{
+ "ep": "EP. 03",
+ "title": "How a Tree Becomes a Pencil",
+ "lang": "en",
+ "lines": [
+  {
+   "id": 1,
+   "say": "How does a tree become a pencil?"
+  },
+  {
+   "id": 2,
+   "say": "Cedar logs are sawn into thin slats, then grooved."
+  },
+  {
+   "id": 3,
+   "say": "The black core? It isn't lead. It's graphite and clay."
+  },
+  {
+   "id": 4,
+   "say": "Ground with water, squeezed into strings, baked at eleven hundred degrees Celsius.",
+   "caption": "1,100 °C"
+  },
+  {
+   "id": 5,
+   "say": "More graphite: softer, darker. More clay: harder, lighter."
+  },
+  {
+   "id": 6,
+   "say": "Glue, the cores, a second slat on top."
+  },
+  {
+   "id": 7,
+   "say": "So a pencil is really two halves glued together."
+  },
+  {
+   "id": 8,
+   "say": "Pressed, then cut: six to nine pencils per sandwich.",
+   "caption": "6-9 PENCILS PER SANDWICH"
+  },
+  {
+   "id": 9,
+   "say": "Coat after coat of paint."
+  },
+  {
+   "id": 10,
+   "say": "A metal ring, an eraser, a stamp."
+  },
+  {
+   "id": 11,
+   "say": "Now it writes the answer: graphite."
+  },
+  {
+   "id": 12,
+   "say": "Gummy bear, or toy brick? Comment below."
+  }
+ ],
+ "tail": 1.6,
+ "min_gap": 0.22,
+ "gaps": {},
+ "max_pause": 0.35,
+ "hud": false
+}
