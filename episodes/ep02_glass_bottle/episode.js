@@ -467,7 +467,7 @@ export async function build(ctx, script, timing) {
     const cur = steps.filter(s => t >= s.at).pop();
     const hudA = smooth(0.08, 0.3, t) * (1 - smooth(Ls(12), Ls(12) + 0.25, t));
     const r = readout(t);
-    hud(g, { ep: EP, step: cur ? cur.n : 0, nSteps: 6, stepName: cur ? cur.word.replace('.', '') : 'SAND', label: r.label, text: r.text, flag: r.flag, progress: t / (END - LOOP), from: 'SAND', to: 'BOTTLE', alpha: hudA });
+    if (script.hud !== false) hud(g, { ep: EP, step: cur ? cur.n : 0, nSteps: 6, stepName: cur ? cur.word.replace('.', '') : 'SAND', label: r.label, text: r.text, flag: r.flag, progress: t / (END - LOOP), from: 'SAND', to: 'BOTTLE', alpha: hudA });
     for (const s of steps) sticker(g, t, s);
     for (const c of caps) caption(g, t, c);
     stamp(g, t, { at: tCheck, until: tKick + 0.5, x: 560, y: 1010, text: 'REJECT' });

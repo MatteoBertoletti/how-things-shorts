@@ -22,7 +22,7 @@ Render in two layers: `tools/render.py render plate`, `tools/render.py render ov
 
 ## Fixed channel language (never changes)
 
-- **HUD**: JetBrains Mono, top-left at (70, 250), cream text `#F3E9D2` at 90% on a 40% navy plate.
+- **HUD** (optional since EP 02: `"hud": false` in the episode's script.json hides it): JetBrains Mono, top-left at (70, 250), cream text `#F3E9D2` at 90% on a 40% navy plate.
   - line 1: `EP. 01`
   - line 2: `STEP 3/6 · TILT`
   - line 3: one live readout (EP 01: `TEETH LOCKED 042/104`)
