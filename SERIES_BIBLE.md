@@ -31,7 +31,9 @@ Render in two layers: `tools/render.py render plate`, `tools/render.py render ov
   Small mono label `STEP 3` + huge Anton title with full stop: `TILT.` Slides in with overshoot, holds ~1.6 s.
 - **Captions**: Archivo Black, 1–3 words, uppercase, cream with 10 px dark outline; key word in the episode accent colour.
   Pop-in scale 0.85 → 1.0 in 0.12 s. Centred on x = 470, max 790 px wide, y ≈ 1290. Min 0.6 s on screen.
-- **Hook**: tight on the finished object, giant 2-line caption, snap cut at ~2 s.
+- **Hook** (rule since EP 02): the question title is readable from frame 0 (it is also the feed thumbnail), set high (y ≈ 400) so the subject stays visible;
+  in the first second show the raw material turning into the object (EP 02: a fistful of sand pouring → snap cut → the same hand holding a glowing bottle that cools to clear).
+  The loop frames repeat frame 0 with the title.
 - **End card**: "NEXT EPISODE?" title, two pedestals with real 3D objects, green rim light (left) vs red rim light (right),
   "COMMENT BELOW", then "FOLLOW FOR EP. N+1". Last frame = first frame (clean hook plate) for a seamless loop.
 - **Lens**: light vignette, fine grain, slight chromatic fringe at the edges. Bloom only on hot / emissive accents.

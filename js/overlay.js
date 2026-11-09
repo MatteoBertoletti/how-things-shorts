@@ -92,10 +92,10 @@ export function sticker(g, t, { at, n, word, hold = 1.7 }) {
   g.restore();
 }
 
-export function hookTitle(g, t, { at, until, l1, l2 }) {
-  if (t < at || t > until) return;
+export function hookTitle(g, t, { at, until, l1, l2, from = -1e9, y = 1080 }) {
+  if (t < at || t > until || t < from) return;
   const u = E.back(clamp((t - at) / 0.18)), o = clamp((until - t) / 0.08);
-  g.save(); g.translate(SAFE.cx, 1080); g.scale(lerp(0.8, 1, u) * o, lerp(0.8, 1, u) * o);
+  g.save(); g.translate(SAFE.cx, y); g.scale(lerp(0.8, 1, u) * o, lerp(0.8, 1, u) * o);
   g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.lineJoin = 'round';
   let f1 = 96; g.font = `400 ${f1}px ${F.cap}`; while (g.measureText(l1).width > SAFE.maxW && f1 > 40) { f1 -= 4; g.font = `400 ${f1}px ${F.cap}`; }
   g.lineWidth = f1 * 0.23; g.strokeStyle = C.ink; g.strokeText(l1, 0, 0); g.fillStyle = C.cream; g.fillText(l1, 0, 0);
