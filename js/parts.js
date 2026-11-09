@@ -357,7 +357,8 @@ function leatherTex() {
     g.fillStyle = `rgb(${v},${v},${v})`; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 3); return t;
 }
-export function hand(R = 30.5) {
+export function hand(R = 30.5, opts = {}) {
+  // opts (EP 03+): curl[4] extra curl per finger, len[4] length scale per finger, thumbJoint: visible thumb knuckle band
   const g = new THREE.Group();
   const bump = leatherTex();
   const leather = new THREE.MeshStandardMaterial({ color: 0x8a6a45, roughness: 0.7, metalness: 0, bumpMap: bump, bumpScale: 0.9, envMapIntensity: 0.6 });
@@ -376,6 +377,7 @@ export function hand(R = 30.5) {
   const fingers = [ // [height, length scale, start angle, radius]
     { y: 31, k: 0.96, th0: -0.30, r: 9.4 }, { y: 10, k: 1.0, th0: -0.34, r: 9.8 }, { y: -11, k: 0.95, th0: -0.32, r: 9.5 }, { y: -30, k: 0.8, th0: -0.26, r: 8.6 }];
   const fingerRigs = [];
+  fingers.forEach((f, fi) => { if (opts.len) f.k *= opts.len[fi]; f.c = opts.curl ? opts.curl[fi] : 0; });
   for (const f of fingers) {
     const segs = [46 * f.k, 31 * f.k, 25 * f.k];
     const rig = { f, meshes: [], segs }; fingerRigs.push(rig);
@@ -409,7 +411,7 @@ export function hand(R = 30.5) {
       const { f, segs, meshes } = rig; const rf = R + f.r * 0.95 - grip * 0.8;
       let th = f.th0 - grip * 0.05; let y = f.y; const tilt = -0.06 * (f.y / 30);
       const joints = [at(rf, th, y)];
-      for (let j = 0; j < 3; j++) { const dth = segs[j] / rf * (1 + grip * 0.04 + j * 0.05); th += dth; y += segs[j] * tilt; joints.push(at(rf - j * 0.6, th, y)); }
+      for (let j = 0; j < 3; j++) { const dth = segs[j] / rf * (1 + grip * 0.04 + j * 0.05 + f.c * (j + 1) * 0.5); th += dth; y += segs[j] * tilt; joints.push(at(rf - j * 0.6, th, y)); }
       for (let j = 0; j < 3; j++) {
         const a = joints[j], b = joints[j + 1], mid = a.clone().add(b).multiplyScalar(0.5), dir = b.clone().sub(a);
         const m = meshes[j]; m.position.copy(mid); m.quaternion.copy(qAlong(dir)); m.scale.set(1, 1, 1);
@@ -430,6 +432,10 @@ export function hand(R = 30.5) {
     for (; k < NST; k++) { _o.scale.setScalar(0); _o.updateMatrix(); stIM.setMatrixAt(k, _o.matrix); }
     stIM.count = NST; stIM.instanceMatrix.needsUpdate = true;
   }
+  let thumbBand = null;
+  if (opts.thumbJoint) { thumbBand = add(new THREE.TorusGeometry(11.4, 2.2, 8, 24), leatherDark, new THREE.Vector3()); }
+  const pose0 = pose;
+  pose = function (grip = 0) { pose0(grip); if (thumbBand) { thumbBand.position.copy(thumb[2].position); thumbBand.quaternion.copy(thumb[1].quaternion).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2)); } };
   pose(0);
   g.userData.pose = pose;
   return g;

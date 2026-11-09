@@ -54,8 +54,8 @@
    "say": "Gummy bear, or toy brick? Comment below."
   }
  ],
- "tail": 1.6,
- "min_gap": 0.22,
+ "tail": 1.2,
+ "min_gap": 0.18,
  "gaps": {},
  "max_pause": 0.35,
  "hud": false

@@ -289,10 +289,10 @@ export function kcap(g, t, o) {
 export function odometer(g, t, o) {
   const { at, until, value, unit = '', y = 640, size = 250, cx = SAFE.cx, dur = 0.8, color = C.accent, morph } = o;
   const a = t - at, r = until - t; if (a < 0 || r < 0) return;
-  const txt = Math.round(value).toLocaleString('en-US');
+  const txt = typeof value === 'string' ? value : Math.round(value).toLocaleString('en-US'), isD = (c) => c >= '0' && c <= '9';
   g.save(); g.textBaseline = 'alphabetic'; g.textAlign = 'left'; g.lineJoin = 'round';
   let fs = size; const uf = 0.46;
-  const meas = () => { g.font = `400 ${fs}px ${F.title}`; const dw = g.measureText('0').width + fs * 0.02, cw = g.measureText(',').width; let w = 0; const xs = []; for (const ch of txt) { xs.push(w); w += ch === ',' ? cw : dw; } g.font = `400 ${fs * uf}px ${F.title}`; const uw = unit ? g.measureText(unit).width + fs * 0.06 : 0; return { dw, cw, xs, w, uw }; };
+  const meas = () => { g.font = `400 ${fs}px ${F.title}`; const dw = g.measureText('0').width + fs * 0.02, cw = g.measureText(',').width; let w = 0; const xs = []; for (const ch of txt) { xs.push(w); w += isD(ch) ? dw : (ch === ',' ? cw : g.measureText(ch).width + fs * 0.02); } g.font = `400 ${fs * uf}px ${F.title}`; const uw = unit ? g.measureText(unit).width + fs * 0.06 : 0; return { dw, cw, xs, w, uw }; };
   let M = meas(); while (M.w + M.uw > SAFE.maxW - 40 && fs > 80) { fs -= 6; M = meas(); }
   const m = morph ? sp(t - morph.at, 'pos') : 0, mk = morph ? clamp((t - morph.at) / 0.3) : 0;
   const to = morph ? (typeof morph.to === 'function' ? morph.to(t) : morph.to) : { x: cx, y };
@@ -321,11 +321,11 @@ export function odometer(g, t, o) {
   }
   const col = morph ? mixCol(color, C.ink, mk) : color, ow = 0.085 * (1 - mk);
   g.translate(px + (o.dir || 1) * 40 * xo, py); g.scale(k * punch * lerp(1, 0.88, xo), k * punch * lerp(1, 0.88, xo));
-  const x0 = -(M.w + M.uw) / 2, nd = [...txt].filter(c => c !== ',').length; let di = 0;
+  const x0 = -(M.w + M.uw) / 2, nd = [...txt].filter(isD).length; let di = 0;
   const glow = (1 - mk) * (landed >= 0 ? 18 + 46 * Math.exp(-landed * 7) + 8 * Math.sin(a * 8) : 8);
   [...txt].forEach((ch, i) => {
     g.font = `400 ${fs}px ${F.title}`; const gx = x0 + M.xs[i];
-    if (ch === ',') { const s = sp(a - 0.05, 'scl'); g.save(); g.translate(gx, 0); g.scale(s, s); if (ow > 0.01) { g.lineWidth = fs * ow; g.strokeStyle = C.ink; g.strokeText(',', 0, 0); } g.fillStyle = col; g.fillText(',', 0, 0); g.restore(); return; }
+    if (!isD(ch)) { const s = sp(a - 0.05, 'scl'); g.save(); g.translate(gx, 0); g.scale(s, s); if (ow > 0.01) { g.lineWidth = fs * ow; g.strokeStyle = C.ink; g.strokeText(ch, 0, 0); } if (glow > 1) { g.shadowColor = col; g.shadowBlur = glow; } g.fillStyle = col; g.fillText(ch, 0, 0); g.restore(); return; }
     const j = di++, stop = dur * (0.5 + 0.5 * (nd > 1 ? j / (nd - 1) : 1)), turns = 7 + 4 * j, u = clamp(a / stop);
     const v = +ch - turns * (1 - E.o(u)) + 0.16 * ring(a - stop, 5, 16) * (a > stop ? 1 : 0), fl = Math.floor(v), fr = v - fl, cell = fs * 0.92;
     const cwid = g.measureText(ch).width, pad = (M.dw - g.measureText('0').width) / 2;
@@ -343,6 +343,10 @@ export function odometer(g, t, o) {
     g.save(); g.translate(x0 + M.w + fs * 0.06, lerp(-fs * 0.4, 0, mk)); g.scale(s * lerp(1, UK, mk), s * lerp(1, UK, mk));
     if (ow > 0.01) { g.lineWidth = fs * uf * ow * 1.5; g.strokeStyle = C.ink; g.strokeText(unit, 0, 0); }
     g.fillStyle = col; g.fillText(unit, 0, 0); g.restore();
+  }
+  if (o.sub) {                                       // the unit as a line under the number (e.g. PENCILS PER SANDWICH)
+    const sf = fit(g, o.sub, fs * 0.3, F.cap, (SAFE.maxW - 40) / Math.max(0.2, k), 30), s = sp(a - 0.06, 'scl');
+    g.save(); g.translate(0, fs * 0.36); g.scale(s, s); g.textAlign = 'center'; g.font = `400 ${sf}px ${F.cap}`; inkText(g, o.sub, 0, 0, C.cream, sf, 0.22); g.restore();
   }
   g.restore();
 }
@@ -366,7 +370,7 @@ export function strike(g, t, o) {
     G.forEach((L, i) => {
       const f = Math.max(0, fa - 0.035 * i), dy = 0.5 * 2600 * f * f, rot = f * (2.2 + i * 0.5) * (i % 2 ? 1 : -1);
       g.save(); g.translate(-ww / 2 + L.x + L.w / 2, dy); g.rotate(rot); g.globalAlpha *= clamp(1 - (f - 0.25) / 0.3);
-      inkText(g, L.ch, -L.w / 2, 0, mixCol(C.cream, '#8E96A3', dim), fs, 0.09); g.restore();
+      inkText(g, L.ch, -L.w / 2, 0, mixCol(C.cream, '#C2C8D0', dim), fs, 0.09); g.restore();
     });
     // graphite scribble across it (0.25 s) + dust
     if (sa >= 0) {
@@ -411,7 +415,7 @@ export function callout(g, t, o) {
   const pr = 12 + 3 * Math.sin(a * 9), rp = (a % 0.9) / 0.9;
   g.strokeStyle = C.accent; g.globalAlpha = (1 - rp) * out; g.lineWidth = 4; g.beginPath(); g.arc(p.x, p.y, pr + rp * 30, 0, 7); g.stroke(); g.globalAlpha = 1;
   g.fillStyle = C.accent; g.beginPath(); g.arc(p.x, p.y, pr * sp(a, 'scl') * out, 0, 7); g.fill(); g.lineWidth = 5; g.strokeStyle = C.ink; g.stroke();
-  const la = a - 0.16;
+  const la = a - 0.1;
   if (la > 0 && out > 0) {
     const open = sp(la, 'pos') * E.o(out), w = bw * open;
     g.save(); g.translate(ex, ey - bh / 2);
@@ -419,7 +423,7 @@ export function callout(g, t, o) {
     g.fillStyle = 'rgba(0,0,0,0.35)'; rr(g, x0 + 7, 9, w, bh, 12); g.fill();
     g.fillStyle = 'rgba(16,20,24,0.94)'; rr(g, x0, 0, w, bh, 12); g.fill(); g.lineWidth = 5; g.strokeStyle = C.accent; g.stroke();
     g.fillStyle = C.accent; g.fillRect(sd > 0 ? 0 : -10, 12, 10, bh - 24);
-    const n = Math.floor(clamp((la - 0.08) / (0.035 * text.length)) * text.length * clamp(r / 0.12 - 0.15, 0, 1) + 1e-6);
+    const n = Math.floor(clamp((la - 0.04) / (0.02 * text.length)) * text.length * clamp(r / 0.07 - 0.1, 0, 1) + 1e-6);
     g.beginPath(); g.rect(x0, 0, w, bh); g.clip(); g.textBaseline = 'middle'; g.fillStyle = C.cream;
     const tx = (sd > 0 ? 0 : -bw) + 30; g.fillText(text.slice(0, n), tx, bh / 2 + 2);
     if (n < text.length || Math.floor(la * 5) % 2 === 0) { g.fillStyle = C.accent; g.fillRect(tx + g.measureText(text.slice(0, n)).width + 5, 18, 14, bh - 36); }
@@ -448,7 +452,7 @@ export function stepSticker(g, t, { at, n, word, hold = 1.0, total = DOCK.total,
   if (a < 0 || da > ST.dock) return;
   const p = swipe ? sp(a, 'pos') : 1, slap = la >= 0 ? sp(la, 'scl') : 0, [sx, sy] = shake2(la, 11);
   const d = clamp(da / ST.dock), de = d <= 0 ? 0 : (d < 0.2 ? -0.06 * Math.sin(d / 0.2 * Math.PI) : E.io((d - 0.2) / 0.8));   // tiny anticipation, then travel
-  const X0 = SAFE.cx, Y0 = 660, X1 = dockX(n - 1, total), Y1 = DOCK.y;
+  const X0 = SAFE.cx, Y0 = 720, X1 = dockX(n - 1, total), Y1 = DOCK.y;
   const x = lerp(lerp(-760, X0, p), X1, Math.max(0, de)) + sx, y = lerp(Y0, Y1, Math.max(0, de)) - Math.sin(Math.PI * clamp(de)) * 90 + sy + (swipe ? 0 : -900 * (1 - sp(a, 'pos')));
   const s = lerp(lerp(1.3, 1, slap), 0.07, Math.max(0, de)) * (1 - 0.04 * Math.min(0, de) * 10);
   const wob = la > 0 ? ring(la, 2.6, 2.4) * 2.5 : 0;
@@ -513,4 +517,40 @@ export function blurred(g, t, draw, { n = 6, shutter = 0.5, fps = 30 } = {}) {
   const img = new ImageData(W, H), o = img.data;
   for (let j = 0; j < acc.length; j += 4) { const al = acc[j + 3]; if (al === 0) continue; o[j] = acc[j] / al + 0.5; o[j + 1] = acc[j + 1] / al + 0.5; o[j + 2] = acc[j + 2] / al + 0.5; o[j + 3] = al / n + 0.5; }
   _out.getContext('2d').putImageData(img, 0, 0); g.drawImage(_out, 0, 0);
+}
+
+// ---------- H <-> B mini-graphic: a hardness track, the knob slides to B (more graphite) then to H (more clay) ----------
+export function hbSlider(g, t, { at, until, toB, soft, dark, toH, hard, light, y = 520 }) {
+  const a = t - at, r = until - t; if (a < 0 || r < 0) return;
+  const out = E.i(clamp(1 - r / 0.12)), wd = 640, x0 = SAFE.cx - wd / 2, grow = sp(a, 'pos');
+  g.save(); g.globalAlpha = 1 - out; g.translate(0, -out * 30); g.lineJoin = 'round'; g.lineCap = 'round';
+  softPlate(g, SAFE.cx, y + 40, wd + 140, 270, 0.32 * clamp(a / 0.1));
+  // gradient track (light grey H -> black B), draws out from the centre
+  const hw = wd / 2 * grow; const gr = g.createLinearGradient(x0, 0, x0 + wd, 0); gr.addColorStop(0, '#C9CDD3'); gr.addColorStop(0.5, '#6E737C'); gr.addColorStop(1, '#16181C');
+  g.lineWidth = 34; g.strokeStyle = C.ink; g.beginPath(); g.moveTo(SAFE.cx - hw, y); g.lineTo(SAFE.cx + hw, y); g.stroke();
+  g.lineWidth = 24; g.strokeStyle = gr; g.beginPath(); g.moveTo(SAFE.cx - hw, y); g.lineTo(SAFE.cx + hw, y); g.stroke();
+  // grade labels
+  const lab = (txt, x, i, col) => { const s = sp(a - 0.08 - 0.05 * i, 'scl'); g.save(); g.translate(x, y - 58); g.scale(s, s); g.font = `400 64px ${F.title}`; g.textAlign = 'center'; g.textBaseline = 'alphabetic'; inkText(g, txt, 0, 0, col, 64, 0.16); g.restore(); };
+  lab('H', x0, 0, '#D5D9DE'); lab('HB', SAFE.cx, 1, C.cream); lab('B', x0 + wd, 2, '#FFFFFF');
+  // knob position: centre -> B -> H, springs with overshoot
+  const pB = sp(t - toB, 'pos'), pH = sp(t - toH, 'pos'); const kx = SAFE.cx + (wd / 2) * (t < toB ? 0 : pB) - wd * (t < toH ? 0 : pH);
+  const kk = sp(a - 0.15, 'scl'), squash = 1 + 0.25 * Math.abs(spring(t - toB, 3, 8) - pB) + 0.25 * Math.abs(spring(t - toH, 3, 8) - pH);
+  g.save(); g.translate(kx, y); g.scale(kk * squash, kk / squash);
+  g.fillStyle = C.accent; g.shadowColor = C.accent; g.shadowBlur = 20; g.beginPath(); g.arc(0, 0, 26, 0, 7); g.fill(); g.shadowBlur = 0; g.lineWidth = 7; g.strokeStyle = C.ink; g.stroke();
+  g.fillStyle = C.ink; g.beginPath(); g.arc(0, 0, 8, 0, 7); g.fill(); g.restore();
+  if (t > toB) specks(g, t, { at: toB + 0.25, x: SAFE.cx + wd / 2, y, n: 9, kind: 'graphite', dir: -Math.PI / 2, spread: 2.4, speed: 360, seed: 51 });
+  if (t > toH) specks(g, t, { at: toH + 0.25, x: x0, y, n: 9, kind: 'graphite', dir: -Math.PI / 2, spread: 2.4, speed: 360, seed: 53 });
+  // two-line read-out under the track: MORE GRAPHITE -> SOFTER · DARKER, MORE CLAY -> HARDER · LIGHTER
+  const side = t >= toH ? 'H' : 'B', t0 = side === 'H' ? toH : toB;
+  if (t >= toB) {
+    const words = side === 'B' ? [['MORE GRAPHITE', toB, C.cream], ['SOFTER', soft, C.accent], ['DARKER', dark, C.accent]] : [['MORE CLAY', toH, C.cream], ['HARDER', hard, C.accent], ['LIGHTER', light, C.accent]];
+    const sw = t - t0 < 0.12 && side === 'H' ? 1 - (t - t0) / 0.12 : 1;
+    g.font = `400 52px ${F.cap}`; g.textBaseline = 'middle'; g.textAlign = 'center';
+    const [w1, a1, c1] = words[0], ax = side === 'B' ? 1 : -1;
+    const k1 = t - a1; if (k1 >= 0) { const T = { p: sp(k1, 'pos') }; g.save(); g.translate(SAFE.cx - ax * 560 * (1 - T.p), y + 92); g.transform(1, 0, -ax * 0.5 * (1 - spring(k1, 3.6, 11)), 1, 0, 0); inkText(g, w1, 0, 0, c1, 52, 0.22); g.restore(); }
+    const pair = [words[1], words[2]]; g.font = `400 58px ${F.cap}`;
+    pair.forEach(([w, at2, col], i) => { const k2 = t - at2; if (k2 < 0) return; const s = k2 < 0.045 ? lerp(0.9, 0.86, k2 / 0.045) : lerp(0.86, 1, sp(k2 - 0.045, 'scl'));
+      g.save(); g.translate(SAFE.cx + (i ? 1 : -1) * 170, y + 168); g.scale(s, s); inkText(g, w, 0, 0, col, 58, 0.22, 8); g.restore(); });
+  }
+  g.restore();
 }

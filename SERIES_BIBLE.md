@@ -9,9 +9,10 @@ Every episode stands alone. On-screen text and narration in English. Always "Sim
 |----|--------|-------|-----------------|--------|-------|---------|------------------------------------|
 | 01 | Zipper (#5 metal, generic) | How it works inside | Metal + textile | ~49 s | ElevenLabs narrator (EN) | Brass & Blueprint | Glass bottle / Ballpoint pen |
 | 02 | Glass bottle (generic long-neck) | How it's made (sand → bottle) | Glass | ~45 s | ElevenLabs "Brian" (EN) | Ember & Slate | Gummy bear / Pencil |
+| 03 | Pencil (hexagonal, yellow, HB, no brand) | How it's made (tree → pencil); twist: no lead, two halves glued | Wood + mineral | ~38 s | ElevenLabs "Brian" (EN) | Cedar & Graphite | Gummy bear / Toy brick |
 
 Material rotation: food, plastic, metal, glass, paper, textile, electronics, rubber, ceramics, everyday gadgets.
-EP 03 should not be glass or metal (gummy bear = food, pencil = wood/graphite; decided by comments).
+EP 04 should not be wood, glass or metal (gummy bear = food, toy brick = plastic; decided by comments).
 
 ## Shorts safe area (since EP 02)
 iPhone crops ~50 px per side; the top bar covers ~230 px; the action icons cover x > 870 between y ≈ 900 and 1870;
@@ -31,8 +32,22 @@ Render in two layers: `tools/render.py render plate`, `tools/render.py render ov
 - Stickers: hold 1.2 s with a small wobble (`sticker(..., { hold: 1.2, wobble: true })`).
 - Hook title (`hookTitle2`): full and readable on frame 0 (it is the thumbnail); from frame 1 a gloss band sweeps the big word once, the big word breathes on a 0.5 s beat, the raw-material word turns accent for 0.4 s when spoken, the big word punches (1.12 + 2-frame shake) when the object appears, exits by scaling up into the cut; on the loop frames it re-enters with the same punch and settles on the frame-0 look (same grain seed), so the first and last frames match.
 
+## Motion grammar (since EP 03, js/motion.js — re-exported by js/overlay.js; EP 01-02 helpers unchanged)
+- OPENING TITLE "RAW TO REAL" (`titleRawReal`): frame 0 = the big word as a RAW blueprint (cream outline, cyan hatching, baseline / cap-height guides, corner ticks), readable on its own. 0.15-0.85 s a linear scan line turns it REAL behind it (accent gradient fill, gloss, ink outline, 7-copy extrusion down-right, sparks / graphite specks, guides fade). The small line drops word by word on the narration (spring overshoot + 1-frame RGB split); the raw-material word turns accent and gets a hand-drawn underline with a tiny pencil following it. On the object reveal: squash-and-stretch punch (1.14 x 0.92), extrusion pulse, 2-frame shake, light shockwave ring. Idle: per-letter breathing wave (40 ms offset), gloss band every 0.8 s, extrusion parallax. Exit: top line slides up, big word scales to 1.2 with blur. Loop frames rebuild the blueprint letter by letter and settle exactly on frame 0. Cover frame ≈ 1.0 s.
+- ENTRANCES BY WORD TYPE (`kcap` words[].k): noun = scale pop with 4 % anticipation; verb = whip slide from the side with skew that snaps straight; q = drop with bounce, the "?" wobbles; twist = glitch hit (RGB split + 3 frames of slice jitter) then clean.
+- NUMBERS (`odometer`): every digit rolls on its own with a staggered stop and blur, glow pulse on landing; the unit (or a `sub` line) always appears with the number. Shared-element morph: the number shrinks into its tag (1,100 °C -> BAKED).
+- STRIKE-THROUGH (`strike`): wrong word, graphite scribble across it (0.25 s, dust), shake, letters fall with gravity, the right word whips in below in accent and rises into place (LEAD -> GRAPHITE, ONE PIECE? -> TWO HALVES.).
+- CALLOUTS (`callout`): a line draws out of a 3D anchor (re-projected every sub-sample, lags for follow-through), the dark label expands and types its text with a cursor.
+- STEPS: an ink swipe (`inkSwipe`, 5 frames, accent bars) carries the sticker in only on step changes; `stepSticker` slaps down with a tape strip, shakes, holds 1.0 s, then shrinks and docks into the progress `dock` (5 dots at the top of the safe area, current one filled and pulsing, `STEP n/5 · WORD` types underneath). The dock stays until the end card.
+- EXITS: 0.1 s pop-out + small slide in the direction of motion. DEPTH: soft shadow plate behind every block, moving against the camera (`setParallax`). PARTICLES only on hits (graphite specks, wood chips).
+- MOTION BLUR: the overlay is drawn with 6 temporal sub-samples (180° shutter) and averaged (`blurred`); held text stays crisp.
+- EASING: springs with their own stiffness per property (position / scale / rotation), staggered parts, follow-through; linear only for scan lines.
+- SOUND: soft tick/whoosh only on the title, the stickers (swipe) and the strike-throughs.
+- Test bench: episodes/ep03_pencil/typo_test/ (render any page with tools/page.py).
+
 ## Hands
 No cartoon hands. Use the leather work glove `hand()` in js/parts.js (four 3-phalanx fingers with knuckles, 2-segment thumb, smooth palm, stitched cuff, work-jacket sleeve, leather grain bump, no outline shell), lit by the scene (warm light from hot objects). `pose(grip)` tightens the fist; give it an idle sway. Fallback if a pose cannot be made to read: a mechanical gripper from the factory set.
+EP 03: no hands at all (owner's call: "la mano iniziale è brutta"). The hook shows the raw material alone (a floating cedar log section shedding sawdust) and snap-cuts to the finished object in the same spot. Prefer hand-free hooks from now on.
 
 ## Fixed channel language (never changes)
 
@@ -59,6 +74,7 @@ No cartoon hands. Use the leather work glove `hand()` in js/parts.js (four 3-pha
 | EP | Background | Warm key | Cold fill | Accent | Hero material |
 |----|------------|----------|-----------|--------|---------------|
 | 01 | Navy `#0E1A2B` | Brass lamp `#FFC777` | Cyan `#5EC8E5` | Safety orange `#FF5A1F` | Brass teeth `#D9A441`, nickel slider `#C9CED6`, denim tape `#2E4A6B` |
+| 03 | Graphite `#14181F` | Cedar amber `#E39A52` | `#7FB3D9` | Pencil yellow `#FFD23A` | Cedar with growth rings, graphite (matte black, metallic sheen), clay grey, cream glue, yellow lacquer, brushed ferrule, pink eraser; kiln = furnaceMouth with a redder `hotMat` |
 | 02 | Slate `#0F1A21` | Furnace ember `#FF8A2B` | Cyan `#6FD0E6` | Molten gold `#FFB62E` | Soda-lime glass `#9ADBC0`; hot ramp `#FFE9A8` (1,550 °C) → `#FF8A2B` (1,100 °C) → `#B8330F` (~580 °C) → clear |
 
 ## Reusable parts library (js/parts.js)
@@ -67,4 +83,5 @@ workbench, cutting mat (mm grid), tray, conveyor + rollers, pedestal, desk lamp,
 EP 02 added: brick/refractory material, factory floor, hopper, furnace mouth, forehearth channel (+ feeder, plunger), shear blades, CSG moulds (blank / blow), invert arm, lehr belt + tunnel, stylised hand, gummy bear, pencil.
 js/glass.js: glass material (fresnel rim + temperature glow), morphing lathe gob → parison → bottle with capped cutaway, molten-glass shader.
 The HUD readout can be a value/total (EP 01) or label + text with an optional flag pill (EP 02). Accent colour is per episode (setAccent).
+EP 03 added (js/pencil.js): procedural cedar side/end grain + bark, graphite/clay/paste/glue/lacquer materials, `hotMat` (emissive gradient + fresnel), pencil geometry (+ HB stamp decal), unpainted stick, instanced pencil field, grooved slat, slat -> hexagon section morph, generic toy brick, stroke font for handwriting. parts.js `hand(R, {curl, len, thumbJoint})`.
 Episode-specific: js/zipper.js (tooth via CSG, chain layout from a gap function, slider with cutaway caps, tape sweep).

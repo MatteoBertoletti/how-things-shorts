@@ -1,6 +1,6 @@
 """Mix: voice on top, one Mixkit effect per event (+ optional click per tick), ambient bed ~13 dB under the effects,
 a short dip before the twist and the payoff, loudness -14 LUFS.
-usage: python tools/mix.py audio/events.json episodes/<ep>/sound.json out.wav   (sound.json: {map: {name: [mixkit_id, gain_dB, onset|peak, trim_s|null]}, bed: id, ticks: bool})"""
+usage: python tools/mix.py audio/events.json episodes/<ep>/sound.json out.wav [voice.wav]   (sound.json: {map: {name: [mixkit_id, gain_dB, onset|peak, trim_s|null]}, bed: id, ticks: bool})"""
 import json, sys, subprocess, numpy as np, soundfile as sf
 SR = 48000
 ev = json.load(open(sys.argv[1])); OUT = sys.argv[3]; END = ev['END']
@@ -42,7 +42,7 @@ for j, k in enumerate(sorted(good, key=lambda k: k['t'])):
     else: place(fx, c2, k['t'] - o2, -19 + jit)
 print('tooth clicks', len(good), 'of', len(ticks))
 # voice
-v, vsr = sf.read('audio/voice/voice.wav', dtype='float32'); v = v[:N] if len(v) >= N else np.pad(v, (0, N - len(v)))
+v, vsr = sf.read(sys.argv[4] if len(sys.argv) > 4 else 'audio/voice/voice.wav', dtype='float32'); v = v[:N] if len(v) >= N else np.pad(v, (0, N - len(v)))
 # duck effects under the voice (-4 dB), smooth envelope
 w = 480; n = N // w; ve = np.sqrt((v[:n * w].reshape(n, w) ** 2).mean(1)); act = (ve > 0.01).astype(np.float32)
 env = np.zeros_like(act); a = 0
@@ -70,5 +70,5 @@ r = subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', 'audio/premix.wav', '-a
 r = subprocess.run(['ffmpeg', '-hide_banner', '-i', 'audio/premix_l.wav', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json', '-f', 'null', '-'], capture_output=True, text=True).stderr
 js = json.loads(r[r.rindex('{'): r.rindex('}') + 1])
 af = f"loudnorm=I=-14:TP=-1.5:LRA=11:measured_I={js['input_i']}:measured_TP={js['input_tp']}:measured_LRA={js['input_lra']}:measured_thresh={js['input_thresh']}:offset={js['target_offset']}:linear=true"
-subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', 'audio/premix_l.wav', '-af', af, '-ar', str(SR), '-c:a', 'pcm_s24le', OUT], check=True)
+subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', 'audio/premix_l.wav', '-af', af, '-ar', str(SR), '-ac', '2', '-c:a', 'pcm_s24le', OUT], check=True)
 for t, nme, i in log: print(f'{t:6.2f} {nme:12s} {i}')
