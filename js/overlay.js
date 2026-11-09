@@ -327,3 +327,4 @@ export function endCard2(g, t, { at, comment, commentW2, follow, until, left, ri
   }
   g.restore();
 }
+export * from './motion.js';

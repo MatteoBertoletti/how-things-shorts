@@ -1,0 +1,13 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>EP03 typography test reel</title>
+<style>html,body{margin:0;background:#000}canvas#out{width:1080px;height:1920px;display:block}</style>
+<script type="importmap">{"imports":{"three":"../../../node_modules/three/build/three.module.js","three/addons/":"../../../node_modules/three/examples/jsm/"}}</script>
+</head><body><canvas id="out" width="1080" height="1920"></canvas>
+<script type="module">
+const fonts = [['JBMono', 'jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2', '400'], ['JBMono', 'jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2', '700'], ['JBMono', 'jetbrains-mono/files/jetbrains-mono-latin-800-normal.woff2', '800'], ['Anton', 'anton/files/anton-latin-400-normal.woff2', '400'], ['Archivo Black', 'archivo-black/files/archivo-black-latin-400-normal.woff2', '400']];
+await Promise.all(fonts.map(async ([n, f, w]) => { const ff = new FontFace(n, `url(../../../node_modules/@fontsource/${f})`, { weight: w }); await ff.load(); document.fonts.add(ff); }));
+const { build } = await import('./reel.js');
+const reel = build(document.getElementById('out'));
+window.END = reel.END; window.frame = (t, q = 0.92) => { reel.seek(t); return document.getElementById('out').toDataURL('image/jpeg', q); };
+window.ready = true;
+</script></body></html>
