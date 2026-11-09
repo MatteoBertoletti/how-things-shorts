@@ -3,6 +3,16 @@ so captions / HUD can be moved later without re-rendering the 3D.
 usage: python tools/render.py out_dir plate|over|all [first_shot last_shot]"""
 import asyncio, sys, base64, json, os, subprocess, time, math
 from playwright.async_api import async_playwright
+
+import socket, subprocess, os, time as _t
+def ensure_server(port=8765):
+    s = socket.socket()
+    try: s.connect(('localhost', port)); s.close(); return
+    except OSError: pass
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    subprocess.Popen(['python3', '-m', 'http.server', str(port)], cwd=root, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    _t.sleep(1.0)
+ensure_server()
 ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist']
 FPS = 30
 async def main():

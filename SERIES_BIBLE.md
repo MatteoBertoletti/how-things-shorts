@@ -20,6 +20,20 @@ The 3D camera is shifted 70 px left (`setViewOffset`) so the subject sits in the
 Check with `python tools/safe_preview.py out.jpg still1.jpg ...` before rendering.
 Render in two layers: `tools/render.py render plate`, `tools/render.py render over`, then `tools/composite.sh`.
 
+## On-screen text rules (since EP 02 v2, js/overlay.js v2 helpers)
+- NEVER STATIC: after the pop-in every text keeps moving (scale drift 1.00 → 1.06, ±1.5° sway, accent glow/colour pulse, or word-by-word reveal). No hold longer than 1.6 s; split long lines into 2–3 beats.
+- TIMING: each text starts on the real start of its word (voice alignment, within 80 ms) or on its sound-effect hit, and ends with a pop-out (scale 1.0 → 0.85 + fade, 0.1 s), never a plain cut.
+- RHYTHM: a new text change every 1.0–1.5 s from 2 s to the end card; about 26–32 text events per episode (stickers included).
+- PLACEMENT: text never covers the subject; if the subject fills the lower half, use the top band (y ≈ 400–600). Check with tools/safe_preview.py.
+- NUMBERS: Anton, big, accent/heat colour with glow, and they COUNT (`counter()`): up to the value in 0.5–0.7 s, then a glow beat; temperatures use the hot-glass colour ramp.
+- MOTION MIRRORS ACTION (`captionFx` fx): flip rotates with the mechanism, inflate follows a blow, shake (3 frames) + white flash on hits, stamps slam in with a shake.
+- 3D labels: `tag()` = small accent label with a leader line from a projected 3D point (used for ingredients).
+- Stickers: hold 1.2 s with a small wobble (`sticker(..., { hold: 1.2, wobble: true })`).
+- Hook title (`hookTitle2`): full and readable on frame 0 (it is the thumbnail); from frame 1 a gloss band sweeps the big word once, the big word breathes on a 0.5 s beat, the raw-material word turns accent for 0.4 s when spoken, the big word punches (1.12 + 2-frame shake) when the object appears, exits by scaling up into the cut; on the loop frames it re-enters with the same punch and settles on the frame-0 look (same grain seed), so the first and last frames match.
+
+## Hands
+No cartoon hands. Use the leather work glove `hand()` in js/parts.js (four 3-phalanx fingers with knuckles, 2-segment thumb, smooth palm, stitched cuff, work-jacket sleeve, leather grain bump, no outline shell), lit by the scene (warm light from hot objects). `pose(grip)` tightens the fist; give it an idle sway. Fallback if a pose cannot be made to read: a mechanical gripper from the factory set.
+
 ## Fixed channel language (never changes)
 
 - **HUD** (optional since EP 02: `"hud": false` in the episode's script.json hides it): JetBrains Mono, top-left at (70, 250), cream text `#F3E9D2` at 90% on a 40% navy plate.

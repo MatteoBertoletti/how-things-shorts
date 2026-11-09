@@ -219,7 +219,7 @@ export function hopper(w = 900, hBin = 420, hFun = 560, out = 160) {
   const g = new THREE.Group(); const m = M.metal(0xa9b2bb, 0.45, { side: THREE.DoubleSide, envMapIntensity: 1.0 });
   const fun = new THREE.Mesh(new THREE.CylinderGeometry(w / Math.SQRT2, out / Math.SQRT2, hFun, 4, 1, true), m); fun.rotation.y = Math.PI / 4; fun.position.y = hFun / 2 + 120; g.add(fun);
   const bin = new THREE.Mesh(new THREE.CylinderGeometry(w / Math.SQRT2, w / Math.SQRT2, hBin, 4, 1, true), m); bin.rotation.y = Math.PI / 4; bin.position.y = 120 + hFun + hBin / 2; g.add(bin);
-  const rimM = M.std(0xFFB62E, { roughness: 0.5 });
+  const rimM = M.std(0x9a6a1c, { roughness: 0.6 });
   const rim = new THREE.Mesh(new THREE.TorusGeometry(w / Math.SQRT2, 14, 6, 4), rimM); rim.rotation.set(Math.PI / 2, 0, Math.PI / 4); rim.position.y = 120 + hFun + hBin; g.add(rim);
   const spout = new THREE.Mesh(new THREE.BoxGeometry(out, 120, out), m); spout.position.y = 60; g.add(spout);
   const legM = M.std(0x3a4652, { roughness: 0.6, metalness: 0.3 });
@@ -346,9 +346,98 @@ export function lehrBelt({ len = 7000, w = 1300, h = 650 } = {}) {
   return shadowed(g);
 }
 
-// stylised hand (matte cream, thick dark outline) gripping a cylinder of radius R around the y axis.
+// work glove gripping a cylinder of radius R around the y axis (EP 02 v2).
+// Angles around the bottle: 0 = +x (right), 90° = +z (front, towards camera), -90° = back.
+// Palm behind the bottle, four fingers (3 phalanges + knuckles) wrap the right side to the front,
+// two-segment thumb wraps the left side, thick cuff + sleeve go down and back (never a bare pipe).
+function leatherTex() {
+  const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
+  g.fillStyle = '#808080'; g.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 2600; i++) { const x = (Math.sin(i * 12.9898) * 43758.5453 % 1 + 1) % 1 * 256, y = (Math.sin(i * 78.233) * 12345.6789 % 1 + 1) % 1 * 256, r = 1 + (i % 5) * 0.7, v = 100 + (i * 37) % 70;
+    g.fillStyle = `rgb(${v},${v},${v})`; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 3); return t;
+}
+export function hand(R = 30.5) {
+  const g = new THREE.Group();
+  const bump = leatherTex();
+  const leather = new THREE.MeshStandardMaterial({ color: 0x8a6a45, roughness: 0.7, metalness: 0, bumpMap: bump, bumpScale: 0.9, envMapIntensity: 0.6 });
+  const leatherDark = new THREE.MeshStandardMaterial({ color: 0x6b4f31, roughness: 0.75, bumpMap: bump, bumpScale: 0.9, envMapIntensity: 0.5 });
+  const stitchM = new THREE.MeshStandardMaterial({ color: 0xE3CFA3, roughness: 0.8 });
+  const sleeveM = new THREE.MeshStandardMaterial({ color: 0x2c3f55, roughness: 0.9 });
+  const parts = [];
+  const add = (geo, m, p, q) => { const o = new THREE.Mesh(geo, m); o.position.copy(p); if (q) o.quaternion.copy(q); o.castShadow = o.receiveShadow = true; g.add(o); parts.push(o); return o; };
+  const at = (r, th, y) => new THREE.Vector3(r * Math.cos(th), y, r * Math.sin(th));
+  const up = new THREE.Vector3(0, 1, 0);
+  const qAlong = (dir) => new THREE.Quaternion().setFromUnitVectors(up, dir.clone().normalize());
+  // stitches: instanced little dashes along polylines
+  const stitchPts = [];
+  const stitchLine = (a, b, n) => { for (let i = 0; i < n; i++) { const u0 = (i + 0.15) / n, u1 = (i + 0.65) / n; stitchPts.push([a.clone().lerp(b, u0), a.clone().lerp(b, u1)]); } };
+  // fingers
+  const fingers = [ // [height, length scale, start angle, radius]
+    { y: 31, k: 0.96, th0: -0.30, r: 9.4 }, { y: 10, k: 1.0, th0: -0.34, r: 9.8 }, { y: -11, k: 0.95, th0: -0.32, r: 9.5 }, { y: -30, k: 0.8, th0: -0.26, r: 8.6 }];
+  const fingerRigs = [];
+  for (const f of fingers) {
+    const segs = [46 * f.k, 31 * f.k, 25 * f.k];
+    const rig = { f, meshes: [], segs }; fingerRigs.push(rig);
+    for (let j = 0; j < 3; j++) { const rr = f.r * (1 - 0.06 * j); rig.meshes.push(add(new THREE.CapsuleGeometry(rr, Math.max(1, segs[j] - rr * 0.9), 6, 16), j === 2 ? leatherDark : leather, new THREE.Vector3(), null)); }
+    for (let j = 0; j < 3; j++) rig.meshes.push(add(new THREE.SphereGeometry(f.r * (1.0 - 0.06 * j), 18, 12), leather, new THREE.Vector3(), null));
+  }
+  // palm (smooth ellipsoid behind the bottle) + back of the hand
+  const palm = add(new THREE.SphereGeometry(1, 40, 28), leather, at(R + 17, -0.62, 0), null); palm.scale.set(44, 60, 21);
+  palm.rotation.y = 0.62 + Math.PI / 2;
+  // thumb: 2 segments + knuckle wrapping the left side
+  const thumb = [add(new THREE.CapsuleGeometry(11.5, 1, 6, 14), leather, new THREE.Vector3()), add(new THREE.CapsuleGeometry(10.5, 1, 6, 14), leatherDark, new THREE.Vector3()), add(new THREE.SphereGeometry(11.6, 18, 12), leather, new THREE.Vector3()), add(new THREE.SphereGeometry(12, 18, 12), leather, new THREE.Vector3())];
+  // cuff + sleeve going down and back
+  const wristDir = new THREE.Vector3(0.55, -0.72, -0.42).normalize();
+  const wrist = at(R + 24, -0.62, -50);
+  const cuff = add(new THREE.CylinderGeometry(40, 44, 58, 32), leatherDark, wrist.clone().addScaledVector(wristDir, 26), qAlong(wristDir));
+  const cuffRim = add(new THREE.TorusGeometry(42, 5, 10, 40), leather, wrist.clone().addScaledVector(wristDir, 2), qAlong(wristDir).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2)));
+  const sleeve = add(new THREE.CylinderGeometry(48, 54, 320, 32), sleeveM, wrist.clone().addScaledVector(wristDir, 55 + 160), qAlong(wristDir));
+  const sleeveHem = add(new THREE.TorusGeometry(48, 4, 8, 40), sleeveM, wrist.clone().addScaledVector(wristDir, 56), qAlong(wristDir).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2)));
+  const wristBlend = add(new THREE.SphereGeometry(1, 28, 20), leather, wrist.clone(), null); wristBlend.scale.set(36, 30, 26);
+  // cuff stitches (static)
+  { const q = qAlong(wristDir); const n = 34; for (let i = 0; i < n; i++) { const a0 = i / n * Math.PI * 2, a1 = (i + 0.55) / n * Math.PI * 2;
+      const pa = new THREE.Vector3(Math.cos(a0) * 45.5, 18, Math.sin(a0) * 45.5).applyQuaternion(q).add(wrist.clone().addScaledVector(wristDir, 26));
+      const pb = new THREE.Vector3(Math.cos(a1) * 45.5, 18, Math.sin(a1) * 45.5).applyQuaternion(q).add(wrist.clone().addScaledVector(wristDir, 26)); stitchPts.push([pa, pb]); } }
+  const NST = 400; const stIM = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.9, 0.9, 1, 6), stitchM, NST); stIM.frustumCulled = false; g.add(stIM);
+  const _o = new THREE.Object3D();
+  const staticStitches = stitchPts.length;
+  // pose: grip in 0..1 tightens the fist; idle sway handled by the caller
+  function pose(grip = 0) {
+    const pts = stitchPts.slice(0, staticStitches);
+    for (const rig of fingerRigs) {
+      const { f, segs, meshes } = rig; const rf = R + f.r * 0.95 - grip * 0.8;
+      let th = f.th0 - grip * 0.05; let y = f.y; const tilt = -0.06 * (f.y / 30);
+      const joints = [at(rf, th, y)];
+      for (let j = 0; j < 3; j++) { const dth = segs[j] / rf * (1 + grip * 0.04 + j * 0.05); th += dth; y += segs[j] * tilt; joints.push(at(rf - j * 0.6, th, y)); }
+      for (let j = 0; j < 3; j++) {
+        const a = joints[j], b = joints[j + 1], mid = a.clone().add(b).multiplyScalar(0.5), dir = b.clone().sub(a);
+        const m = meshes[j]; m.position.copy(mid); m.quaternion.copy(qAlong(dir)); m.scale.set(1, 1, 1);
+        m.scale.y = 1; const len = dir.length(); m.userData.len = len;
+        const rr = f.r * (1 - 0.06 * j), nom = Math.max(1, segs[j] - rr * 0.9) + 2 * rr; m.scale.set(1, (len + rr * 1.1) / nom, 1);
+        // stitch along the top edge of each phalanx
+        const off = new THREE.Vector3(0, f.r * 0.92, 0); pts.push(...(() => { const out = []; const n = Math.max(2, Math.round(len / 5)); for (let i = 0; i < n; i++) { const u0 = (i + 0.2) / n, u1 = (i + 0.7) / n; out.push([a.clone().lerp(b, u0).add(off), a.clone().lerp(b, u1).add(off)]); } return out; })());
+      }
+      for (let j = 0; j < 3; j++) meshes[3 + j].position.copy(joints[j + (j === 0 ? 0 : 0)].clone().lerp(joints[j], 1));
+      meshes[3].position.copy(joints[0]); meshes[4].position.copy(joints[1]); meshes[5].position.copy(joints[2]);
+    }
+    // thumb from behind-left, wrapping the left side to the front-left, slightly up
+    const rt = R + 11 - grip * 0.6; const t0 = -0.75, t1 = t0 - 0.95 - grip * 0.05, t2 = t1 - 0.75;
+    const j0 = at(rt + 6, t0, 30), j1 = at(rt, t1, 44), j2 = at(rt - 1, t2, 50);
+    const seg = (m, a, b, r) => { const d = b.clone().sub(a); m.position.copy(a.clone().add(b).multiplyScalar(0.5)); m.quaternion.copy(qAlong(d)); m.scale.set(1, Math.max(0.2, d.length() / (2 * r + 1)), 1); };
+    seg(thumb[0], j0, j1, 11.5); seg(thumb[1], j1, j2, 10.5); thumb[2].position.copy(j1); thumb[3].position.copy(j0);
+    let k = 0; for (const [a, b] of pts) { if (k >= NST) break; const d = b.clone().sub(a); _o.position.copy(a.clone().add(b).multiplyScalar(0.5)); _o.quaternion.copy(qAlong(d)); _o.scale.set(1, d.length(), 1); _o.updateMatrix(); stIM.setMatrixAt(k++, _o.matrix); }
+    for (; k < NST; k++) { _o.scale.setScalar(0); _o.updateMatrix(); stIM.setMatrixAt(k, _o.matrix); }
+    stIM.count = NST; stIM.instanceMatrix.needsUpdate = true;
+  }
+  pose(0);
+  g.userData.pose = pose;
+  return g;
+}
+
+// v1 cartoon hand (kept for the record; EP 02 v1) gripping a cylinder of radius R around the y axis.
 // fingers wrap the +z (front) side, palm and forearm sit behind (-z)
-export function hand(R = 31) {
+export function handToon(R = 31) {
   const g = new THREE.Group();
   const skin = new THREE.MeshStandardMaterial({ color: 0x9c907a, roughness: 0.95, envMapIntensity: 0.4 });
   const ink = new THREE.MeshBasicMaterial({ color: 0x101418, side: THREE.BackSide });

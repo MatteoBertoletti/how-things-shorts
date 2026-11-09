@@ -6,3 +6,5 @@ out/
 cache/
 *.mp4
 *.wav
+render_v1_plates/
+render_v2/

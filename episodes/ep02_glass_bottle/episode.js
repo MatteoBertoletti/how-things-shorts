@@ -4,7 +4,7 @@ import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { clamp, lerp, smooth, track, E, noise1, hash, W, H } from '../../js/core.js';
 import { M, shadowed, conveyor, pedestal, factoryFloor, hopper, furnaceMouth, forehearth, shearBlades, mould, invertArm, lehrBelt, hand, gummyBear, pencil } from '../../js/parts.js';
 import { glassMat, GlassBody, gobProfile, parisonProfile, bottleProfile, lerpProfile, bottleGeometry, moltenMat, rampJS } from '../../js/glass.js';
-import { hud, caption, sticker, endCard, flash, stamp, setAccent, hookTitle, C } from '../../js/overlay.js';
+import { hud, caption, sticker, endCard, flash, stamp, setAccent, hookTitle, hookTitle2, captionFx, counter, tag, endCard2, C } from '../../js/overlay.js';
 import { simBodies, sample } from '../../js/physics.js';
 
 export const EP = 'EP. 02';
@@ -79,7 +79,7 @@ export async function build(ctx, script, timing) {
   const hop = hopper(900, 420, 560, 160); HOP.add(hop);
   const HT = hop.userData.funTop; // pile base height (local)
   box(1200, 300, 1200, 0, -150, 0, steelM, HOP);
-  const pileM = M.std(0xd9c39a, { roughness: 0.95 });
+  const pileM = M.std(0x4a3f31, { roughness: 0.95 });
   const pile = new THREE.Mesh(new THREE.ConeGeometry(420, 1, 40, 1), pileM); pile.receiveShadow = pile.castShadow = true; HOP.add(pile);
   // chutes above the hopper (sand, soda ash, limestone) + a cullet chute
   const chutes = [{ p: v3(-230, 1700, -120), c: 0xD8B98A }, { p: v3(160, 1760, -200), c: 0xF2F0EA }, { p: v3(20, 1680, 230), c: 0xA9A49A }];
@@ -88,12 +88,18 @@ export async function build(ctx, script, timing) {
   const cul = new THREE.Mesh(new THREE.BoxGeometry(900, 20, 260), chuteM); cul.position.set(780, 1440, 0); cul.rotation.z = 0.32; cul.castShadow = true; HOP.add(cul);
   const NP = 420, gs = new THREE.SphereGeometry(1, 6, 4);
   const streams = chutes.map(ch => { const m = new THREE.InstancedMesh(gs, M.std(ch.c, { roughness: 0.9 }), NP); m.frustumCulled = false; m.castShadow = true; HOP.add(m); return m; });
-  const pileTop = t => HT + 10 + 200 * E.o(clamp((t - Ls(2)) / 4.4));
+  const pileTop = t => HT + 10 + 50 * E.o(clamp((t - Ls(2)) / 4.4));
+  // one mound per ingredient, each in its own colour, growing under its own stream
+  const MOUND = { sand: { p: v3(-230, 0, -120), c: 0xC08A45, k: 0 }, soda: { p: v3(160, 0, -200), c: 0xB8B4AA, k: 1 }, lime: { p: v3(20, 0, 230), c: 0x77736c, k: 2 }, cul: { p: v3(150, 0, 60), c: 0x2f8f63, k: 3 } };
+  const mStart = { sand: () => Wd(2, 'Sand') - 0.1, soda: () => Wd(2, 'soda') - 0.1, lime: () => Wd(2, 'limestone') - 0.1, cul: () => Wd(2, 'crushed') - 0.05 };
+  const mH = (n, t) => 150 * E.o(clamp((t - mStart[n]()) / 2.2));
+  const moundTop = (n, t) => pileTop(t) + mH(n, t);
+  for (const n of Object.keys(MOUND)) { const d = MOUND[n]; const m = new THREE.Mesh(new THREE.ConeGeometry(150, 1, 28, 1), n === 'cul' ? M.std(d.c, { roughness: 0.35, metalness: 0.1 }) : M.std(d.c, { roughness: 0.95 })); m.castShadow = m.receiveShadow = true; HOP.add(m); d.mesh = m; }
   // cullet physics (pre-simulated once)
   const NS = 46;
   const culSim = simBodies({
     bodies: Array.from({ length: NS }, (_, i) => ({ half: [10 + hash(i) * 12, 3 + hash(i + 3) * 3, 8 + hash(i + 5) * 10], pos: [330 + hash(i + 9) * 40, 1290 + hash(i + 11) * 30, (hash(i + 13) - 0.5) * 180], vel: [-320 - hash(i + 15) * 300, 120, (hash(i + 17) - 0.5) * 200], spin: [(hash(i + 19) - 0.5) * 20, (hash(i + 21) - 0.5) * 20, (hash(i + 23) - 0.5) * 20], at: i * 0.035, rot: [hash(i + 25) * 6, hash(i + 27) * 6, hash(i + 29) * 6] })),
-    statics: [{ half: [460, 20, 460], pos: [0, HT + 196, 0] }, { half: [10, 400, 460], pos: [-450, HT + 400, 0] }, { half: [10, 400, 460], pos: [450, HT + 400, 0] }, { half: [460, 400, 10], pos: [0, HT + 400, -450] }, { half: [460, 400, 10], pos: [0, HT + 400, 450] }],
+    statics: [{ half: [460, 20, 460], pos: [0, HT + 40, 0] }, { half: [10, 400, 460], pos: [-450, HT + 400, 0] }, { half: [10, 400, 460], pos: [450, HT + 400, 0] }, { half: [460, 400, 10], pos: [0, HT + 400, -450] }, { half: [460, 400, 10], pos: [0, HT + 400, 450] }],
     dur: 3.2, restitution: 0.25,
   });
   const culShards = shardSet(NS, 0x2f8f63, 0.8); HOP.add(culShards.grp);
@@ -101,7 +107,7 @@ export async function build(ctx, script, timing) {
 
   // ================= STATION B: furnace (x = -9000) =================
   const FUR = new THREE.Group(); FUR.position.set(-9000, 0, 0); scene.add(FUR);
-  const melt = moltenMat({ T: 1560, scale: 0.0024, speed: [0, -0.18], bright: 0.75 });
+  const melt = moltenMat({ T: 1560, scale: 0.0024, speed: [0, -0.18], bright: 0.5 });
   const fur = furnaceMouth({ meltMat: melt }); FUR.add(fur);
   const MZ = fur.userData.mouthZ, MY = fur.userData.meltY;
   const fbelt = conveyor(1800, 640); fbelt.position.set(0, MY + 30, MZ + 900); FUR.add(fbelt);
@@ -185,7 +191,7 @@ export async function build(ctx, script, timing) {
   const PAY = new THREE.Group(); PAY.position.set(22000, 0, 0); scene.add(PAY);
   const NPL = 7, PER = 90, prow = bottleRow(NPL * PER); PAY.add(prow.grp);
   const pconvs = []; for (let k = 0; k < NPL; k++) { const c = conveyor(9000, 200); c.rotation.y = Math.PI / 2; c.position.set(0, 800, -3200 + k * 650); PAY.add(c); pconvs.push(c); box(9000, 800, 160, 0, 400 - 30, -3200 + k * 650, M.std(0x2c3742, { roughness: 0.6, metalness: 0.3 }), PAY); }
-  const handBottle = new GlassBody({ clip: false }); handBottle.update(bottleProfile()); handBottle.setT(20);
+  const handBottle = new GlassBody({ clip: false }); handBottle.update(bottleProfile()); handBottle.setT(20); handBottle.front.receiveShadow = handBottle.back.receiveShadow = true;
   const HB = new THREE.Group(); HB.position.set(0, 1150, 1900); HB.rotation.set(0.08, 0.5, -0.06); PAY.add(HB); HB.add(handBottle.group);
   const hnd = hand(30.5); hnd.position.y = 95; HB.add(hnd);
   // hook: a fistful of sand pouring out (frame 0 = loop frame)
@@ -253,7 +259,9 @@ export async function build(ctx, script, timing) {
   const _o = new THREE.Object3D(), _q = new THREE.Quaternion(), _p = v3(0, 0, 0);
   function hopperSet(t) {
     const top = pileTop(t); pile.scale.y = Math.max(1, top - HT); pile.position.y = HT + pile.scale.y / 2;
-    pile.scale.x = pile.scale.z = 0.7 + 0.3 * clamp((top - HT) / 200);
+    pile.scale.x = pile.scale.z = 1;
+    for (const n of Object.keys(MOUND)) { const d = MOUND[n], h = mH(n, t); d.mesh.visible = h > 1; d.mesh.scale.set(0.4 + 0.6 * clamp(h / 150), Math.max(1, h), 0.4 + 0.6 * clamp(h / 150)); d.mesh.position.set(d.p.x, top + h / 2 - 2, d.p.z); }
+    const tops = ['sand', 'soda', 'lime'].map(n => moundTop(n, t));
     const starts = [Wd(2, 'Sand'), Wd(2, 'soda'), Wd(2, 'limestone')].map(x => x - 0.35);
     streams.forEach((m, k) => {
       const P0 = chutes[k].p;
@@ -262,7 +270,7 @@ export async function build(ctx, script, timing) {
         let vis = a > 0 && t < Ls(3) + 1;
         const x = P0.x + (hash(i + k * 999) - 0.5) * 50 + (hash(i + 7) - 0.5) * 30 * a, z = P0.z + (hash(i + k * 777) - 0.5) * 50;
         let y = P0.y - 500 * a - 0.5 * 9810 * a * a * 0.35;
-        if (y < top + 10) vis = false;
+        if (y < tops[k] + 6) vis = false;
         const vy = 500 + 9810 * 0.35 * a; _o.position.set(x, y, z); const sc = vis ? 4 + hash(i + 3) * 3 : 0; _o.scale.set(sc, sc * (1 + vy / 700), sc); _o.updateMatrix(); m.setMatrixAt(i, _o.matrix);
       }
       m.instanceMatrix.needsUpdate = true;
@@ -289,8 +297,8 @@ export async function build(ctx, script, timing) {
   function feederSet(t) {
     fstream.uniforms.uTime.value = t; fh.userData.plunger.position.y = fh.userData.surfY + 300 + 70 * Math.sin(t * 6);
     let last = -1; for (const c of cutTimes) if (t >= c) last = c;
-    const since = last < 0 ? t - (tCut1 - 1.1) : t - last;
-    const len = clamp(20 + 95 * since / 0.75, 2, 115);
+    const since = last < 0 ? -1 : t - last;
+    const len = last < 0 ? 2 + 113 * clamp((t - Ls(5)) / (tCut1 - Ls(5))) : clamp(20 + 95 * since / 0.75, 2, 115);
     hotRod.scale.y = len; hotRod.position.set(0, OY - len / 2, 0);
     const near = cutTimes.map(c => t - c).filter(d => d > -0.1 && d < 0.25)[0];
     shears.userData.set(near === undefined ? 0 : (near < 0 ? E.o(clamp((near + 0.1) / 0.1)) : 1 - E.io(clamp(near / 0.25))));
@@ -331,12 +339,16 @@ export async function build(ctx, script, timing) {
   const all = [HOP, FUR, FH, IS, LE, IN, PAY, chG];
   // HOOK = the bottle in a hand (also the loop frame)
   const hookTgt = () => L(HB, 0, 135, 0);
-  const hookPos = u => L(HB, 0, 0, 0).add(v3(-150 + 20 * u, 250 - 10 * u, 470 - 50 * u).applyAxisAngle(v3(0, 1, 0), 0.5));
+  const hookPos = u => L(HB, 0, 0, 0).add(v3(-130, 240, 450).multiplyScalar(1 / (1 + 0.06 * u)).applyAxisAngle(v3(0, 1, 0), 0.5));
   const hookShot = (u, t) => {
     show(PAY); prowSet(t);
     const sand = t < tHookCut; sandG.visible = sand; handBottle.group.visible = !sand;
-    if (sand) sandSet(t); else handBottle.setT(Math.max(20, lerp(980, 20, E.io(clamp((t - tHookCut) / 1.0)))));
-    cam(hookPos(u), hookTgt(), 36); rig(hookTgt(), 300); glowAt(L(HB, 0, 120, 160), sand ? 0 : 260 * clamp(1 - (t - tHookCut) / 1.0), 900);
+    const Tb = Math.max(20, lerp(980, 20, E.io(clamp((t - tHookCut) / 1.0))));
+    if (sand) sandSet(t); else handBottle.setT(Tb);
+    HB.rotation.set(0.08 + 0.012 * Math.sin(t * 1.7), 0.5 + 0.02 * Math.sin(t * 1.1), -0.06 + 0.015 * Math.sin(t * 2.2));
+    hnd.userData.pose(0.8 * E.io(clamp(t / 2.4)));
+    cam(hookPos(u), hookTgt(), 36); rig(hookTgt(), 300);
+    if (!sand && Tb > 120) { const c = rampJS(Tb); glow.color.setRGB(...c.c); glowAt(L(HB, 0, 110, 0), 900 * c.k + 60, 700); } else glow.color.set(0xFF8A2B);
   };
   function prowSet(t) {
     const V = 600;
@@ -346,15 +358,17 @@ export async function build(ctx, script, timing) {
   S(0, Ls(2), (u, t) => hookShot(E.lin(clamp(t / Ls(2))), t));
   // STEP 1 MIX
   const HL = (x, y, z) => L(HOP, x, y, z);
-  S(Ls(2), Wd(2, 'ash') + 0.05, (u, t) => { show(HOP); hopperSet(t); cam(HL(-500, 1500, 1500).lerp(HL(-460, 1460, 1380), u), HL(-200, 1250, -100), 40); rig(HL(0, 900, 0), 1200); });
-  S(Wd(2, 'ash') + 0.05, Wd(2, 'limestone') + 0.25, (u, t) => { show(HOP); hopperSet(t); cam(HL(700, 1350, 1100).lerp(HL(640, 1330, 1000), u), HL(150, 1300, -200), 40); rig(HL(0, 900, 0), 1200); });
-  S(Wd(2, 'limestone') + 0.25, Wd(2, 'crushed') - 0.1, (u, t) => { show(HOP); hopperSet(t); cam(HL(-300, 2100, 2300).lerp(HL(-280, 2050, 2150), u), HL(0, 1150, 0), 40); rig(HL(0, 900, 0), 1200); });
-  S(Wd(2, 'crushed') - 0.1, Ls(3), (u, t) => { show(HOP); hopperSet(t); cam(HL(200, 1240, 330).lerp(HL(185, 1200, 300), u), HL(60, 905, 0), 40); rig(HL(100, 900, 0), 700); });
+  const hopCam = (n, u, d = 1) => { const P = MOUND[n].p; const tg = HL(P.x * 0.8, HT + 150, P.z * 0.8); const off = { sand: [-160, 1000, 560], soda: [200, 1000, 520], lime: [-60, 1050, 600], cul: [160, 860, 460] }[n]; return [tg.clone().add(v3(...off).multiplyScalar(d * (1 - 0.05 * E.io(u)))), tg]; };
+  const hopShot = (n, d) => (u, t) => { show(HOP); hopperSet(t); key.intensity = 1.0; const [p, q] = hopCam(n, u, d); cam(p, q, 40); rig(HL(0, 900, 0), 1000); };
+  S(Ls(2), Wd(2, 'soda') - 0.02, hopShot('sand', 1));
+  S(Wd(2, 'soda') - 0.02, Wd(2, 'limestone') - 0.02, hopShot('soda', 1));
+  S(Wd(2, 'limestone') - 0.02, Wd(2, 'crushed') - 0.1, hopShot('lime', 1));
+  S(Wd(2, 'crushed') - 0.1, Ls(3), hopShot('cul', 0.9));
   // STEP 2 MELT
   const FL = (x, y, z) => L(FUR, x, y, z);
   S(Ls(3), Wd(3, 'Fifteen') - 0.08, (u, t) => { show(FUR); furnaceSet(t); glowAt(FL(0, MY + 260, MZ - 150), 2200, 5000); cam(FL(700, MY + 900, MZ + 1700).lerp(FL(620, MY + 820, MZ + 1450), E.io(u)), FL(0, MY + 120, MZ - 300), 42); rig(FL(0, MY, MZ + 600), 1500); });
-  S(Wd(3, 'Fifteen') - 0.08, Ls(4), (u, t) => { show(FUR); furnaceSet(t); key.intensity = 0.5; glowAt(FL(0, 1000, 0), 260, 5000); cam(FL(500, 1100, 1700).lerp(FL(380, 1020, 1300), E.io(u)), FL(-200, MY, -900), 48); rig(FL(0, 0, 0), 2200); });
-  S(Ls(4), Wd(4, 'river') - 0.1, (u, t) => { show(FUR); furnaceSet(t); key.intensity = 0.5; glowAt(FL(0, 900, 0), 260, 5000); cam(FL(-500, MY + 260, 1300).lerp(FL(-300, MY + 200, 300), E.io(u)), FL(-200, MY + 40, -1400), 46); rig(FL(0, 0, 0), 2200); });
+  S(Wd(3, 'Fifteen') - 0.08, Ls(4), (u, t) => { show(FUR); furnaceSet(t); key.intensity = 0.5; glowAt(FL(0, 1000, 0), 140, 5000); cam(FL(500, 1100, 1700).lerp(FL(380, 1020, 1300), E.io(u)), FL(-200, MY, -900), 48); rig(FL(0, 0, 0), 2200); });
+  S(Ls(4), Wd(4, 'river') - 0.1, (u, t) => { show(FUR); furnaceSet(t); key.intensity = 0.5; glowAt(FL(0, 900, 0), 140, 5000); cam(FL(-500, MY + 260, 1300).lerp(FL(-300, MY + 200, 300), E.io(u)), FL(-200, MY + 40, -1400), 46); rig(FL(0, 0, 0), 2200); });
   const FHL = (x, y, z) => L(FH, x, y, z);
   S(Wd(4, 'river') - 0.1, Ls(5), (u, t) => { show(FH); feederSet(t); fh.userData.lids.forEach(l => l.visible = false); glowAt(FHL(-900, 400, 0), 900, 3000); cam(FHL(-1900, 700, 520).lerp(FHL(-1700, 640, 460), u), FHL(-700, 120, 0), 42); rig(FHL(-1000, 0, 0), 1400); });
   // STEP 3 CUT
@@ -370,9 +384,13 @@ export async function build(ctx, script, timing) {
     hero.group.rotation.set(0, 0, rot); const off = v3(0, 190, 0).applyAxisAngle(v3(0, 0, 1), rot);
     hero.group.position.copy(c.sub(off)); return true;
   };
-  S(Wd(5, 'shears') - 0.08, Wd(5, 'One') - 0.05, (u, t) => { show(FH); const last = feederSet(t); hero.group.visible = gobFall(t, last); glowAt(FHL(0, OY - 120, 150), 400, 900);
-    const sp = cutTimes.some(c => t > c && t < c + 0.08); flashA = sp ? 0.18 : 0; shake = cutTimes.some(c => t > c && t < c + 0.15) ? 2.5 : 0;
-    cam(FHL(110, BLADE_Y - 10, 330), FHL(0, BLADE_Y + 10, 0), 36); rig(FHL(0, BLADE_Y, 0), 300); });
+  const tSlow0 = Wd(5, 'shears') - 0.08, tSlow1 = tSlow0 + 1.0, slow = (t) => tCut1 + 0.4 * (t - tCut1);
+  S(tSlow0, tSlow1, (u, t) => { const tau = slow(t); show(FH); const last = feederSet(tau); hero.group.visible = gobFall(tau, last); glowAt(FHL(0, OY - 120, 150), 400, 900);
+    flashA = (t >= tCut1 && t < tCut1 + 0.07) ? 0.18 : 0; shake = (t >= tCut1 && t < tCut1 + 0.12) ? 2.0 : 0;
+    cam(FHL(95 - 10 * u, BLADE_Y - 6, 285 - 25 * u), FHL(0, BLADE_Y + 8, 0), 34); rig(FHL(0, BLADE_Y, 0), 300); });
+  S(tSlow1, Wd(5, 'One') - 0.05, (u, t) => { show(FH); const last = feederSet(t); hero.group.visible = gobFall(t, last); glowAt(FHL(0, OY - 120, 150), 400, 900);
+    flashA = (t >= tCut2 && t < tCut2 + 0.07) ? 0.18 : 0; shake = (t >= tCut2 && t < tCut2 + 0.12) ? 2.5 : 0;
+    cam(FHL(-170, BLADE_Y + 60, 380), FHL(0, BLADE_Y - 30, 0), 38); rig(FHL(0, BLADE_Y, 0), 350); });
   S(Wd(5, 'One') - 0.05, Ls(6), (u, t) => { show(FH); const last = feederSet(t); hero.group.visible = gobFall(t, last); const gp = v3(0, 190, 0).applyAxisAngle(v3(0, 0, 1), hero.group.rotation.z).add(hero.group.position); glowAt(L(FH, gp.x, gp.y + 120, 150), 500, 900); cam(L(FH, gp.x + 120, gp.y + 260, 620), L(FH, gp.x + 40, gp.y - 20, 0), 38); rig(L(FH, gp.x, gp.y, 0), 500); });
   // STEP 4 BLOW
   const IL = (x, y, z) => L(IS, x, y, z);
@@ -430,9 +448,9 @@ export async function build(ctx, script, timing) {
   S(Wd(10, 'Rejects') - 0.05, Wd(10, 'melted') - 0.05, (u, t) => { show(IN); inspectSet(t); shake = t > tSmash && t < tSmash + 0.3 ? 4 : 0; cam(INL(700, 1500, BIN.z + 900), INL(BIN.x + 200, 500, BIN.z), 40); rig(INL(BIN.x, 300, BIN.z), 900); });
   S(Wd(10, 'melted') - 0.05, Ls(11), (u, t) => { show(IN); inspectSet(t); cam(INL(2400 + 260, 760, -900 - 120 * u), INL(2400, 520, 400), 40); rig(INL(2400, 500, 0), 900); });
   // PAYOFF: from the hand to the floor
-  S(Ls(11), Ls(12), (u, t) => { show(PAY); prowSet(t); sandG.visible = false; handBottle.group.visible = true; handBottle.setT(20); const k = E.io(u);
-    const q0 = hookTgt(), p0 = hookPos(1); const q1 = L(PAY, 0, 700, -600), p1 = L(PAY, -1400, 3000, 5600);
-    const q = q0.clone().lerp(q1, E.io2(u)); const off = logDolly(p0.clone().sub(q0), p1.clone().sub(q1), k); cam(q.clone().add(off), q, lerp(36, 44, k)); rig(q, lerp(300, 5000, k)); });
+  S(Ls(11), Ls(12), (u, t) => { show(PAY); prowSet(t); sandG.visible = false; handBottle.group.visible = true; handBottle.setT(20); hnd.userData.pose(0.8); HB.rotation.set(0.08, 0.5, -0.06); glow.color.set(0xFF8A2B); const k = E.io(u);
+    const q0 = hookTgt().add(v3(0, 110, 0)), p0 = hookPos(1).add(v3(0, 110, 0)); const q1 = L(PAY, 0, 700, -600), p1 = L(PAY, -1400, 3000, 5600);
+    const q = q0.clone().lerp(q1, E.io(clamp((u - 0.25) / 0.75))); const off = logDolly(p0.clone().sub(q0), p1.clone().sub(q1), k); cam(q.clone().add(off), q, lerp(36, 44, k)); rig(q, lerp(300, 5000, k)); });
   // END CARD
   const choiceSet = t => { show(chG); const lt = t - Ls(12);
     bear.rotation.y = 0.4 + lt * 0.6; pen.rotation.set(0.2, lt * 0.8, 0.15); pen.position.y = 150 + Math.sin(lt * 2.2) * 4;
@@ -472,29 +490,81 @@ export async function build(ctx, script, timing) {
   ];
   { let lastVy = 0; for (let f = 1; f < shSim.frames.length; f++) { const vy = shSim.frames[f][0][1] - shSim.frames[f - 1][0][1]; if (lastVy < -0.4 && vy > -0.05) { sfx.push({ t: tSmash + f / 30, n: 'tink' }); } lastVy = vy; } }
 
+  // ---------------- text events v2: every element moves for its whole life ----------------
+  const proj = (v) => { const p = v.clone().project(camera); return { x: (p.x + 1) / 2 * W, y: (1 - p.y) / 2 * H }; };
+  const lin = (c) => { const r = rampJS(c); const m = Math.max(...r.c, 1e-6); return `rgb(${r.c.map(x => Math.round(255 * Math.pow(Math.min(1, x / m * 0.98), 1 / 2.2))).join(',')})`; };
+  const hotCol = (T) => T > 300 ? lin(T) : '#F3E9D2';
+  const flipU = (t) => E.io(clamp((t - tFlip0) / (tFlip1 - tFlip0)));
+  const blowU = (t) => E.io(clamp((t - tBlast) / (tBlown - tBlast)));
+  const tPuff = Wd(6, 'puff');
+  const TEXT = [];
+  const T_ = (o) => { TEXT.push(o); return o; };
+  T_({ k: 'title', at: -1, until: Ls(2), label: 'HOW SAND BECOMES A / BOTTLE?', fx: 'breathe, gloss, SAND accent, punch on the bottle, exit scale-up' });
+  for (const st of steps) T_({ k: 'sticker', at: st.at, until: st.at + 1.45, label: 'sticker ' + st.word, st, fx: 'slide in, wobble, 1.2 s hold' });
+  const HPos = { sand: v3(-230, 0, -120), soda: v3(160, 0, -200), lime: v3(20, 0, 230), cul: v3(150, 0, 60) };
+  T_({ k: 'tag', at: Wd(2, 'Sand'), until: Wd(2, 'soda') - 0.02, text: 'SAND', p: 'sand', fx: 'leader line grows, bob' });
+  T_({ k: 'tag', at: Wd(2, 'soda'), until: Wd(2, 'soda') + 0.6, text: 'SODA ASH', p: 'soda', fx: 'leader line grows, bob' });
+  T_({ k: 'tag', at: Wd(2, 'limestone'), until: Wd(2, 'limestone') + 0.6, text: 'LIMESTONE', p: 'lime', fx: 'leader line grows, bob' });
+  T_({ k: 'tag', at: Wd(2, 'crushed'), until: Wd(2, 'crushed') + 0.62, text: 'OLD GLASS', p: 'cul', fx: 'leader line grows, bob' });
+  T_({ k: 'counter', at: Wd(3, 'Fifteen'), until: Wd(3, 'Celsius') - 0.04, from: 0, to: 1550, dur: 0.6, y: 600, colorFn: (v) => hotCol(Math.max(600, v)), fx: 'counts 0 -> 1,550 in 0.6 s, hot-glass colour, glow beat' });
+  T_({ k: 'cap', at: Wd(3, 'Celsius'), until: Wd(4, 'shape') - 0.04, words: [{ t: 'MOLTEN' }, { t: 'GLASS', a: true }], fx: 'drift', y: 600 });
+  T_({ k: 'cap', at: Wd(4, 'shape'), until: Wd(4, 'river') - 0.04, words: [{ t: 'SHAPE' }, { t: 'IT?', a: true }], fx: 'sway', y: 600 });
+  T_({ k: 'cap', at: Wd(4, 'river'), until: Ls(5) - 0.05, words: [{ t: 'RIVER OF' }, { t: 'FIRE', a: true }], fx: 'drift', flicker: ['#FF8A2B', '#FFB62E'], y: 600 });
+  T_({ k: 'counter', at: Wd(5, 'eleven'), until: Wd(5, 'shears') - 0.1, from: 1550, to: 1100, dur: 0.5, y: 1250, colorFn: (v) => hotCol(v), fx: 'counts 1,550 -> 1,100 in 0.5 s, white-yellow -> orange' });
+  T_({ k: 'cap', at: tCut1, until: Wd(5, 'One') - 0.05, words: [{ t: 'SNIP!', a: true }, { t: 'SNIP!', a: true, at: tCut2 }], fx: 'shake', shakeAt: [tCut1, tCut2], flashAt: [tCut1, tCut2], y: 1290 });
+  T_({ k: 'cap', at: Wd(5, 'One'), until: Ls(6) - 0.05, words: [{ t: '1 GOB' }, { t: '=', at: Wd(5, 'one', 1) }, { t: '1 BOTTLE', a: true, at: Wd(5, 'bottle') }], fx: 'drift', y: 1290 });
+  T_({ k: 'cap', at: tPuff, until: Wd(6, 'small') - 0.04, words: [{ t: 'PUFF', a: true }], fx: 'inflate', sy: (t) => 1 + 0.18 * Math.sin(clamp((t - tPuff) / 0.5) * Math.PI), y: 1350 });
+  T_({ k: 'cap', at: Wd(6, 'small'), until: Wd(6, 'preform') - 0.04, words: [{ t: 'SMALL,' }, { t: 'THICK', at: Wd(6, 'thick') }], fx: 'drift', y: 1350 });
+  T_({ k: 'cap', at: Wd(6, 'preform'), until: Ls(7) - 0.05, words: [{ t: 'PREFORM', a: true }], fx: 'drift', y: 1350 });
+  T_({ k: 'cap', at: Wd(7, 'flips'), until: Wd(7, 'second') - 0.05, words: [{ t: 'FLIP', a: true }], fx: 'flip', rot: (t) => Math.PI * flipU(t), y: 1350 });
+  T_({ k: 'cap', at: Wd(7, 'second'), until: Wd(7, 'full') - 0.04, words: [{ t: 'BLOW', a: true }], fx: 'inflate', sy: (t) => 0.8 + 0.35 * blowU(t), y: 1350 });
+  T_({ k: 'cap', at: Wd(7, 'full'), until: Ls(8) - 0.05, words: [{ t: 'FULL' }, { t: 'SIZE', a: true }], fx: 'drift', y: 1350 });
+  T_({ k: 'cap', at: Wd(8, 'Done'), until: Wd(8, 'No') - 0.02, words: [{ t: 'DONE?' }], fx: 'sway', y: 1290, swapTo: true });
+  T_({ k: 'cap', at: Wd(8, 'No'), until: Wd(8, 'back') - 0.04, words: [{ t: 'NOPE.', a: true }], fx: 'shake', y: 1290, merged: true });
+  T_({ k: 'cap', at: Wd(8, 'back'), until: Ls(9) - 0.05, words: [{ t: 'BACK' }, { t: 'IN THE', at: Wd(8, 'into') }, { t: 'OVEN', a: true, at: Wd(8, 'oven') }], fx: 'drift', flicker: ['#FF8A2B', '#FFB62E'], y: 1290 });
+  T_({ k: 'counter', at: Ls(9), until: Wd(9, 'so') - 0.04, value: (t) => t < Wd(9, 'then') ? 580 * E.o(clamp((t - Ls(9)) / 0.6)) : ThL(t), dur: 0.6, to: 580, pad: 3, y: 600, colorFn: (v) => hotCol(v), label: null, label2: 'ON PURPOSE', label2At: Wd(9, 'Celsius'), label3: 'COOLED SLOWLY', label3At: Wd(9, 'cooled'), fx: 'counts to 580, "ON PURPOSE", then falls to 038 with the glass' });
+  T_({ k: 'cap', at: Wd(9, 'so'), until: Ls(10) - 0.05, words: [{ t: 'NO' }, { t: 'CRACKS', a: true }], fx: 'drift', y: 1290 });
+  T_({ k: 'stamp', at: tCheck, until: tKick - 0.05, text: 'REJECT.', fx: 'slams in with a shake' });
+  T_({ k: 'cap', at: Wd(10, 'crushed'), until: Ls(11) - 0.05, words: [{ t: 'CRUSH.' }, { t: 'MELT', a: true, at: Wd(10, 'melted') }, { t: 'AGAIN.', a: true, at: Wd(10, 'again') }], fx: 'drift', y: 1290 });
+  T_({ k: 'counter', at: Ls(11), until: Ls(12) - 0.05, value: (t) => 600 * E.o(clamp((t - Wd(11, 'make')) / 0.7)), numAt: Wd(11, 'make'), dur: 0.7, to: 600, plus: true, suffix: '', y: 560, label: '1 MACHINE', label2: 'A MINUTE', label2At: Wd(11, 'minute'), fx: '"1 MACHINE", counts 0 -> 600+ on "six hundred", then "A MINUTE", top band' });
+  T_({ k: 'end', at: Ls(12), until: END - LOOP, fx: 'bounce, alternating pill pulse, word reveal, slide-in follow' });
+  T_({ k: 'title-loop', at: END - LOOP, until: END + 1, label: 'HOW SAND BECOMES A / BOTTLE?', fx: 're-enters with the punch, settles on the frame-0 look' });
+  function drawText(g, t) {
+    for (const o of TEXT) {
+      if (t < o.at - 0.01 || t > o.until + 0.01) continue;
+      if (o.k === 'title') hookTitle2(g, t, { at: -1, until: o.until, l1: 'HOW SAND BECOMES A', l2: 'BOTTLE?', y: 400, accentWord: 'SAND', accentAt: Wd(1, 'sand'), punches: [tHookCut], gloss: [0.3, 0.9] });
+      else if (o.k === 'title-loop') { const settle = t > END - LOOP + 0.2; hookTitle2(g, settle ? 0 : t, { at: -1, until: 1e9, l1: 'HOW SAND BECOMES A', l2: 'BOTTLE?', y: 400, punches: settle ? [] : [END - LOOP], gloss: [-9, -8], exitScale: false }); }
+      else if (o.k === 'sticker') sticker(g, t, { ...o.st, hold: 1.2, wobble: true });
+      else if (o.k === 'tag') { const P = HPos[o.p]; tag(g, t, { at: o.at, until: o.until, text: o.text, side: P.x > 0 ? 1 : -1, anchor: () => proj(L(HOP, P.x, moundTop(o.p, t), P.z)) }); }
+      else if (o.k === 'counter') {
+        let lab = o.label, la = o.at; if (o.label2 && t >= o.label2At) { lab = o.label2; la = o.label2At; } if (o.label3 && t >= o.label3At) { lab = o.label3; la = o.label3At; }
+        if (o.numAt && t < o.numAt) captionFx(g, t, { at: o.at, until: o.numAt + 0.1, words: [{ t: '1' , a: true }, { t: 'MACHINE' }], fx: 'drift', y: 390, size: 110 });
+        else counter(g, t, { ...o, at: o.numAt || o.at, label: lab, labelAt: la });
+      }
+      else if (o.k === 'cap') { captionFx(g, t, o); for (const f of (o.flashAt || [])) if (t >= f && t - f < 2 / 30) flash(g, 0.55, 'rgba(255,255,255,'); }
+      else if (o.k === 'stamp') { const d = t - o.at; const sh = d < 3 / 30 ? [16, -12, 6][Math.floor(d * 30)] : 0; stamp(g, t, { at: o.at, until: o.until, x: 560 + sh, y: 1010 + sh * 0.5, text: 'REJECT' }); }
+      else if (o.k === 'end') endCard2(g, t, { at: o.at, comment: Wd(12, 'Comment'), commentW2: Wd(12, 'below'), follow: Le(12) + 0.25, until: o.until, left: 'GUMMY BEAR', right: 'PENCIL', next: 'EP. 03' });
+    }
+  }
+
   // ---------------- seek ----------------
   let flashA = 0, air = false;
   function seek(t, g, opts = {}) {
     const plate = opts.plate !== false, over = opts.over !== false;
-    TT = t; key.intensity = 2.2; shake = 0; flashA = 0; air = false; glow.intensity = 0; spotG.intensity = spotR.intensity = 0;
+    TT = t; glow.color.set(0xFF8A2B); key.intensity = 2.2; shake = 0; flashA = 0; air = false; glow.intensity = 0; spotG.intensity = spotR.intensity = 0;
     all.forEach(o => o.visible = false); hero.group.visible = false; hero.setCut(false);
     const sh = shots.find(s => t >= s.t0 && t < s.t1) || shots[shots.length - 1];
     sh.fn(clamp((t - sh.t0) / (sh.t1 - sh.t0)), t);
     hero.updatePlane();
     glow.visible = glow.intensity > 0; spotG.visible = spotG.intensity > 0; spotR.visible = spotR.intensity > 0;
-    lens.uniforms.uSeed.value = Math.floor(t * 30) % 1000; lens.uniforms.uFlash.value.set(1, 0.92, 0.75, flashA);
+    lens.uniforms.uSeed.value = t >= END - LOOP ? 0 : Math.floor(t * 30) % 1000; // loop frames reuse frame 0's grain lens.uniforms.uFlash.value.set(1, 0.92, 0.75, flashA);
     if (plate) { ctx.composer.render(); g.drawImage(ctx.canvas3d, 0, 0, W, H); }
     if (!over) return;
     const cur = steps.filter(s => t >= s.at).pop();
     const hudA = smooth(0.08, 0.3, t) * (1 - smooth(Ls(12), Ls(12) + 0.25, t));
     const r = readout(t);
     if (script.hud !== false) hud(g, { ep: EP, step: cur ? cur.n : 0, nSteps: 6, stepName: cur ? cur.word.replace('.', '') : 'SAND', label: r.label, text: r.text, flag: r.flag, progress: t / (END - LOOP), from: 'SAND', to: 'BOTTLE', alpha: hudA });
-    hookTitle(g, t, { at: -1, until: Ls(2) - 0.04, l1: 'HOW SAND BECOMES A', l2: 'BOTTLE?', y: 400 });
-    hookTitle(g, t, { at: -1, until: END + 1, l1: 'HOW SAND BECOMES A', l2: 'BOTTLE?', from: END - LOOP, y: 400 });
-    for (const s of steps) sticker(g, t, s);
-    for (const c of caps) caption(g, t, c);
-    stamp(g, t, { at: tCheck, until: tKick + 0.5, x: 560, y: 1010, text: 'REJECT' });
-    endCard(g, t, { at: Ls(12), comment: Wd(12, 'Comment'), follow: Le(12) + 0.25, until: END - LOOP, left: 'GUMMY BEAR', right: 'PENCIL', next: 'EP. 03' });
+    drawText(g, t);
   }
-  return { seek, END, sfx, lines, shots: shots.map(s => [s.t0, s.t1]), caps: caps.map(c => [c.at, c.until, c.words.map(w => w.t).join(' ')]), lockTicks: () => [] };
+  return { seek, END, sfx, lines, shots: shots.map(s => [s.t0, s.t1]), caps: TEXT.map(o => [o.at, o.until, o.text || o.label || (o.words ? o.words.map(w => w.t).join(' ') : o.k), o.k, o.fx || '']), lockTicks: () => [] };
 }
