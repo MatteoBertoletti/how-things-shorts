@@ -1,0 +1,52 @@
+{
+ "ep": "EP. 04",
+ "title": "Why Toy Bricks Stick",
+ "lang": "en",
+ "lines": [
+  {
+   "id": 1,
+   "say": "Why do toy bricks stick? There's no glue."
+  },
+  {
+   "id": 2,
+   "say": "The stud is slightly too big for the gap."
+  },
+  {
+   "id": 3,
+   "say": "So the plastic bends, and squeezes back."
+  },
+  {
+   "id": 4,
+   "say": "The molds are accurate to a hundredth of a millimetre.",
+   "caption": "0.01 MM"
+  },
+  {
+   "id": 5,
+   "say": "It starts as plastic grains, melted at about two hundred thirty degrees Celsius.",
+   "caption": "230 °C"
+  },
+  {
+   "id": 6,
+   "say": "Injected into a steel mold, with up to a hundred and fifty tons of pressure.",
+   "caption": "UP TO 150 TONS"
+  },
+  {
+   "id": 7,
+   "say": "About seven seconds later, a brick drops out.",
+   "caption": "ABOUT 7 SECONDS"
+  },
+  {
+   "id": 8,
+   "say": "Press two together. Squeeze, not glue."
+  },
+  {
+   "id": 9,
+   "say": "Gummy bear, or ballpoint pen? Comment below."
+  }
+ ],
+ "tail": 0.9,
+ "min_gap": 0.18,
+ "gaps": {},
+ "max_pause": 0.35,
+ "hud": false
+}

@@ -344,6 +344,10 @@ export function odometer(g, t, o) {
     if (ow > 0.01) { g.lineWidth = fs * uf * ow * 1.5; g.strokeStyle = C.ink; g.strokeText(unit, 0, 0); }
     g.fillStyle = col; g.fillText(unit, 0, 0); g.restore();
   }
+  if (o.pre) {                                       // qualifier above the number (UP TO, ABOUT), appears with it
+    const pf = Math.round(fs * 0.24), s = sp(a - 0.03, 'scl');
+    g.save(); g.translate(0, -fs * 0.9); g.scale(s, s); g.textAlign = 'center'; g.font = `400 ${pf}px ${F.cap}`; inkText(g, o.pre, 0, 0, C.cream, pf, 0.22); g.restore();
+  }
   if (o.sub) {                                       // the unit as a line under the number (e.g. PENCILS PER SANDWICH)
     const sf = fit(g, o.sub, fs * 0.3, F.cap, (SAFE.maxW - 40) / Math.max(0.2, k), 30), s = sp(a - 0.06, 'scl');
     g.save(); g.translate(0, fs * 0.36); g.scale(s, s); g.textAlign = 'center'; g.font = `400 ${sf}px ${F.cap}`; inkText(g, o.sub, 0, 0, C.cream, sf, 0.22); g.restore();
@@ -360,7 +364,8 @@ export function strike(g, t, o) {
   const fs = fit(g, word.length > repl.length ? word : repl, size, font, SAFE.maxW - 30, 60);
   g.font = `400 ${fs}px ${font}`; const G = glyphs(g, word), ww = g.measureText(word).width, rw = g.measureText(repl).width;
   const sa = t - strikeAt, fallAt = strikeAt + 0.3, fa = t - fallAt, xo = E.i(clamp(1 - r / 0.1));
-  softPlate(g, cx, y, Math.max(ww, rw) + 110, fs * 1.2, 0.3 * clamp(a / 0.1) * clamp(r / 0.1));
+  const vis = (t - (strikeAt + 0.3)) < 0.7 || t >= (o.replAt ?? strikeAt + 0.32) ? 1 : 0;   // no empty plate while waiting for a late replacement
+  softPlate(g, cx, y, Math.max(ww, rw) + 110, fs * 1.2, 0.3 * clamp(a / 0.1) * clamp(r / 0.1) * vis);
   g.globalAlpha = clamp(r / 0.08);
   // the wrong word
   if (fa < 0.7) {
@@ -386,7 +391,7 @@ export function strike(g, t, o) {
     g.restore();
   }
   // the right word slides in below, then rises to take the place
-  const ra = t - fallAt - 0.02;
+  const ra = t - (o.replAt ?? fallAt + 0.02);
   if (ra >= 0) {
     const p = sp(ra, 'pos'), rise = sp(ra - 0.32, 'pos'), skew = -0.5 * (1 - spring(ra, 3.6, 11));
     const yy = y + fs * 0.98 * (1 - rise), drift = 1 + 0.04 * clamp(ra / 1.5);

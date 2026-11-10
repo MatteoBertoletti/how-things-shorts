@@ -300,7 +300,7 @@ export function hookTitle2(g, t, o) {
   g.restore();
 }
 // end card v2: NEXT EPISODE? bounces in, pills pulse alternately, COMMENT BELOW word by word, FOLLOW slides in
-export function endCard2(g, t, { at, comment, commentW2, follow, until, left, right, next }) {
+export function endCard2(g, t, { at, comment, commentW2, follow, until, left, right, next, followText }) {
   if (t < at || t > until) return;
   const fade = clamp((until - t) / 0.12);
   g.save(); g.globalAlpha = fade;
@@ -320,7 +320,7 @@ export function endCard2(g, t, { at, comment, commentW2, follow, until, left, ri
   if (t >= follow) {
     const v = E.o(clamp((t - follow) / 0.25));
     g.save(); g.translate(lerp(-500, SAFE.cx, v), 1490); g.rotate(0.015 * Math.sin((t - follow) * 4)); g.textAlign = 'center';
-    g.font = `800 50px ${F.mono}`; const txt = `FOLLOW FOR ${next}`; const tw = g.measureText(txt).width;
+    g.font = `800 50px ${F.mono}`; const txt = followText || `FOLLOW FOR ${next}`; const tw = g.measureText(txt).width;
     g.fillStyle = C.accent; rr(g, -tw / 2 - 34, -50, tw + 68, 88, 16); g.fill(); g.lineWidth = 6; g.strokeStyle = C.ink; g.stroke();
     g.fillStyle = C.ink; g.textBaseline = 'middle'; g.fillText(txt, 0, -4);
     g.restore();
