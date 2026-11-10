@@ -10,6 +10,7 @@ Every episode stands alone. On-screen text and narration in English. Always "Sim
 | 01 | Zipper (#5 metal, generic) | How it works inside | Metal + textile | ~49 s | ElevenLabs narrator (EN) | Brass & Blueprint | Glass bottle / Ballpoint pen |
 | 02 | Glass bottle (generic long-neck) | How it's made (sand → bottle) | Glass | ~45 s | ElevenLabs "Brian" (EN) | Ember & Slate | Gummy bear / Pencil |
 | 03 | Pencil (hexagonal, yellow, HB, no brand) | How it's made (tree → pencil); twist: no lead, two halves glued | Wood + mineral | ~38 s | ElevenLabs "Brian" (EN) | Cedar & Graphite | Gummy bear / Toy brick |
+| 04 | Toy brick 2x4 (red hero, yellow + blue support, no brand, no logo) | Why it sticks (interference fit), then how it's made; twist: no glue, no click, the stud is slightly too big | Plastic | ~32 s | ElevenLabs "Brian" (EN) | Signal red on graphite-blue | Gummy bear / Ballpoint pen |
 
 Material rotation: food, plastic, metal, glass, paper, textile, electronics, rubber, ceramics, everyday gadgets.
 EP 04 should not be wood, glass or metal (gummy bear = food, toy brick = plastic; decided by comments).
@@ -45,6 +46,15 @@ Render in two layers: `tools/render.py render plate`, `tools/render.py render ov
 - SOUND: soft tick/whoosh only on the title, the stickers (swipe) and the strike-throughs.
 - Test bench: episodes/ep03_pencil/typo_test/ (render any page with tools/page.py).
 
+## Retention rules (since EP 04, from the Studio data of EP 01-03)
+About half of the viewers swipe in the first seconds (49-53 %), the average viewer watches 23-31 s. EP 01 held above 100 % for 4 s, then lost ~40 points between 4 and 12 s while the narration listed static facts before showing the mechanism; once the mechanism appeared the curve stayed flat; it dropped again in the last 5 s (a stat, then the comment question).
+- R1. The first mechanism shot starts at 1.2 s at the latest; the first twist is said before 6 s.
+- R2. No standalone fact, number or size before the first twist. A number only appears together with the image that explains it.
+- R3. Frame 0 is already in motion (mid-fall, mid-press, mid-swing), never a settled pose, and the title is readable on it. The loop frames replay the motion so the last frame lands exactly on frame 0.
+- R4. Payoff in the last 4 s, end card at most 2.5 s, last spoken sentence at most 7 words, no extra stat before the comment question.
+- R5. Nothing between 4 and 12 s is a list; something visually new every 1.2-2.0 s there.
+- Length now 31-35 s. If the voice comes out short, stretch the pauses between lines (script.json `gaps`), never pay for a second take.
+
 ## Hands
 No cartoon hands. Use the leather work glove `hand()` in js/parts.js (four 3-phalanx fingers with knuckles, 2-segment thumb, smooth palm, stitched cuff, work-jacket sleeve, leather grain bump, no outline shell), lit by the scene (warm light from hot objects). `pose(grip)` tightens the fist; give it an idle sway. Fallback if a pose cannot be made to read: a mechanical gripper from the factory set.
 EP 03: no hands at all (owner's call: "la mano iniziale è brutta"). The hook shows the raw material alone (a floating cedar log section shedding sawdust) and snap-cuts to the finished object in the same spot. Prefer hand-free hooks from now on.
@@ -63,8 +73,9 @@ EP 03: no hands at all (owner's call: "la mano iniziale è brutta"). The hook sh
 - **Hook** (rule since EP 02): the question title is readable from frame 0 (it is also the feed thumbnail), set high (y ≈ 400) so the subject stays visible;
   in the first second show the raw material turning into the object (EP 02: a fistful of sand pouring → snap cut → the same hand holding a glowing bottle that cools to clear).
   The loop frames repeat frame 0 with the title.
+  Since EP 04 the hook follows the Retention rules R1-R5: frame 0 already in motion with the title readable, the first mechanism shot by 1.2 s, the first twist spoken before 6 s, no fact or number before the twist, no lists between 4 and 12 s, end card at most 2.5 s.
 - **End card**: "NEXT EPISODE?" title, two pedestals with real 3D objects, green rim light (left) vs red rim light (right),
-  "COMMENT BELOW", then "FOLLOW FOR EP. N+1". Last frame = first frame (clean hook plate) for a seamless loop.
+  "COMMENT BELOW", then "FOLLOW FOR EP. N+1" (EP 04+: "FOLLOW: NEW ONE EVERY DAY"), at most 2.5 s. Last frame = first frame (clean hook plate) for a seamless loop.
 - **Lens**: light vignette, fine grain, slight chromatic fringe at the edges. Bloom only on hot / emissive accents.
 - **Light**: one warm key, one cold fill, one strong accent.
 - **No** characters (stickman only on request, for scale), no emojis, no brands/logos, no vocal music.
@@ -74,6 +85,7 @@ EP 03: no hands at all (owner's call: "la mano iniziale è brutta"). The hook sh
 | EP | Background | Warm key | Cold fill | Accent | Hero material |
 |----|------------|----------|-----------|--------|---------------|
 | 01 | Navy `#0E1A2B` | Brass lamp `#FFC777` | Cyan `#5EC8E5` | Safety orange `#FF5A1F` | Brass teeth `#D9A441`, nickel slider `#C9CED6`, denim tape `#2E4A6B` |
+| 04 | Graphite-blue `#10151D` | `#FFB26B` | `#6FA8FF` | Signal red `#FF4B3E` | Glossy ABS (red `#E8261C`, yellow, blue `#2F6BFF`), x-ray = opaque horizontal section with bright cut faces + translucent ghost of the removed half + cyan edges, stress glow where it bends; brushed steel mould (CSG cavity); melt = `hotMat` |
 | 03 | Graphite `#14181F` | Cedar amber `#E39A52` | `#7FB3D9` | Pencil yellow `#FFD23A` | Cedar with growth rings, graphite (matte black, metallic sheen), clay grey, cream glue, yellow lacquer, brushed ferrule, pink eraser; kiln = furnaceMouth with a redder `hotMat` |
 | 02 | Slate `#0F1A21` | Furnace ember `#FF8A2B` | Cyan `#6FD0E6` | Molten gold `#FFB62E` | Soda-lime glass `#9ADBC0`; hot ramp `#FFE9A8` (1,550 °C) → `#FF8A2B` (1,100 °C) → `#B8330F` (~580 °C) → clear |
 

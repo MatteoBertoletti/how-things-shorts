@@ -22,7 +22,8 @@ export async function build(ctx, script, timing) {
   const norm = s => s.toLowerCase().replace(/[^a-z0-9-]/g, '');
   const Wd = (i, w, n = 0) => { const L = lines[i - 1]; const hits = L.words.filter(x => norm(x.w).startsWith(norm(w))); if (!hits.length) { console.log('missing word', i, w); return L.s; } return hits[Math.min(n, hits.length - 1)].s; };
   const LOOP = 0.9, ENDCARD = 2.5;
-  const END = +(Ls(9) + ENDCARD + LOOP).toFixed(3);
+  const tEC = +(Le(9) - ENDCARD + 0.04).toFixed(3);            // end card: exactly 2.5 s, ends just after the last word
+  const END = +(tEC + ENDCARD + LOOP).toFixed(3);
   const tSnap = Math.min(1.2, Wd(1, 'stick') - 0.05);       // R1: the first mechanism shot starts at 1.2 s at the latest
 
   // ---------------- lights ----------------
@@ -93,7 +94,7 @@ export async function build(ctx, script, timing) {
   const G = station(2400); plinth(G, 300, 200);
   const GB = makeBrick(COL.red); G.add(GB);
   const jaws = new THREE.Group(); G.add(jaws);
-  const beam = box(5, 3, 46, 0, 0, 0, steel, jaws); const jA = box(5, 12, 1.6, 0, 0, 0, steel, jaws), jB = box(5, 12, 1.6, 0, 0, 0, steel, jaws);
+  const jawM = M.metal(0xC9CED6, 0.22); const beam = box(3.5, 2.4, 40, 0, 0, 0, jawM, jaws); const jA = box(3.5, 10, 1.0, 0, 0, 0, jawM, jaws), jB = box(3.5, 10, 1.0, 0, 0, 0, jawM, jaws);
   const scale = new THREE.Mesh(new THREE.PlaneGeometry(80, 3.4), new THREE.MeshBasicMaterial({ map: (() => { const c = document.createElement('canvas'); c.width = 1024; c.height = 44; const g = c.getContext('2d'); g.fillStyle = '#c9ced6'; g.fillRect(0, 0, 1024, 44); g.fillStyle = '#1b1e24'; for (let i = 0; i <= 100; i++) { const x = 12 + i * 10; g.fillRect(x, 0, 2, i % 10 ? 14 : (i % 5 ? 22 : 30)); } const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })() }));
   jaws.add(scale);
   const MB = mouldBlock([54, 30, 40], new THREE.MeshStandardMaterial({ color: 0x5a6574, metalness: 0.9, roughness: 0.28, envMapIntensity: 1.3 })); MB.position.set(70, 0, -10); G.add(MB);
@@ -232,8 +233,10 @@ export async function build(ctx, script, timing) {
   const hookPlate = (t) => { show(X); hookSet(t, 0); const c = L(X, 0, BH + 8, 0); cam(orbit(c, 175, 0.62 + 0.03 * t, 0.2), c, 38, 0.3); rig(c, 140, 2.0); expo = 1.05; };
   S(0, tSnap, (u, t) => hookPlate(t), 0);
   // R1: the cutaway arrives at tSnap (<= 1.2 s): x-ray section through both bricks, stud entering the gap
-  const xcam = (t, el, r, tg = v3(0, BH + 1, 0), az = -Math.PI / 2) => { const c = L(X, tg.x, tg.y, tg.z); cam(orbit(c, r, az, el), c, 34, 0.5); rig(c, 80, 1.8); expo = 1.0; };
-  S(tSnap, Ls(2), (u, t) => { show(X); hookSet(t, 1); exagK.v = 1; xcam(t, lerp(1.05, 1.2, u), lerp(120, 105, u)); });
+  const xcam = (t, el, r, tg = v3(0, BH + 1, 0), az = -Math.PI / 2) => { const c = L(X, tg.x, tg.y, tg.z); cam(orbit(c, r, az, el), c, 34, 0.5); rig(c, 80, 1.8); expo = 0.92; };
+  const tSnap2 = Wd(1, "There's") + 0.1;
+  S(tSnap, tSnap2, (u, t) => { show(X); hookSet(t, 1); exagK.v = 1; xcam(t, lerp(1.0, 1.12, u), lerp(125, 110, u)); });
+  S(tSnap2, Ls(2), (u, t) => { show(X); hookSet(t, 1); exagK.v = 1; xcam(t, lerp(1.2, 1.28, u), lerp(70, 62, u), v3(-4, BH + 1, 0), -Math.PI / 2 - 0.35); });
   // MECHANISM (no lists: one new thing per shot)
   const tM1 = Ls(2), tM2 = Wd(2, 'big') - 0.12, tM3 = Wd(3, 'So') - 0.02, tM4 = Wd(3, 'and') - 0.05;
   S(tM1, tM2, (u, t) => { show(X); mechSet(t, tM1); exagK.v = 1; xcam(t, 1.25, lerp(52, 44, u), v3(4, BH + 1, 2.4)); });
@@ -254,7 +257,7 @@ export async function build(ctx, script, timing) {
   S(Ls(6), tI2, (u, t) => { show(MO); mouldSet(t, { cut: false }); const c = L(MO, 0, 130, 0); cam(c.clone().add(v3(lerp(140, 110, u), 70, 160)), c, 40, 0.25); rig(c, 160, 2.0); });
   S(tI2, tI3, (u, t) => { show(MO); mouldSet(t, { cut: true }); const c = L(MO, 0, 118, 0); cam(c.clone().add(v3(lerp(-40, -20, u), 30, lerp(120, 105, u))), c, 38, 0.3); rig(c, 100, 1.6); expo = 1.0; });
   S(tI3, tI4, (u, t) => { show(MO); mouldSet(t, { cut: false }); const c = L(MO, 0, 140, 0); cam(c.clone().add(v3(lerp(-120, -90, u), 110, 150)), c, 40, 0.25); rig(c, 160, 2.0); shake = Math.abs(t - tI3 - 0.3) < 0.08 ? 1.5 : 0; });
-  S(tI4, Ls(7), (u, t) => { show(MO); mouldSet(t, { cut: true }); const c = L(MO, 0, 112, 0); cam(c.clone().add(v3(lerp(20, 0, u), 30, lerp(80, 70, u))), c, 38, 0.22); rig(c, 100, 1.8); });
+  S(tI4, Ls(7), (u, t) => { show(MO); mouldSet(t, { cut: true }); fillMat.userData.u.uHot.value *= 0.6; const c = L(MO, 0, 112, 0); cam(c.clone().add(v3(lerp(20, 0, u), 30, lerp(80, 70, u))), c, 38, 0.22); rig(c, 100, 1.8); expo = 0.8; });
   // STEP 3 DROP
   const tD2 = Wd(7, 'brick') - 0.25;
   S(Ls(7), tD2, (u, t) => { show(DR); dropSet(t); const c = L(DR, 0, 130, 30); cam(c.clone().add(v3(lerp(330, 300, u), lerp(60, 30, u), lerp(140, 120, u))), c, 40, 0.2); rig(c, 300, 2.1); });
@@ -265,14 +268,16 @@ export async function build(ctx, script, timing) {
     const tau = (t - tPay) * 0.55, y = tau < 0.6 ? lerp(26, studH, E.i(tau / 0.6)) : studH * (1 - E.io(clamp((tau - 0.6) / 0.5)));
     PB.position.set(0, BH + y, 0); PB.rotation.set(0, 0, 0); const pen = clamp(studH - y, 0, studH) / studH, d = DMAX * E.io(pen); PB.userData.setDeform(d, d / DMAX); xrayOn(xray, [PB, UB]); arrowsSet(xray * pen, t, PB); };
   S(tPay, tPay2, (u, t) => { const xr = clamp((t - (tPay2 - 0.55)) / 0.15); paySet(t, xr); exagK.v = xr; const c = L(X, 0, BH + 2, 0); const k = E.io(clamp((t - tPay) / (tPay2 - tPay - 0.5))); cam(orbit(c, lerp(170, 110, k), lerp(0.7, -Math.PI / 2, k), lerp(0.35, 1.15, k)), c, 36, 0.32); rig(c, 120, 1.9); expo = 1.05; });
-  S(tPay2, Ls(9), (u, t) => { show(TW); towerSet(t); const c = L(TW, 0, 26, 0); cam(orbit(c, lerp(200, 230, u), 0.6 + 0.25 * u, 0.25), c, 40, 0.42); rig(c, 160, 2.1); });
+  const tTw2 = tPay2 + 1.15;
+  S(tPay2, tTw2, (u, t) => { show(TW); towerSet(t); const c = L(TW, 0, 26, 0); cam(orbit(c, lerp(170, 190, u), 0.5 + 0.15 * u, 0.22), c, 40, 0.42); rig(c, 160, 2.1); });
+  S(tTw2, tEC, (u, t) => { show(TW); towerSet(t); const c = L(TW, 0, 26, 0); cam(orbit(c, lerp(230, 280, u), -0.4 + 0.2 * u, 0.32), c, 40, 0.45); rig(c, 180, 2.1); });
   // END CARD (2.5 s)
-  const tE2 = Ls(9) + 1.25;
-  const choiceSet = t => { show(chG); const lt = t - Ls(9); bear.rotation.y = 0.4 + lt * 0.6; pen.position.set(105, 150 + Math.sin(lt * 2.2) * 4, 0); pen.rotation.set(0, lt * 0.8, 0.95);
+  const tE2 = tEC + 1.25;
+  const choiceSet = t => { show(chG); const lt = t - tEC; bear.rotation.y = 0.4 + lt * 0.6; pen.position.set(105, 150 + Math.sin(lt * 2.2) * 4, 0); pen.rotation.set(0, lt * 0.8, 0.95);
     spotG.intensity = 9 * E.o(clamp(lt / 0.3)); spotR.intensity = 9 * E.o(clamp((lt - 0.15) / 0.3));
     spotG.position.copy(chG.position).add(v3(-260, 520, 260)); spotG.target.position.copy(chG.position).add(v3(-105, 150, 0));
     spotR.position.copy(chG.position).add(v3(260, 520, 260)); spotR.target.position.copy(chG.position).add(v3(105, 150, 0)); };
-  S(Ls(9), tE2, (u, t) => { choiceSet(t); const tg = chG.position.clone().add(v3(0, 175, 0)); cam(chG.position.clone().add(v3(0, lerp(250, 236, E.io(u)), lerp(1080, 1010, E.io(u)))), tg, 40, 0.12); rig(tg, 400, 2.0); });
+  S(tEC, tE2, (u, t) => { choiceSet(t); const tg = chG.position.clone().add(v3(0, 175, 0)); cam(chG.position.clone().add(v3(0, lerp(250, 236, E.io(u)), lerp(1080, 1010, E.io(u)))), tg, 40, 0.12); rig(tg, 400, 2.0); });
   S(tE2, END - LOOP, (u, t) => { choiceSet(t); const tg = chG.position.clone().add(v3(0, 180, 0)); cam(chG.position.clone().add(v3(lerp(-60, -20, E.io(u)), 160, lerp(950, 900, E.io(u)))), tg, 40, 0.12); rig(tg, 400, 2.0); });
   // LOOP: the fall replays and lands exactly on frame 0
   S(END - LOOP, END + 1, (u, t) => hookPlate(t - (END - 1 / 30)), 0);
@@ -305,14 +310,14 @@ export async function build(ctx, script, timing) {
   T_({ k: 'exag', at: tSnap + 0.2, until: Ls(4) - 0.05, fx: 'small tag EXAGGERATED while the bent section is on screen' });
   T_({ k: 'odo', at: Wd(4, 'hundredth'), until: Ls(5) - 0.08, value: '0.01', unit: 'MM', y: 640, morph: { at: tP2 + 0.35, label: 'MOLD' } });
   for (const s of steps) T_({ k: 'sticker', at: s.at, until: s.at + 1.54, label: 'sticker ' + s.word, s });
-  T_({ k: 'callout', at: Wd(5, 'grains'), until: tB1 - 0.05, text: 'ABS GRAINS', anchor: anchorOf(() => L(MLT, 30, 20, 210)), dx: 120, dy: -260 });
+  T_({ k: 'callout', at: Wd(5, 'grains'), until: tB1 - 0.05, text: 'ABS GRAINS', anchor: anchorOf(() => L(MLT, -160, 268, -36)), dx: 140, dy: -230 });
   T_({ k: 'odo', at: Wd(5, 'two'), until: Ls(6) - 0.05, value: 230, unit: '°C', pre: 'ABOUT', y: 660, morph: { at: Wd(5, 'Celsius') + 0.35, label: 'MELTED' } });
   T_({ k: 'callout', at: Wd(6, 'steel'), until: tI2 - 0.05, text: 'STEEL MOLD', anchor: anchorOf(() => L(MO, 30, 128, 22)), dx: 140, dy: -240 });
   T_({ k: 'odo', at: Wd(6, 'hundred'), until: Ls(7) - 0.05, value: 150, unit: 'TONS', pre: 'UP TO', y: 620 });
   T_({ k: 'odo', at: Wd(7, 'seven'), until: Ls(8) - 0.05, value: 7, unit: 'SECONDS', pre: 'ABOUT', y: 620 });
   T_({ k: 'cap', at: Wd(8, 'Press'), until: tPay2 - 0.04, words: [{ t: 'PRESS', a: true, k: 'verb' }, { t: 'TWO', k: 'noun', at: Wd(8, 'two') }], dir: 1, size: 120 });
-  T_({ k: 'cap', at: Wd(8, 'Squeeze'), until: Ls(9) - 0.05, words: [{ t: 'SQUEEZE,', a: true, k: 'twist' }, { t: 'NOT GLUE.', k: 'twist', at: Wd(8, 'not') }], size: 110 });
-  T_({ k: 'end', at: Ls(9), until: END - LOOP, fx: 'NEXT EPISODE? gummy bear / ballpoint pen, COMMENT BELOW, FOLLOW: NEW ONE EVERY DAY' });
+  T_({ k: 'cap', at: Wd(8, 'Squeeze'), until: tEC - 0.05, words: [{ t: 'SQUEEZE,', a: true, k: 'twist' }, { t: 'NOT GLUE.', k: 'twist', at: Wd(8, 'not') }], size: 110 });
+  T_({ k: 'end', at: tEC, until: END - LOOP, fx: 'NEXT EPISODE? gummy bear / ballpoint pen, COMMENT BELOW, FOLLOW: NEW ONE EVERY DAY' });
   T_({ k: 'title-loop', at: END - LOOP, until: END + 1, label: 'WHY DO TOY BRICKS / STICK?', fx: 'blueprint rebuilds, last frame = frame 0' });
   const titleO = { l1: 'WHY DO TOY BRICKS', l2: 'STICK?', y: 400, words: titleWords, rawWord: 'BRICKS', scan: [0.15, 0.85], punchAt: tSnap, until: Wd(1, "There's") - 0.05, push: (tt) => clamp(tt / 2) };
   function exagTag(g, t, o) {
@@ -351,7 +356,7 @@ export async function build(ctx, script, timing) {
     { t: tClose + 0.6, n: 'press_thud' }, { t: tFill, n: 'inject_hiss' }, { t: tI3 + 0.3, n: 'hydraulic' },
     { t: tOpen + 0.1, n: 'mold_open' }, { t: tOpen + 0.5, n: 'plastic_drop' }, { t: tD2 + 0.2, n: 'plastic_clatter' },
     { t: tPay + 0.9, n: 'plastic_click' }, { t: tTower, n: 'plastic_stack' },
-    { t: Ls(9), n: 'whoosh' }, { t: Ls(9) + 0.25, n: 'click_ui' }, { t: Ls(9) + 0.4, n: 'click_ui' }, { t: END - LOOP, n: 'whoosh_soft' },
+    { t: tEC, n: 'whoosh' }, { t: tEC + 0.25, n: 'click_ui' }, { t: tEC + 0.4, n: 'click_ui' }, { t: END - LOOP, n: 'whoosh_soft' },
   ];
 
   function seek(t, g, opts = {}) {

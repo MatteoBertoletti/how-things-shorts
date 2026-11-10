@@ -1,0 +1,139 @@
+{
+ "map": {
+  "whoosh_soft": [
+   1489,
+   -13,
+   "peak",
+   null
+  ],
+  "ui_tick": [
+   2577,
+   -16,
+   "onset",
+   0.15
+  ],
+  "xray_hit": [
+   2903,
+   -10,
+   "peak",
+   null
+  ],
+  "plastic_creak": [
+   854,
+   -15,
+   "onset",
+   0.7
+  ],
+  "pencil_scribble": [
+   2369,
+   -10,
+   "onset",
+   0.5
+  ],
+  "plastic_click": [
+   1124,
+   -9,
+   "onset",
+   null
+  ],
+  "swell": [
+   2626,
+   -11,
+   "onset",
+   null
+  ],
+  "metal_click": [
+   1131,
+   -9,
+   "onset",
+   null
+  ],
+  "low_whoosh": [
+   3120,
+   -12,
+   "onset",
+   null
+  ],
+  "swipe": [
+   1490,
+   -12,
+   "peak",
+   null
+  ],
+  "granules": [
+   2494,
+   -12,
+   "onset",
+   1.4
+  ],
+  "machine_hum": [
+   3117,
+   -14,
+   "onset",
+   1.4
+  ],
+  "fire_whoosh": [
+   1345,
+   -11,
+   "onset",
+   null
+  ],
+  "press_thud": [
+   2498,
+   -6,
+   "onset",
+   null
+  ],
+  "inject_hiss": [
+   1458,
+   -11,
+   "onset",
+   1.0
+  ],
+  "hydraulic": [
+   2709,
+   -9,
+   "onset",
+   1.0
+  ],
+  "mold_open": [
+   3154,
+   -9,
+   "onset",
+   null
+  ],
+  "plastic_drop": [
+   3088,
+   -8,
+   "onset",
+   null
+  ],
+  "plastic_clatter": [
+   397,
+   -10,
+   "onset",
+   1.2
+  ],
+  "plastic_stack": [
+   3204,
+   -8,
+   "onset",
+   null
+  ],
+  "whoosh": [
+   1490,
+   -9,
+   "peak",
+   null
+  ],
+  "click_ui": [
+   2568,
+   -10,
+   "onset",
+   null
+  ]
+ },
+ "bed": 2504,
+ "ticks": false,
+ "repeat": {}
+}
