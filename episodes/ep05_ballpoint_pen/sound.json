@@ -1,0 +1,26 @@
+{
+ "map": {
+  "pen_scratch": [3011, -11, "onset", 1.3],
+  "ui_tick": [2577, -16, "onset", 0.15],
+  "xray_hit": [2903, -10, "peak", null],
+  "glitch": [2857, -14, "onset", 0.2],
+  "swell": [2626, -11, "onset", null],
+  "low_whoosh": [3120, -12, "onset", null],
+  "metal_click": [1131, -10, "onset", null],
+  "swipe": [1490, -12, "peak", null],
+  "press_thud": [2498, -7, "onset", null],
+  "inject_hiss": [1458, -11, "onset", 1.0],
+  "mold_open": [3154, -9, "onset", null],
+  "plastic_drop": [3088, -8, "onset", null],
+  "metal_tink": [1131, -8, "onset", null],
+  "crimp": [2858, -9, "onset", null],
+  "plastic_click": [1124, -9, "onset", null],
+  "pen_click": [1124, -6, "onset", 0.4],
+  "whoosh_soft": [1489, -13, "peak", null],
+  "whoosh": [1490, -9, "peak", null],
+  "click_ui": [2568, -10, "onset", null]
+ },
+ "bed": 2504,
+ "ticks": false,
+ "repeat": {}
+}

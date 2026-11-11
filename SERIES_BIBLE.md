@@ -11,9 +11,11 @@ Every episode stands alone. On-screen text and narration in English. Always "Sim
 | 02 | Glass bottle (generic long-neck) | How it's made (sand → bottle) | Glass | ~45 s | ElevenLabs "Brian" (EN) | Ember & Slate | Gummy bear / Pencil |
 | 03 | Pencil (hexagonal, yellow, HB, no brand) | How it's made (tree → pencil); twist: no lead, two halves glued | Wood + mineral | ~38 s | ElevenLabs "Brian" (EN) | Cedar & Graphite | Gummy bear / Toy brick |
 | 04 | Toy brick 2x4 (red hero, yellow + blue support, no brand, no logo) | Why it sticks (interference fit), then how it's made; twist: no glue, no click, the stud is slightly too big | Plastic | ~32 s | ElevenLabs "Brian" (EN) | Signal red on graphite-blue | Gummy bear / Ballpoint pen |
+| 05 | Ballpoint pen (click pen, round white barrel, blue button and grip ring, no brand) | Why it has a ball, then how it's made; twist: the ball is the cap and the roller in one; callback to EP 04 (injection molding) | Plastic + metal | ~29 s | ElevenLabs "Brian" (EN) | Ink blue & brass on night navy | Crayon / Paper clip |
 
 Material rotation: food, plastic, metal, glass, paper, textile, electronics, rubber, ceramics, everyday gadgets.
 EP 04 should not be wood, glass or metal (gummy bear = food, toy brick = plastic; decided by comments).
+EP 06 is decided by comments between a crayon (wax) and a paper clip (metal wire).
 
 ## Shorts safe area (since EP 02)
 iPhone crops ~50 px per side; the top bar covers ~230 px; the action icons cover x > 870 between y ≈ 900 and 1870;
@@ -46,14 +48,19 @@ Render in two layers: `tools/render.py render plate`, `tools/render.py render ov
 - SOUND: soft tick/whoosh only on the title, the stickers (swipe) and the strike-throughs.
 - Test bench: episodes/ep03_pencil/typo_test/ (render any page with tools/page.py).
 
-## Retention rules (since EP 04, from the Studio data of EP 01-03)
+## Retention rules (since EP 04, from the Studio data of EP 01-03; tightened in EP 05)
 About half of the viewers swipe in the first seconds (49-53 %), the average viewer watches 23-31 s. EP 01 held above 100 % for 4 s, then lost ~40 points between 4 and 12 s while the narration listed static facts before showing the mechanism; once the mechanism appeared the curve stayed flat; it dropped again in the last 5 s (a stat, then the comment question).
-- R1. The first mechanism shot starts at 1.2 s at the latest; the first twist is said before 6 s.
+Studio data read for EP 05: EP 01 and EP 02 both hold above 100 % for the first 4 s, then lose 30-45 points between 4 and 12 s, exactly where the narration listed nouns and numbers right after the opening question; both lose about 30 more points in the last 6 s (a last stat, then the comment question). Viewed vs swiped away: 47 % (EP 01), 59 % (EP 02), 49 % (EP 03).
+- R1. The first mechanism shot starts at 1.2 s at the latest; the first twist is said before 5.5 s (6 s until EP 04).
 - R2. No standalone fact, number or size before the first twist. A number only appears together with the image that explains it.
 - R3. Frame 0 is already in motion (mid-fall, mid-press, mid-swing), never a settled pose, and the title is readable on it. The loop frames replay the motion so the last frame lands exactly on frame 0.
 - R4. Payoff in the last 4 s, end card at most 2.5 s, last spoken sentence at most 7 words, no extra stat before the comment question.
 - R5. Nothing between 4 and 12 s is a list; something visually new every 1.2-2.0 s there.
-- Length now 31-35 s. If the voice comes out short, stretch the pauses between lines (script.json `gaps`), never pay for a second take.
+- R6 (since EP 05). One idea per line of narration, and every line shows a cause or an action on screen (something moves or changes), never only a label.
+- Length now 28-32 s (EP 05; hard max 36 s). If the voice comes out short, stretch the pauses between lines (script.json `gaps`), never pay for a second take.
+
+## Callback tag (since EP 05)
+When a process repeats one from an earlier episode, say it in a few words of narration ("like the toy brick") and show a small pill tag "SAME TRICK AS EP. NN" with a tiny icon of that episode's hero object, and put the old hero object in the 3D scene next to the new part (EP 05: the red toy brick on the tray beside the freshly molded pen barrel). It costs no extra explanation time and rewards returning viewers. At most one callback per episode, never in the hook.
 
 ## Hands
 No cartoon hands. Use the leather work glove `hand()` in js/parts.js (four 3-phalanx fingers with knuckles, 2-segment thumb, smooth palm, stitched cuff, work-jacket sleeve, leather grain bump, no outline shell), lit by the scene (warm light from hot objects). `pose(grip)` tightens the fist; give it an idle sway. Fallback if a pose cannot be made to read: a mechanical gripper from the factory set.
@@ -73,7 +80,7 @@ EP 03: no hands at all (owner's call: "la mano iniziale è brutta"). The hook sh
 - **Hook** (rule since EP 02): the question title is readable from frame 0 (it is also the feed thumbnail), set high (y ≈ 400) so the subject stays visible;
   in the first second show the raw material turning into the object (EP 02: a fistful of sand pouring → snap cut → the same hand holding a glowing bottle that cools to clear).
   The loop frames repeat frame 0 with the title.
-  Since EP 04 the hook follows the Retention rules R1-R5: frame 0 already in motion with the title readable, the first mechanism shot by 1.2 s, the first twist spoken before 6 s, no fact or number before the twist, no lists between 4 and 12 s, end card at most 2.5 s.
+  Since EP 04 the hook follows the Retention rules R1-R5 (R6 since EP 05): frame 0 already in motion with the title readable, the first mechanism shot by 1.2 s, the first twist spoken before 6 s (5.5 s since EP 05), no fact or number before the twist, no lists between 4 and 12 s, end card at most 2.5 s.
 - **End card**: "NEXT EPISODE?" title, two pedestals with real 3D objects, green rim light (left) vs red rim light (right),
   "COMMENT BELOW", then "FOLLOW FOR EP. N+1" (EP 04+: "FOLLOW: NEW ONE EVERY DAY"), at most 2.5 s. Last frame = first frame (clean hook plate) for a seamless loop.
 - **Lens**: light vignette, fine grain, slight chromatic fringe at the edges. Bloom only on hot / emissive accents.
@@ -86,6 +93,7 @@ EP 03: no hands at all (owner's call: "la mano iniziale è brutta"). The hook sh
 |----|------------|----------|-----------|--------|---------------|
 | 01 | Navy `#0E1A2B` | Brass lamp `#FFC777` | Cyan `#5EC8E5` | Safety orange `#FF5A1F` | Brass teeth `#D9A441`, nickel slider `#C9CED6`, denim tape `#2E4A6B` |
 | 04 | Graphite-blue `#10151D` | `#FFB26B` | `#6FA8FF` | Signal red `#FF4B3E` | Glossy ABS (red `#E8261C`, yellow, blue `#2F6BFF`), x-ray = opaque horizontal section with bright cut faces + translucent ghost of the removed half + cyan edges, stress glow where it bends; brushed steel mould (CSG cavity); melt = `hotMat` |
+| 05 | Night navy `#0F1420` | `#FFC27A` | `#7FB0FF` | Ink blue `#2F7BFF` | Textured carbide-grey ball `#8E9AA8`, brass socket `#C9A24B` with pale cut faces, glossy blue oil paste with a stringy stretch, cream paper `#F2E8D5` with a wet line that dulls as it dries; x-ray = section in the plane of motion through tip, barrel and refill + translucent brass ghost + cyan outline; ENLARGED tag while the tip is enlarged |
 | 03 | Graphite `#14181F` | Cedar amber `#E39A52` | `#7FB3D9` | Pencil yellow `#FFD23A` | Cedar with growth rings, graphite (matte black, metallic sheen), clay grey, cream glue, yellow lacquer, brushed ferrule, pink eraser; kiln = furnaceMouth with a redder `hotMat` |
 | 02 | Slate `#0F1A21` | Furnace ember `#FF8A2B` | Cyan `#6FD0E6` | Molten gold `#FFB62E` | Soda-lime glass `#9ADBC0`; hot ramp `#FFE9A8` (1,550 °C) → `#FF8A2B` (1,100 °C) → `#B8330F` (~580 °C) → clear |
 
@@ -96,4 +104,5 @@ EP 02 added: brick/refractory material, factory floor, hopper, furnace mouth, fo
 js/glass.js: glass material (fresnel rim + temperature glow), morphing lathe gob → parison → bottle with capped cutaway, molten-glass shader.
 The HUD readout can be a value/total (EP 01) or label + text with an optional flag pill (EP 02). Accent colour is per episode (setAccent).
 EP 03 added (js/pencil.js): procedural cedar side/end grain + bark, graphite/clay/paste/glue/lacquer materials, `hotMat` (emissive gradient + fresnel), pencil geometry (+ HB stamp decal), unpainted stick, instanced pencil field, grooved slat, slat -> hexagon section morph, generic toy brick, stroke font for handwriting. parts.js `hand(R, {curl, len, thumbJoint})`.
+EP 05 added (js/pen.js): textured ball, brass socket lathe with an open/crimped lip (`setOpen`) and x-ray clip, ink film band, transparent refill with ink level, spring, click pen parts (front barrel with grip ring, rear with clip, button) and `makePen().setClick`, crayon and paper clip for end cards. motion.js callout `pre` (small qualifier like USUALLY); overlay.js endCard2 `leftColor` / `rightColor`.
 Episode-specific: js/zipper.js (tooth via CSG, chain layout from a gap function, slider with cutaway caps, tape sweep).
