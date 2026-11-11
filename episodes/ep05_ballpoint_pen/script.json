@@ -1,0 +1,50 @@
+{
+ "ep": "EP. 05",
+ "title": "Why Ballpoint Pens Have a Ball",
+ "lang": "en",
+ "lines": [
+  {
+   "id": 1,
+   "say": "Why does a ballpoint pen have a ball?"
+  },
+  {
+   "id": 2,
+   "say": "It's the cap and the roller, in one."
+  },
+  {
+   "id": 3,
+   "say": "Rolling drags thick oil ink out of the tube."
+  },
+  {
+   "id": 4,
+   "say": "Usually tungsten carbide, in a brass socket.",
+   "caption": "TUNGSTEN CARBIDE"
+  },
+  {
+   "id": 5,
+   "say": "The barrel is injection molded, like the toy brick."
+  },
+  {
+   "id": 6,
+   "say": "The tip closes around the ball, then ink is injected."
+  },
+  {
+   "id": 7,
+   "say": "In advanced factories, a pen takes under five minutes.",
+   "caption": "UNDER 5 MINUTES"
+  },
+  {
+   "id": 8,
+   "say": "Click. One tiny ball, rolling."
+  },
+  {
+   "id": 9,
+   "say": "Crayon, or paper clip? Comment below."
+  }
+ ],
+ "tail": 0.9,
+ "min_gap": 0.18,
+ "gaps": {},
+ "max_pause": 0.35,
+ "hud": false
+}

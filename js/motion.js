@@ -428,6 +428,7 @@ export function callout(g, t, o) {
     g.fillStyle = 'rgba(0,0,0,0.35)'; rr(g, x0 + 7, 9, w, bh, 12); g.fill();
     g.fillStyle = 'rgba(16,20,24,0.94)'; rr(g, x0, 0, w, bh, 12); g.fill(); g.lineWidth = 5; g.strokeStyle = C.accent; g.stroke();
     g.fillStyle = C.accent; g.fillRect(sd > 0 ? 0 : -10, 12, 10, bh - 24);
+    if (o.pre) { g.save(); g.font = `700 26px ${F.mono}`; g.textBaseline = 'bottom'; g.fillStyle = C.cream; g.globalAlpha *= clamp((la - 0.05) / 0.12); g.lineWidth = 6; g.strokeStyle = C.ink; g.lineJoin = 'round'; const px = (sd > 0 ? 0 : -bw) + 30; g.strokeText(o.pre, px, -6); g.fillText(o.pre, px, -6); g.restore(); }   // small qualifier above the label (USUALLY)
     const n = Math.floor(clamp((la - 0.04) / (0.02 * text.length)) * text.length * clamp(r / 0.07 - 0.1, 0, 1) + 1e-6);
     g.beginPath(); g.rect(x0, 0, w, bh); g.clip(); g.textBaseline = 'middle'; g.fillStyle = C.cream;
     const tx = (sd > 0 ? 0 : -bw) + 30; g.fillText(text.slice(0, n), tx, bh / 2 + 2);

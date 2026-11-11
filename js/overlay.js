@@ -300,7 +300,7 @@ export function hookTitle2(g, t, o) {
   g.restore();
 }
 // end card v2: NEXT EPISODE? bounces in, pills pulse alternately, COMMENT BELOW word by word, FOLLOW slides in
-export function endCard2(g, t, { at, comment, commentW2, follow, until, left, right, next, followText }) {
+export function endCard2(g, t, { at, comment, commentW2, follow, until, left, right, next, followText, leftColor, rightColor }) {
   if (t < at || t > until) return;
   const fade = clamp((until - t) / 0.12);
   g.save(); g.globalAlpha = fade;
@@ -314,8 +314,8 @@ export function endCard2(g, t, { at, comment, commentW2, follow, until, left, ri
   g.textAlign = 'left';
   const pulse = (ph) => 1 + 0.07 * Math.max(0, Math.sin((a - 0.6) * Math.PI * 1.6 + ph));
   const pl = (t - at - 0.25) / 0.2, pr = (t - at - 0.4) / 0.2;
-  g.save(); g.translate(255, 1235); const s1 = a > 0.6 ? pulse(0) : 1; g.scale(s1, s1); pill(g, 0, 0, left, C.green, pl); g.restore();
-  g.save(); g.translate(690, 1235); const s2 = a > 0.6 ? pulse(Math.PI) : 1; g.scale(s2, s2); pill(g, 0, 0, right, C.red, pr); g.restore();
+  g.save(); g.translate(255, 1235); const s1 = a > 0.6 ? pulse(0) : 1; g.scale(s1, s1); pill(g, 0, 0, left, leftColor || C.green, pl); g.restore();
+  g.save(); g.translate(690, 1235); const s2 = a > 0.6 ? pulse(Math.PI) : 1; g.scale(s2, s2); pill(g, 0, 0, right, rightColor || C.red, pr); g.restore();
   captionFx(g, t, { at: comment, until: until + 1, fx: 'drift', words: [{ t: 'COMMENT', at: comment }, { t: 'BELOW', a: true, at: commentW2 }], y: 1375, size: 90 });
   if (t >= follow) {
     const v = E.o(clamp((t - follow) / 0.25));
