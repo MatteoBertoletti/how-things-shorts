@@ -50,11 +50,14 @@ for i in range(len(act)): a = a + (act[i] - a) * (0.4 if act[i] > a else 0.04); 
 duck = np.repeat(1 - (1 - 10 ** (-4 / 20)) * env, w); duck = np.pad(duck, (0, N - len(duck)), constant_values=1)
 fx *= duck
 # bed: low, clean industrial hum, filtered, ~13 dB under the effects
-bed = np.frombuffer(subprocess.run(['ffmpeg', '-v', 'error', '-i', f"audio/sfx/{SND.get('bed', 2504)}.mp3", '-af', SND.get('bed_filter', 'highpass=f=45,lowpass=f=1600'), '-ac', '1', '-ar', str(SR), '-f', 'f32le', '-'], capture_output=True, check=True).stdout, np.float32).copy()
+BEDSRC = SND.get('bed_file') or f"audio/sfx/{SND.get('bed', 2504)}.mp3"
+bed = np.frombuffer(subprocess.run(['ffmpeg', '-v', 'error', '-i', BEDSRC, '-af', SND.get('bed_filter', 'highpass=f=45,lowpass=f=1600'), '-ac', '1', '-ar', str(SR), '-f', 'f32le', '-'], capture_output=True, check=True).stdout, np.float32).copy()
 bed = np.tile(bed, 2)[:N]; fad = int(0.6 * SR); bed[:fad] *= np.linspace(0, 1, fad); bed[-fad:] *= np.linspace(1, 0, fad)
 def rms_active(x):
     m = len(x) // 19200; r = np.sqrt((x[:m * 19200].reshape(m, 19200) ** 2).mean(1)); r = r[r > 1e-3]; return np.sqrt((r ** 2).mean())
-bed *= (rms_active(fx) * 10 ** (-13 / 20)) / (np.sqrt((bed ** 2).mean()) + 1e-9)
+if 'bed_db_voice' in SND:   # long form: the bed sits a fixed level under the voice and ducks a little more while it speaks
+    bed *= (rms_active(v) * 10 ** (SND['bed_db_voice'] / 20)) / (np.sqrt((bed ** 2).mean()) + 1e-9); bed *= np.pad(np.repeat(1 - (1 - 10 ** (-5 / 20)) * env, w), (0, N - n * w), constant_values=1)
+else: bed *= (rms_active(fx) * 10 ** (-13 / 20)) / (np.sqrt((bed ** 2).mean()) + 1e-9)
 # dips: fx + bed fall away just before the twist and the payoff
 gate = np.ones(N, np.float32)
 for e in ev['sfx']:
@@ -63,7 +66,7 @@ for e in ev['sfx']:
     gate[a:a + r] = np.minimum(gate[a:a + r], np.linspace(1, 0.08, r)); gate[a + r:b] = 0.08; gate[b:b + r] = np.minimum(gate[b:b + r], np.linspace(0.08, 1, r))
 mix = v * 1.0 + (fx + bed) * gate
 # loop: fade the very end so the restart is clean
-fe = int(0.12 * SR); mix[-fe:] *= np.linspace(1, 0, fe)
+fe = int((SND.get('tail_fade', 0.12)) * SR); mix[-fe:] *= np.linspace(1, 0, fe)
 sf.write('audio/premix.wav', mix, SR, subtype='FLOAT')
 # loudness -14 LUFS, true peak -1.5 (two-pass)
 r = subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', 'audio/premix.wav', '-af', 'volume=8dB,alimiter=limit=0.55:attack=3:release=60:level=disabled', '-c:a', 'pcm_f32le', 'audio/premix_l.wav'], check=True)

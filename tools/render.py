@@ -39,7 +39,8 @@ async def main():
         lo, hi = (int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 else (0, len(segs) - 1)
         if MODE == 'over':
             os.makedirs(f'{out}/over', exist_ok=True); t0 = time.time()
-            for f in range(NF):
+            NFO = min(NF, int(float(os.environ.get('OVER_T1', '1e9')) * FPS))
+            for f in range(int(float(os.environ.get('OVER_T0', '0')) * FPS), NFO):
                 fn = f'{out}/over/{f:05d}.png'
                 if os.path.exists(fn): continue
                 d = await pg.evaluate(f"frame({f / FPS:.6f}, 0.9, 'over')")

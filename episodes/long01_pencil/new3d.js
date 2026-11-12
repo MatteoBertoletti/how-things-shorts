@@ -69,6 +69,8 @@ export function buildNew(ctx, S) {
   const sec = new THREE.Mesh(secGeo, secM); sec.position.z = 0.02; XR.add(sec);
   const coreGlow = new THREE.Mesh(new THREE.BoxGeometry(PEN.cone + PEN.body, PEN.core * 2, 0.1), new THREE.MeshBasicMaterial({ color: 0xFFD23A, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, clippingPlanes: [secM.clippingPlanes[0]] }));
   coreGlow.position.set((PEN.cone + PEN.body) / 2, 0, 0.08); XR.add(coreGlow);
+  const xfloor = new THREE.Mesh(new THREE.PlaneGeometry(900, 600), new THREE.MeshStandardMaterial({ color: 0x4a5464, roughness: 0.8, metalness: 0.1 })); xfloor.rotation.x = -Math.PI / 2; xfloor.position.set(95, -PEN.R - 0.5, 0); xfloor.receiveShadow = true;
+  const XRF = new THREE.Group(); XRF.position.copy(XR.position); scene.add(XRF); XRF.add(xfloor);
   const ghostM = new THREE.MeshBasicMaterial({ color: 0x7FB3D9, transparent: true, opacity: 0, depthWrite: false, side: THREE.BackSide });
   const ghost = new THREE.Mesh(new THREE.CylinderGeometry(PEN.R * 1.02, PEN.R * 1.02, PEN.L - PEN.cone, 6, 1, true), ghostM); ghost.rotation.z = -Math.PI / 2; ghost.position.x = PEN.cone + (PEN.L - PEN.cone) / 2; XR.add(ghost);
   const edges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.ShapeGeometry(secShape)), new THREE.LineBasicMaterial({ color: 0x7FE3FF, transparent: true, opacity: 0 })); edges.position.z = 0.05; XR.add(edges);
@@ -148,5 +150,5 @@ export function buildNew(ctx, S) {
     sticks.instanceMatrix.needsUpdate = capsI.instanceMatrix.needsUpdate = ends.instanceMatrix.needsUpdate = true;
   }
   scene.updateMatrixWorld(true);
-  return { MAC, macroSet, macTip, tipX, lineZ, writer, XR, xp, xraySet, sec, CB, LAY, sheets, FIB, carbonSet, CR, coreSet, FAC, factorySet, all: [MAC, XR, CB, CR, FAC] };
+  return { MAC, macroSet, macTip, tipX, lineZ, writer, XR, XRF, xp, xraySet, sec, CB, LAY, sheets, FIB, carbonSet, CR, coreSet, FAC, factorySet, all: [MAC, XR, XRF, CB, CR, FAC] };
 }

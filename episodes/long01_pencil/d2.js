@@ -21,7 +21,7 @@ function grainTiles() {
 export function grade(g, t, { vig = 0.32, grain = 0.10 } = {}) {
   g.save();
   const r = g.createRadialGradient(W / 2, H / 2, H * 0.25, W / 2, H / 2, H * 1.05);
-  r.addColorStop(0, 'rgba(0,0,0,0)'); r.addColorStop(1, `rgba(0,0,0,${vig * 1.6})`); g.fillStyle = r; g.fillRect(0, 0, W, H);
+  r.addColorStop(0, 'rgba(0,0,0,0)'); r.addColorStop(1, `rgba(0,0,0,${vig * 0.9})`); g.fillStyle = r; g.fillRect(0, 0, W, H);
   const tiles = grainTiles(), f = Math.floor(t * 30), tile = tiles[f % 4], ox = Math.floor(hash(f * 3.1) * 512), oy = Math.floor(hash(f * 7.7) * 512);
   g.globalCompositeOperation = 'overlay'; g.globalAlpha = grain; g.translate(-ox, -oy);
   for (let x = 0; x < W + 512; x += 512) for (let y = 0; y < H + 512; y += 512) g.drawImage(tile, x, y);
@@ -31,7 +31,7 @@ export function grade(g, t, { vig = 0.32, grain = 0.10 } = {}) {
 // ---------------- backgrounds ----------------
 export function bgGraphite(g, t, { tone = 0, grid = 1 } = {}) {
   const r = g.createRadialGradient(W * 0.5, H * 0.45, 50, W * 0.5, H * 0.5, W * 0.75);
-  r.addColorStop(0, tone ? '#232a35' : '#1E2430'); r.addColorStop(1, '#0E1117'); g.fillStyle = r; g.fillRect(0, 0, W, H);
+  r.addColorStop(0, tone ? '#5a6476' : '#536072'); r.addColorStop(0.6, '#3a4352'); r.addColorStop(1, '#262c37'); g.fillStyle = r; g.fillRect(0, 0, W, H);
   if (grid) { g.save(); g.globalAlpha = 0.05 * grid; g.strokeStyle = P.cold; g.lineWidth = 1; const off = (t * 12) % 60;
     for (let x = -60 + off; x < W; x += 60) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
     for (let y = -60 + off * 0.5; y < H; y += 60) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); } g.restore(); }
@@ -45,7 +45,7 @@ function fibres() {
     x.strokeStyle = `rgba(${130 + hash(i) * 70},${110 + hash(i * 2) * 60},${80 + hash(i * 3) * 50},0.13)`; x.lineWidth = 1; x.beginPath(); x.moveTo(px, py); x.lineTo(px + Math.cos(a) * l, py + Math.sin(a) * l); x.stroke(); }
   _fib = c; return c;
 }
-export function bgPaper(g, t, { dx = 0, dy = 0, dark = 0 } = {}) {
+export function bgPaper(g, t, { dx = 0, dy = 0, dark = 0.36 } = {}) {
   const f = fibres(); g.save(); g.translate(-((dx % 1024) + 1024) % 1024, -((dy % 1024) + 1024) % 1024);
   for (let x = 0; x < W + 1024; x += 1024) for (let y = 0; y < H + 1024; y += 1024) g.drawImage(f, x, y); g.restore();
   if (dark) { g.fillStyle = `rgba(20,24,31,${dark})`; g.fillRect(0, 0, W, H); }
@@ -183,6 +183,9 @@ export function recipeKiln(g, t, a, { name = 'N.-J. CONTÉ', year = '1795' } = {
     for (let i = 0; i < 7; i++) { const fx = -80 + i * 27, fh = 70 + 40 * Math.abs(noise1(t * 4 + i * 1.7)); const gr = g.createLinearGradient(0, 0, 0, -fh); gr.addColorStop(0, '#FF7A2B'); gr.addColorStop(1, 'rgba(255,210,58,0)'); g.fillStyle = gr;
       g.beginPath(); g.moveTo(fx - 14, -4); g.quadraticCurveTo(fx, -fh * 1.2, fx + 14, -4); g.fill(); }
     g.restore(); label(g, 'BAKED', 1460, 660, ka - 0.4, { size: 34, col: P.acc }); }
+  // a baked core slides out of the kiln and becomes the core of a pencil outline
+  const oa = a - 3.0; if (oa > 0) { const u = E.io(clamp(oa / 1.2)), x0 = 1650, x1 = lerp(1650, 1840, u); g.save(); g.fillStyle = '#2a2e36'; g.fillRect(x0, 570, x1 - x0, 18);
+    if (oa > 1.3) { const pu = E.o(clamp((oa - 1.3) / 0.6)); g.globalAlpha = pu; g.strokeStyle = P.acc; g.lineWidth = 6; rr(g, 1590, 548, 300, 62, 12); g.stroke(); } g.restore(); }
   chip(g, `${name} · ${year}`, 960, 230, a - 0.2, { size: 38 });
   if (a > 2.6) label(g, 'STILL HOW IT\'S DONE', 960, 860, a - 2.6, { size: 44, col: P.cream });
 }

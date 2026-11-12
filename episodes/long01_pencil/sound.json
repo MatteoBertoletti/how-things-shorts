@@ -1,0 +1,196 @@
+{
+ "map": {
+  "pencil_write": [
+   3194,
+   -12,
+   "onset",
+   1.3
+  ],
+  "pencil_scribble": [
+   2369,
+   -12,
+   "onset",
+   0.55
+  ],
+  "ui_tick": [
+   2577,
+   -19,
+   "onset",
+   0.15
+  ],
+  "fire_whoosh": [
+   1345,
+   -12,
+   "onset",
+   null
+  ],
+  "low_whoosh": [
+   3120,
+   -15,
+   "onset",
+   null
+  ],
+  "sparkle": [
+   2350,
+   -17,
+   "peak",
+   null
+  ],
+  "swipe": [
+   1490,
+   -15,
+   "peak",
+   null
+  ],
+  "swell": [
+   2626,
+   -13,
+   "onset",
+   null
+  ],
+  "whoosh_soft": [
+   1489,
+   -16,
+   "peak",
+   null
+  ],
+  "water_pour": [
+   2826,
+   -14,
+   "onset",
+   1.2
+  ],
+  "mixer": [
+   3117,
+   -17,
+   "onset",
+   1.2
+  ],
+  "squish": [
+   135,
+   -12,
+   "onset",
+   1.0
+  ],
+  "kiln_hum": [
+   1831,
+   -18,
+   "onset",
+   1.4
+  ],
+  "pencil_write2": [
+   2376,
+   -13,
+   "onset",
+   1.3
+  ],
+  "saw": [
+   826,
+   -14,
+   "onset",
+   1.6
+  ],
+  "planer": [
+   850,
+   -15,
+   "onset",
+   1.6
+  ],
+  "glue_squirt": [
+   3215,
+   -16,
+   "onset",
+   0.7
+  ],
+  "wood_tap": [
+   830,
+   -12,
+   "onset",
+   null
+  ],
+  "press_thud": [
+   2498,
+   -9,
+   "onset",
+   null
+  ],
+  "cutter": [
+   821,
+   -13,
+   "onset",
+   1.3
+  ],
+  "wood_clatter": [
+   3136,
+   -13,
+   "onset",
+   1.0
+  ],
+  "paint_dip": [
+   1311,
+   -15,
+   "onset",
+   0.9
+  ],
+  "stamp": [
+   1365,
+   -9,
+   "onset",
+   null
+  ],
+  "crimp": [
+   2858,
+   -12,
+   "onset",
+   null
+  ],
+  "rubber_push": [
+   1124,
+   -14,
+   "onset",
+   null
+  ],
+  "pencil_write3": [
+   3011,
+   -11,
+   "onset",
+   1.7
+  ],
+  "whoosh": [
+   1490,
+   -12,
+   "peak",
+   null
+  ],
+  "xray_hit": [
+   2903,
+   -14,
+   "peak",
+   null
+  ],
+  "pop": [
+   2568,
+   -15,
+   "onset",
+   null
+  ],
+  "hit": [
+   2182,
+   -15,
+   "onset",
+   null
+  ],
+  "factory": [
+   3117,
+   -20,
+   "onset",
+   3.0
+  ]
+ },
+ "bed_file": "audio/long01/bed.wav",
+ "bed_filter": "highpass=f=60,lowpass=f=7000",
+ "bed_db_voice": -21,
+ "ticks": false,
+ "repeat": {},
+ "tail_fade": 1.5
+}

@@ -58,14 +58,14 @@ export async function build(ctx, script, timing) {
   const hookPlate = (tau) => macro(tau, lerp(HOOK0.r, 62, clamp(tau / 2.9)), HOOK0.az + 0.05 * clamp(tau / 2.9), HOOK0.el);
   S(0, Ls(2) - 0.05, '3D', (u, t) => hookPlate(t), 0);
   // x-ray: the same pencil, cut open along its length
-  const xr = (t, t0, opts) => { show(N.XR); N.xraySet(t, opts); const k = E.io(clamp((t - t0) / 4)); const c = L(N.XR, lerp(88, 100, k), 0, 0); cam(orbit(c, lerp(250, 225, k), lerp(-0.2, -0.05, k), 0.95), c, 30, 0.05, -0.18); rig(c, 200, 1.5); expo = 0.8; };
+  const xr = (t, t0, opts) => { show(N.XR, N.XRF); N.xraySet(t, opts); const k = E.io(clamp((t - t0) / 4)); const c = L(N.XR, lerp(88, 100, k), 0, 0); cam(orbit(c, lerp(250, 225, k), lerp(-0.2, -0.05, k), 0.95), c, 30, 0.05, -0.18); rig(c, 200, 1.5); expo = 0.8; };
   S(Ls(2) - 0.05, Ls(4) - 0.15, '3D', (u, t) => xr(t, Ls(2), { scan: E.io(clamp((t - Ls(2)) / 1.4)), glow: clamp((t - Wd(3, 'graphite')) / 0.3) }));
   // promise beats (type)
   S(Ls(4) - 0.15, Ls(5) - 0.15, 'TYPE', (u, t, g) => { D.bgGraphite(g, t); promiseIcons(g, t - Ls(4)); });
   S(Ls(5) - 0.15, Ls(6) - 0.15, 'TYPE', (u, t, g) => { heatBg(g, t, t - Ls(5)); });
   // seam teaser: end-on macro of a finished hexagon, the glue line glints
   S(Ls(6) - 0.15, Ls(7) - 0.2, '3D', (u, t) => { show(ST.SHP); ST.secSet(t); ST.seam.material.emissive = new THREE.Color(0xFFD23A); ST.seam.material.emissiveIntensity = 0.6 + 0.6 * Math.max(0, Math.sin((t - Ls(6)) * 3.2));
-    const c = L(ST.SEC, 0, 0, 0); cam(c.clone().add(v3(lerp(-14, 6, u), lerp(5, 2, u), lerp(44, 34, E.io(u)))), c, 30, 0.22); rig(c, 160, 2.0); expo = 1.05; });
+    const c = L(ST.SEC, 0, 0, 0); cam(c.clone().add(v3(lerp(-14, 6, u), lerp(5, 2, u), lerp(44, 34, E.io(u)))), c, 30, 0.22); rig(c, 160, 2.0); expo = 1.4; });
   S(Ls(7) - 0.2, Ls(8) - 0.1, 'TYPE', (u, t, g) => { D.bgGraphite(g, t, { tone: 1 }); });
   // ---------- CH. 1 ----------
   const tBorr = Wd(9, 'Borrowdale') + 0.6;
@@ -76,11 +76,11 @@ export async function build(ctx, script, timing) {
     notes: [{ px: 0.62, py: 0.35, lx: 1430, ly: 300, text: 'PURE GRAPHITE', at: 0.5, cuts: 3 }] }));
   S(Ls(11) - 0.1, Ls(12) - 0.1, '2D', (u, t, g) => D.leadVsGraphite(g, t, t - Ls(11) + 0.1));
   S(Ls(12) - 0.1, Ls(13) - 0.1, 'ARCH', (u, t, g) => D.archival(g, t, t - Ls(12), Ls(13) - Ls(12), { img: 'graphite', mode: 'card', cardH: 640, cardX: 1240, from: [0.45, 0.5, 1.06], to: [0.55, 0.5, 1.0], credit: 'Graphite · U.S. Geological Survey · public domain',
-    notes: [{ px: 0.4, py: 0.5, lx: 480, ly: 330, text: '1779: CARBON', at: Wd(12, 'carbon') - Ls(12), circle: 120, col: '#FFD23A', bend: 0.2 }] }));
+    notes: [{ px: 0.4, py: 0.5, lx: 480, ly: 330, text: '1779: CARBON', size: 46, at: Wd(12, 'carbon') - Ls(12), circle: 120, col: '#FFD23A', bend: 0.2 }] }));
   S(Ls(13) - 0.1, Ls(14) - 0.1, 'TYPE', (u, t, g) => { D.bgGraphite(g, t, { tone: 1 }); greek(g, t, t - Ls(13)); });
   S(Ls(14) - 0.1, Ls(15) - 0.1, '2D', (u, t, g) => D.blockade(g, t, t - Ls(14) + 0.1));
   S(Ls(15) - 0.1, Ls(16) - 0.1, '2D', (u, t, g) => D.recipeKiln(g, t, t - Ls(15) - 0.1));
-  S(Ls(16) - 0.1, Ls(17) - 0.15, '3D', (u, t) => { show(ST.MIXG); const c = L(ST.CUT, lerp(40, 110, E.io(u)), PEN.R * 0.87, 0); cam(c.clone().add(v3(-60, 46, 52)), c, 30, 0.2); rig(c, 200, 2.0); expo = 1.15; });
+  S(Ls(16) - 0.1, Ls(17) - 0.15, '3D', (u, t) => { show(N.XR, N.XRF); N.xraySet(t, { scan: 1, glow: 1 }); const c = L(N.XR, lerp(30, 60, E.io(u)), 0, 0); cam(orbit(c, lerp(90, 80, u), lerp(0.5, 0.35, u), 0.75), c, 30, -0.15); rig(c, 200, 1.5); expo = 0.8; });
   // ---------- CH. 2 ----------
   const tDive = Ls(17) + 2.0;
   S(Ls(17) - 0.15, tDive, '3D', (u, t) => { const k = E.i(u); macro(t - Ls(17) + 6, lerp(110, 9, k), 0.4, lerp(0.5, 1.1, k), 30, lerp(0.2, 0, k)); });
@@ -167,13 +167,13 @@ export async function build(ctx, script, timing) {
     const la = a - (Wd(4, 'tree') - Ls(4)), ra = a - (Wd(4, 'rock') - Ls(4));
     if (la > 0) { const s = D.pop(la); g.save(); g.translate(560, 640); g.scale(s, s); g.rotate(-0.08); g.fillStyle = '#6b4a33'; D.rr(g, -230, -90, 420, 180, 90); g.fill(); g.fillStyle = D.P.cedar; g.beginPath(); g.ellipse(190, 0, 60, 90, 0, 0, Math.PI * 2); g.fill();
       g.strokeStyle = D.P.cedarD; g.lineWidth = 5; for (let r = 15; r < 60; r += 15) { g.beginPath(); g.ellipse(190, 0, r, r * 1.5, 0, 0, Math.PI * 2); g.stroke(); } g.restore(); }
-    if (ra > 0) { const s = D.pop(ra); g.save(); g.translate(1360, 640); g.scale(s, s); g.fillStyle = '#23262c'; g.beginPath(); [[-170, 40], [-120, -90], [-10, -140], [130, -100], [180, 10], [110, 100], [-60, 110]].forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill();
-      g.strokeStyle = 'rgba(190,200,215,0.55)'; g.lineWidth = 4; g.stroke(); for (let i = 0; i < 9; i++) { g.fillStyle = 'rgba(220,228,240,0.5)'; g.fillRect(-120 + hash(i) * 240, -90 + hash(i * 3) * 160, 26, 4); } g.restore(); }
-    const pa = a - (Wd(4, 'pencil') - Ls(4)); if (pa > 0) { const s = D.pop(pa); g.save(); g.translate(960, 860); g.scale(s, s); g.fillStyle = D.P.acc; g.fillRect(-300, -26, 560, 52); g.fillStyle = D.P.cedar; g.beginPath(); g.moveTo(-300, -26); g.lineTo(-380, 0); g.lineTo(-300, 26); g.fill(); g.fillStyle = '#2a2e36'; g.beginPath(); g.moveTo(-352, -9); g.lineTo(-380, 0); g.lineTo(-352, 9); g.fill(); g.fillStyle = '#C9CED6'; g.fillRect(260, -28, 40, 56); g.fillStyle = '#F29AA8'; D.rr(g, 300, -24, 40, 48, 10); g.fill(); g.restore(); }
+    if (ra > 0) { const s = D.pop(ra); g.save(); g.translate(1360, 640); g.scale(s, s); const rg = g.createLinearGradient(-170, -140, 180, 110); rg.addColorStop(0, '#9aa1ac'); rg.addColorStop(0.5, '#4a505c'); rg.addColorStop(1, '#6c7380'); g.fillStyle = rg; g.beginPath(); [[-170, 40], [-120, -90], [-10, -140], [130, -100], [180, 10], [110, 100], [-60, 110]].forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill();
+      g.strokeStyle = 'rgba(210,220,235,0.85)'; g.lineWidth = 6; g.stroke(); for (let i = 0; i < 9; i++) { g.fillStyle = 'rgba(220,228,240,0.5)'; g.fillRect(-120 + hash(i) * 240, -90 + hash(i * 3) * 160, 26, 4); } g.restore(); }
+    const pa = a - (Wd(4, 'pencil') - Ls(4)); if (pa > 0) { const s = D.pop(pa) * 1.5; g.save(); g.translate(960, 870); g.scale(s, s); g.fillStyle = D.P.acc; g.fillRect(-300, -26, 560, 52); g.fillStyle = D.P.cedar; g.beginPath(); g.moveTo(-300, -26); g.lineTo(-380, 0); g.lineTo(-300, 26); g.fill(); g.fillStyle = '#2a2e36'; g.beginPath(); g.moveTo(-352, -9); g.lineTo(-380, 0); g.lineTo(-352, 9); g.fill(); g.fillStyle = '#C9CED6'; g.fillRect(260, -28, 40, 56); g.fillStyle = '#F29AA8'; D.rr(g, 300, -24, 40, 48, 10); g.fill(); g.restore(); }
   }
   function heatBg(g, t, a) {
     const r = g.createRadialGradient(W / 2, H * 0.9, 50, W / 2, H * 0.6, W * 0.7); const k = clamp(a / 1.2);
-    r.addColorStop(0, `rgba(255,120,40,${0.75 * k})`); r.addColorStop(0.45, `rgba(140,40,10,${0.6 * k})`); r.addColorStop(1, '#0E1117'); g.fillStyle = '#0E1117'; g.fillRect(0, 0, W, H); g.fillStyle = r; g.fillRect(0, 0, W, H);
+    r.addColorStop(0, `rgba(255,130,50,${0.85 * k})`); r.addColorStop(0.45, `rgba(170,60,20,${0.7 * k})`); r.addColorStop(1, '#3a2c27'); g.fillStyle = '#3a2c27'; g.fillRect(0, 0, W, H); g.fillStyle = r; g.fillRect(0, 0, W, H);
     for (let i = 0; i < 90; i++) { const ph = (t * (0.25 + 0.3 * hash(i)) + hash(i * 3)) % 1, x = hash(i * 7) * W + 40 * Math.sin(t * 2 + i), y = H - ph * H * 1.1; g.fillStyle = `rgba(255,${150 + 80 * hash(i)},60,${(1 - ph) * 0.8 * k})`; g.beginPath(); g.arc(x, y, 2 + 3 * hash(i * 5), 0, Math.PI * 2); g.fill(); }
   }
   function greek(g, t, a) { g.save(); g.globalAlpha = 0.16 * clamp(a / 0.6); g.fillStyle = D.P.cold; g.font = `400 300px serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('γράφειν', 960 + 30 * Math.sin(t * 0.4), 560); g.restore(); }
@@ -187,11 +187,13 @@ export async function build(ctx, script, timing) {
   // hook
   T_({ k: 'titlecard', at: -1, until: 2.5 });
   T_({ k: 'strike', at: Ls(2) + 0.1, strikeAt: Wd(3, 'graphite') - 0.32, until: Ls(4) - 0.2, word: 'LEAD', repl: 'GRAPHITE', y: VY(200), size: 190, cx: VX(1380), ek: 'twist' });
+  T_({ k: 'odo', at: Ls(4) - 0.1, until: Wd(4, 'tree') - 0.06, value: 4, unit: 'MINUTES', pre: 'IN', y: VY(560), size: 260 });
   T_({ k: 'cap', at: Wd(4, 'tree'), until: Ls(5) - 0.2, words: [{ t: 'A TREE', k: 'noun' }, { t: '+', k: 'noun', at: Wd(4, 'and') }, { t: 'A ROCK', a: true, k: 'noun', at: Wd(4, 'rock') }], y: VY(260), size: 120 });
   T_({ k: 'odo', at: Wd(5, 'eleven'), until: Ls(6) - 0.2, value: 1100, unit: '°C', pre: 'ABOUT', y: VY(640), size: 300 });
+  T_({ k: 'cap', at: Ls(5) - 0.1, until: Wd(5, 'oven') - 0.05, words: [{ t: 'ON THE WAY', k: 'verb' }], y: VY(300), size: 110, dir: 1 });
   T_({ k: 'cap', at: Wd(5, 'oven'), until: Wd(5, 'eleven') - 0.04, words: [{ t: 'AN OVEN', a: true, k: 'noun' }], y: VY(300), size: 120 });
   T_({ k: 'cap', at: Wd(6, 'glued'), until: Ls(7) - 0.25, words: [{ t: 'ONE', k: 'noun' }, { t: 'GLUED SEAM', a: true, k: 'twist', at: Wd(6, 'seam') - 0.2 }], y: VY(180), cx: VX(620), size: 110 });
-  T_({ k: 'cap', at: Ls(7) - 0.1, until: Ls(8) - 0.15, words: [{ t: 'WHY', k: 'q' }, { t: '"LEAD"?', a: true, k: 'q', at: Wd(7, 'name') }], y: VY(540), size: 170 });
+  T_({ k: 'cap', at: Ls(7) - 0.1, until: Ls(8) - 0.15, words: [{ t: 'FIRST:', k: 'noun' }, { t: 'THE NAME', a: true, k: 'noun', at: Wd(7, 'name') }], y: VY(540), size: 170 });
   // lower-thirds
   for (const c of CH) T_({ k: 'lower', at: c.at + 0.2, until: c.at + 3.6, n: c.n, title: c.title });
   // CH. 1
@@ -200,6 +202,7 @@ export async function build(ctx, script, timing) {
   T_({ k: 'cap', at: Wd(11, 'black'), until: Ls(12) - 0.15, words: [{ t: '"BLACK LEAD"', a: true, k: 'noun' }], y: VY(150), size: 110 });
   T_({ k: 'cap', at: Ls(13), until: Wd(13, 'graphite') - 0.05, words: [{ t: 'GRAPHEIN', k: 'noun' }, { t: '= TO WRITE', a: true, k: 'verb', at: Wd(13, 'Greek') }], y: VY(520), size: 150 });
   T_({ k: 'cap', at: Wd(13, 'graphite'), until: Ls(14) - 0.15, words: [{ t: 'GRAPHITE', a: true, k: 'twist' }], y: VY(520), size: 220, hit: { kind: 'graphite' } });
+  T_({ k: 'chip', at: Ls(12) + 0.1, until: Wd(12, 'carbon') - 0.2, text: '1779', x: 480, y: 330 });
   T_({ k: 'chip', at: Ls(13) + 0.2, until: Ls(14) - 0.15, text: '1789', x: 960, y: 820 });
   // CH. 2
   T_({ k: 'cap', at: Wd(17, 'strange'), until: Ls(18) - 0.2, words: [{ t: 'SOMETHING', k: 'noun' }, { t: 'STRANGE', a: true, k: 'twist', at: Wd(17, 'strange') + 0.1 }], y: VY(160), size: 100 });
