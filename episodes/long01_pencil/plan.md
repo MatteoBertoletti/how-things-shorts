@@ -108,3 +108,109 @@ Total ~3 h 15 min of runner time in series; ~45-50 min wall clock with one job p
 - Camera: landscape framing, subject on the thirds (x 640 or 1280), text on the other side; never centred under a caption.
 - Motion blur: 3 sub-samples (was 6). One file per chapter, resumable, then concat.
 - End screen (4:25-4:45): two video elements at x 150-870 and 1050-1770, y 380-785; subscribe circle centred (960, 880) r 85: those areas stay free of text and busy motion for the full 20 s; text only in y 120-330.
+
+## Step 2 — script (665 words, 67 lines, 3,551 characters for ElevenLabs), waiting for OK
+Voice: Brian (nPczCjzI2devNBz1zQrb), eleven_multilingual_v2, stability 0.5, similarity 0.8, style 0.15, speed 0.95 (~150 wpm spoken, ~146 wpm with the pauses between lines). Spoken forms are written out (numbers in words).
+
+**HOOK (0:00)** (55 words)
+
+1. `3D` There is no lead in your pencil.
+2. `3D` There never was.
+3. `3D` That grey line is graphite.
+4. `TYPE` In four minutes, a tree and a rock become this pencil.
+5. `TYPE` On the way, they pass through an oven at about eleven hundred degrees.
+6. `3D` And it all hangs on a glued seam you've never noticed.
+7. `TYPE` Let's start with the name.
+
+**CH. 1 WHY IT'S CALLED LEAD** (98 words)
+
+8. `2D` So why do we call it lead?
+9. `2D` In the fifteen hundreds, a pure black rock turned up in Borrowdale, in northern England.
+10. `ARCH` It was so pure, it could be sawn straight into sticks.
+11. `2D` It looked like lead and marked like lead, so people called it black lead.
+12. `ARCH` In seventeen seventy-nine, it turned out to be carbon.
+13. `TYPE` Ten years later it was named graphite, from the Greek for to write.
+14. `ARCH` Then war cut France off from English graphite.
+15. `ARCH` So in seventeen ninety-five, Nicolas-Jacques Conté mixed powdered graphite with clay, and baked it.
+16. `2D` Pencil cores are still made that way.
+
+**CH. 2 WHAT GRAPHITE REALLY IS** (96 words)
+
+17. `3D` Zoom into that grey line, and something strange appears.
+18. `2D` Graphite is carbon atoms, locked into flat sheets of hexagons.
+19. `2D` In a sheet, each atom grips three neighbours tightly.
+20. `2D` But the sheets are only loosely stacked.
+21. `2D` Press down and drag, and the top sheets slide off, like cards from a deck.
+22. `3D` Those loose flakes catch in the paper fibres. That's your line.
+23. `TYPE` Here's the twist: a diamond is made of the same atoms.
+24. `TYPE` Same carbon. One is the hardest mineral, the other one of the softest.
+25. `2D` Pure graphite, though, is too soft to work on its own.
+
+**CH. 3 BUILDING THE CORE** (133 words)
+
+26. `3D` So the core starts as two powders: graphite and clay.
+27. `2D` Add water, and they're ground together into a smooth grey paste.
+28. `3D` The paste is squeezed through a tiny hole into long, thin strings.
+29. `2D` The strings are cut to length and left to dry.
+30. `3D` Then they go into a kiln, at about eleven hundred degrees Celsius.
+31. `3D` The heat bakes the clay into hard cores.
+32. `2D` A dip in hot wax fills the pores, so the core glides.
+33. `TYPE` So why do some pencils write darker than others?
+34. `3D` It's all in the recipe.
+35. `3D` More graphite: a softer core, and a darker line.
+36. `3D` More clay: a harder core, and a lighter line.
+37. `2D` Most scales run from nine H, the hardest, to nine B, the softest.
+38. `2D` H B is in the middle: in the US, the number two pencil.
+
+**CH. 4 THE WOOD** (77 words)
+
+39. `TYPE` Now, the wood. And the core still has to get inside it.
+40. `ARCH` Many pencils are made from incense cedar.
+41. `3D` The logs are cut into blocks, then into thin slats.
+42. `2D` Each slat is about eighteen centimetres long, and just over half a centimetre thick.
+43. `ARCH` The slats are dried, stained and waxed.
+44. `3D` Then a cutter carves parallel grooves along each slat.
+45. `2D` Each groove is only half as deep as a core.
+46. `TYPE` Why half? Because every core gets two slats.
+
+**CH. 5 THE SANDWICH** (95 words)
+
+47. `3D` Glue goes on first. Then a core drops into every groove.
+48. `3D` A second slat lands on top, and the stack goes into a press.
+49. `3D` The press holds it until the glue sets.
+50. `TYPE` So your pencil was never one piece.
+51. `TYPE` It's two halves, glued together.
+52. `2D` That glue line runs the full length of every wooden pencil.
+53. `2D` Cutters shape the sandwich into hexagons.
+54. `3D` Six to nine pencils from every sandwich.
+55. `ARCH` Two wooden halves glued around a core is an old idea. It's still how it's done.
+56. `3D` But right now, these pencils are bare wood. They need colour.
+
+**CH. 6 COLOR, METAL, RUBBER** (77 words)
+
+57. `3D` Each pencil gets coat after coat of paint.
+58. `2D` Layer by layer, a smooth, hard shell.
+59. `ARCH` The eraser has its own story.
+60. `ARCH` In eighteen fifty-eight, a Philadelphia stationer patented a pencil with an attached eraser.
+61. `TYPE` Seventeen years later, the US Supreme Court declared that patent invalid.
+62. `3D` Today, a metal ferrule is clamped on, and the eraser is pushed inside.
+63. `3D` One last stamp marks the grade.
+64. `2D` Two cedar halves. A baked core. One glue line. Paint, metal and rubber.
+
+**PAYOFF** (21 words)
+
+65. `3D` A tree and a rock, through the fire, and into your hand.
+66. `3D` And every line it draws is graphite. Never lead.
+
+**END SCREEN** (13 words)
+
+67. `TYPE` Next, how a ballpoint pen works. Subscribe for a new one every week.
+## Titles (no brand names)
+1. How Pencils Are Made (There's No Lead Inside)  <- recommended: main search phrase first + the twist
+2. How Pencils Are Made: From a Tree and a Rock to a Pencil
+3. The Pencil Manufacturing Process, Explained in 3D
+
+## Thumbnail concepts (1280x720, max 3 words)
+A. "NO LEAD?" — 3D x-ray cut of a yellow pencil filling the right two thirds, the dark graphite core glowing along its length; the word LEAD in red with a scribbled strike-through; graphite background, warm key light.
+B. "TWO HALVES" — extreme macro of the hexagonal end of a pencil, the two cedar halves pulled a few mm apart along the glue seam, the core sitting in both grooves; amber wood against the graphite background.
+C. "1,100 °C" — a row of grey cores glowing orange inside the kiln, one finished yellow pencil in sharp focus in front; the number in the accent yellow with heat glow.
