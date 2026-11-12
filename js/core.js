@@ -7,7 +7,9 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-export const W = 1080, H = 1920, FPS = 30;
+// format profile: set globalThis.RTR_FMT = '16x9' before this module loads (film.html reads script.json "format")
+export const FMT = globalThis.RTR_FMT || '9x16';
+export const W = FMT === '16x9' ? 1920 : 1080, H = FMT === '16x9' ? 1080 : 1920, FPS = 30;
 
 // ---------- math ----------
 export const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
@@ -72,7 +74,7 @@ export function makeRenderer() {
   scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
   const camera = new THREE.PerspectiveCamera(40, W / H, 1, 5000);
   // shift the picture left so the subject sits in the Shorts safe centre (x ~ 470), clear of the right-hand icons
-  camera.setViewOffset(W, H, 70, 0, W, H);
+  if (FMT !== '16x9') camera.setViewOffset(W, H, 70, 0, W, H);
   const composer = new EffectComposer(renderer);
   composer.setPixelRatio(1); composer.setSize(W, H);
   composer.addPass(new RenderPass(scene, camera));

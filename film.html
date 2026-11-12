@@ -1,14 +1,17 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><title>film</title>
-<style>html,body{margin:0;background:#000}canvas#out{width:1080px;height:1920px;display:block}</style>
+<style>html,body{margin:0;background:#000}canvas#out{display:block}</style>
 <script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/","cannon-es":"./node_modules/cannon-es/dist/cannon-es.js","three-bvh-csg":"./node_modules/three-bvh-csg/build/index.module.js","three-mesh-bvh":"./node_modules/three-mesh-bvh/build/index.module.js"}}</script>
 </head><body><canvas id="out" width="1080" height="1920"></canvas>
 <script type="module">
-import { makeRenderer, W, H } from './js/core.js';
 const q = new URLSearchParams(location.search); const ep = q.get('ep') || (await (await fetch('./episodes/CURRENT')).text()).trim();
+const script0 = await (await fetch(`./episodes/${ep}/script.json`)).json();
+globalThis.RTR_FMT = script0.format || '9x16';
+const { makeRenderer, W, H } = await import('./js/core.js');
+{ const cv = document.getElementById('out'); cv.width = W; cv.height = H; cv.style.width = W + 'px'; cv.style.height = H + 'px'; }
 const fonts = [['JBMono', 'jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2', '400'], ['JBMono', 'jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2', '700'], ['JBMono', 'jetbrains-mono/files/jetbrains-mono-latin-800-normal.woff2', '800'], ['Anton', 'anton/files/anton-latin-400-normal.woff2', '400'], ['Archivo Black', 'archivo-black/files/archivo-black-latin-400-normal.woff2', '400']];
 await Promise.all(fonts.map(async ([n, f, w]) => { const ff = new FontFace(n, `url(./node_modules/@fontsource/${f})`, { weight: w }); await ff.load(); document.fonts.add(ff); }));
-const script = await (await fetch(`./episodes/${ep}/script.json`)).json();
+const script = script0;
 let timing = null; try { const r = await fetch(`./episodes/${ep}/timing.json`); if (r.ok) timing = await r.json(); } catch (e) {}
 const ctx = makeRenderer();
 const mod = await import(`./episodes/${ep}/episode.js`);

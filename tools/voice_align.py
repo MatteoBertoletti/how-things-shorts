@@ -8,8 +8,10 @@ EP, AD = sys.argv[1], sys.argv[2]; SR = 48000
 S = json.load(open(f'{EP}/script.json'))
 GAPS = S.get('gaps', {})             # extra pause BEFORE a line id, seconds (on top of the natural one)
 MIN_GAP = S.get('min_gap', 0.28)     # minimum silence between lines
+TEMPO = S.get('tempo')               # optional calmer delivery without a new take: rubberband time-stretch, pitch kept
 def load(fn):
-    x = subprocess.run(['ffmpeg', '-v', 'error', '-i', fn, '-ac', '1', '-ar', str(SR), '-f', 'f32le', '-'], capture_output=True, check=True).stdout
+    af = ['-af', f'rubberband=tempo={TEMPO}:pitch=1:formant=preserved:pitchq=quality:window=standard'] if TEMPO else []
+    x = subprocess.run(['ffmpeg', '-v', 'error', '-i', fn, *af, '-ac', '1', '-ar', str(SR), '-f', 'f32le', '-'], capture_output=True, check=True).stdout
     return np.frombuffer(x, np.float32).copy()
 def trim(x, thr=-46):
     w = int(SR * 0.01); n = len(x) // w
