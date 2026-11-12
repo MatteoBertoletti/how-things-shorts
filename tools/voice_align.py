@@ -22,7 +22,7 @@ NUM = {'5': 'five', '7': 'seven'}
 def norm(w): w = w.lower().replace('millimeters', 'millimetres'); w = re.sub(r"[^a-z0-9']", '', w); return NUM.get(w, w)
 model = WhisperModel('small.en', device='cpu', compute_type='int8')
 out, t, report = [], 0.25, []
-wav = np.zeros(int(SR * 80), np.float32)
+wav = np.zeros(int(SR * S.get("max_len", 80)), np.float32)
 for k, L in enumerate(S['lines']):
     x = load(f'{AD}/raw/{L["id"]:02d}.mp3'); y, off = trim(x)
     MP = S.get('max_pause')
