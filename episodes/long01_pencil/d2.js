@@ -262,12 +262,18 @@ export function flakesOnFibres(g, t, a) {
 }
 export function diamondVsGraphite(g, t, a) {
   bgGraphite(g, t, { tone: 1 });
-  // diamond: 3D-ish tetrahedral lattice in perspective (cream), graphite: stacked sheets (grey)
-  const da = a - 0.2; if (da > 0) { g.save(); g.translate(560, 560); g.rotate(t * 0.15); const s = E.back(clamp(da / 0.5));
-    g.scale(s, s); for (let i = 0; i < 26; i++) { const p = [(hash(i * 2.3) - 0.5) * 340, (hash(i * 4.1) - 0.5) * 340]; dot(g, p[0], p[1], 14, P.cream);
-      for (let j = 0; j < i; j++) { const q = [(hash(j * 2.3) - 0.5) * 340, (hash(j * 4.1) - 0.5) * 340]; if (Math.hypot(p[0] - q[0], p[1] - q[1]) < 110) { g.strokeStyle = 'rgba(243,233,210,0.6)'; g.lineWidth = 6; g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(q[0], q[1]); g.stroke(); } } }
-    g.restore(); }
-  const ga = a - 0.5; if (ga > 0) for (let i = 0; i < 4; i++) hexSheet(g, 1180 + 30 * Math.sin(t + i), 380 + i * 70, 26, 8, 2, ga * 1.5 - i * 0.1, { atom: '#8b93a0', bond: '#5d6573', skewY: 1.3, sy: 0.45 });
+  // left: a cut diamond (facets, sparkle); right: graphite as stacked carbon sheets
+  const da = a - 0.15; if (da > 0) { const s = pop(da) * 1.0; g.save(); g.translate(560, 560); g.scale(s, s); g.rotate(0.04 * Math.sin(t));
+    const top = [[-200, -60], [-120, -150], [120, -150], [200, -60]], tip = [0, 230];
+    const facet = (pts, col) => fillPoly(g, pts, col, 1);
+    facet([[-200, -60], [200, -60], tip], '#BFE3F5'); facet([[-200, -60], [0, -60], tip], '#9CCDE8'); facet([[0, -60], [100, -60], tip], '#D9F1FB');
+    facet([[-200, -60], [-120, -150], [-60, -60]], '#E6F6FD'); facet([[-120, -150], [0, -150], [-60, -60]], '#C9EAF8'); facet([[0, -150], [120, -150], [60, -60]], '#F2FBFF'); facet([[120, -150], [200, -60], [60, -60]], '#B5DDF0'); facet([[-60, -60], [0, -150], [60, -60]], '#DDF3FC');
+    path(g, [...top, [200, -60], tip, [-200, -60]], 1, { w: 6, col: '#FFFFFF', close: true });
+    const sp = (t * 0.9) % 1; g.globalAlpha = Math.sin(sp * Math.PI); g.fillStyle = '#fff'; g.save(); g.translate(-90 + 180 * sp, -120); g.rotate(t); g.fillRect(-3, -26, 6, 52); g.fillRect(-26, -3, 52, 6); g.restore(); g.restore();
+    label(g, 'DIAMOND', 560, 860, da - 0.2, { size: 44 }); }
+  const ga = a - 0.45; if (ga > 0) { for (let i = 0; i < 5; i++) hexSheet(g, 1100 + 14 * Math.sin(t * 1.3 + i), 330 + i * 92, 30, 11, 3, ga * 1.5 - i * 0.1, { atom: '#C8CDD5', bond: '#7F8896', skewY: 1.25, sy: 0.42 });
+    label(g, 'GRAPHITE', 1390, 860, ga - 0.2, { size: 44 }); }
+  label(g, 'C', 960, 520, a - 0.7, { size: 120, col: P.acc, font: FONT.title, plate: false });
 }
 export function crumble(g, t, a) {
   bgGraphite(g, t);
@@ -329,16 +335,18 @@ export function waxPores(g, t, a) {
   label(g, 'GLIDES', 960, 950 - 30, a - 2.6, { size: 46, col: P.acc });
 }
 export const GRADES = ['9H', '8H', '7H', '6H', '5H', '4H', '3H', '2H', 'H', 'F', 'HB', 'B', '2B', '3B', '4B', '5B', '6B', '7B', '8B', '9B'];
-export function hbScale(g, t, a, { focusHB = 0 } = {}) {
+export function hbScale(g, t, a, { focusHB = 0, z = 1 } = {}) {   // z: the punch-in factor of the shot that draws it (keeps text inside the safe area)
   bgGraphite(g, t);
   const x0 = 170, x1 = 1750, y = 470, n = GRADES.length, dx = (x1 - x0) / (n - 1);
   GRADES.forEach((gr, i) => { const pa = a - 0.15 - i * 0.05; if (pa <= 0) return; const x = x0 + i * dx, k = i / (n - 1);
     const col = `rgb(${Math.round(lerp(196, 26, k))},${Math.round(lerp(200, 28, k))},${Math.round(lerp(206, 34, k))})`;
     const h = lerp(40, 200, k), sc = pop(pa); g.save(); g.translate(x, y + 150); g.scale(1, sc); g.fillStyle = col; rr(g, -dx * 0.36, -h, dx * 0.72, h, 8); g.fill(); g.restore();
     const isHB = gr === 'HB', big = isHB ? 1 + 0.4 * focusHB : 1;
+    const sx = 960 + (x - 960) * z; if (sx < 115 || sx > 1805) return;
     label(g, gr, x, y - 40 - (isHB ? 40 * focusHB : 0), pa, { size: 30 * big, col: isHB && focusHB > 0 ? P.acc : P.cream, plate: false, drift: 0 }); });
-  label(g, 'HARDER · LIGHTER', 420, 760, a - 1.4, { size: 34, col: '#C4C8CE' });
-  label(g, 'SOFTER · DARKER', 1500, 760, a - 1.8, { size: 34, col: P.acc });
+  const LX = z > 1 ? 960 + (350 - 960) / z : 420, RX = z > 1 ? 960 + (1570 - 960) / z : 1500;
+  label(g, 'HARDER · LIGHTER', LX, 760, a - 1.4, { size: 34, col: '#C4C8CE' });
+  label(g, 'SOFTER · DARKER', RX, 760, a - 1.8, { size: 34, col: P.acc });
   arrow(g, 760, 820, 300, 820, clamp((a - 1.5) / 0.4), { col: '#C4C8CE', w: 6, head: 18 }); arrow(g, 1160, 820, 1620, 820, clamp((a - 1.9) / 0.4), { col: P.acc, w: 6, head: 18 });
   if (focusHB > 0) { const x = x0 + 10 * dx; chip(g, '#2 = HB', x, 250, focusHB * 2, { size: 44 }); g.save(); g.globalAlpha = 0.6 * focusHB; g.strokeStyle = P.acc; g.lineWidth = 6; g.setLineDash([10, 10]); g.beginPath(); g.moveTo(x, 300); g.lineTo(x, 640); g.stroke(); g.restore(); }
 }
@@ -453,7 +461,9 @@ export function archival(g, t, a, D, { img, mode = 'full', from = [0.5, 0.5, 1.0
     const s = cardH / im.height * z, dw = im.width * s, dh = im.height * s, x = cardX - dw / 2 + (fx - 0.5) * 80, y = H / 2 - dh / 2 - 30 + (fy - 0.5) * 60 + cardY;
     g.save(); g.translate(x + dw / 2, y + dh / 2); g.rotate(-0.012 + 0.006 * Math.sin(t * 0.7)); g.translate(-(x + dw / 2), -(y + dh / 2));
     g.fillStyle = 'rgba(0,0,0,0.45)'; g.fillRect(x - 18 + 14, y - 18 + 18, dw + 36, dh + 36); g.fillStyle = '#F7F1E4'; g.fillRect(x - 18, y - 18, dw + 36, dh + 36);
-    g.imageSmoothingQuality = 'high'; g.drawImage(im, x, y, dw, dh); g.restore();
+    g.imageSmoothingQuality = 'high'; g.drawImage(im, x, y, dw, dh);
+    // paper whites capped at ~90% (multiply) so a white scan never clips: luma gate <= 5% clipped for 0.3 s
+    g.globalCompositeOperation = 'multiply'; g.fillStyle = '#E8E5DE'; g.fillRect(x - 18, y - 18, dw + 36, dh + 36); g.globalCompositeOperation = 'source-over'; g.restore();
     notes.forEach(n => n.card = { x, y, dw, dh });
   }
   // annotation arrows + labels: positions in image fractions (card) or screen px (full)

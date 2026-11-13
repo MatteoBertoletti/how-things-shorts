@@ -30,6 +30,7 @@ async def main():
         pg.on('pageerror', lambda e: print('PAGEERROR:', e, flush=True))
         await pg.goto('http://localhost:8765/film.html'); await pg.wait_for_function('window.ready===true', timeout=180000)
         info = json.loads(await pg.evaluate('JSON.stringify(EPINFO)')); END = info['END']
+        if info.get('shotTypes'): json.dump(info['shotTypes'], open(f'{out}/types.json', 'w'))
         NF = math.ceil(END * FPS - 1e-6)
         # frame ranges per shot (by frame index, so every frame is rendered exactly once)
         bounds = sorted(set([0] + [min(NF, round(a * FPS)) for a, b_ in info['shots'] if a < END] + [NF]))

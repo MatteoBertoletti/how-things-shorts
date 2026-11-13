@@ -14,7 +14,7 @@ const TS = 0.7, VW = W / TS, VH = H / TS;                     // overlay type sc
 export async function build(ctx, script, timing) {
   const { scene, camera, lens } = ctx;
   setAccent('#FFD23A');
-  ctx.bloom.threshold = 0.62; ctx.bloom.strength = 0.4; ctx.bloom.radius = 0.5;
+  ctx.bloom.threshold = 0.82; ctx.bloom.strength = 0.25; ctx.bloom.radius = 0.45;
   scene.background = new THREE.Color(0x14181F); scene.environmentIntensity = 0.7;
   Object.assign(SAFE, { top: 90 / TS, left: 90 / TS, right: 1830 / TS, bottom: 960 / TS, cx: 960 / TS, maxW: 1500 / TS });
   const ST = buildStations(ctx), N = buildNew(ctx, ST);
@@ -89,8 +89,11 @@ export async function build(ctx, script, timing) {
   S(Ls(19) - 0.1, Ls(20) - 0.1, '2D', (u, t, g) => D.carbonBonds(g, t, t - Ls(19) + 0.1));
   S(Ls(20) - 0.1, Ls(21) - 0.1, '2D', (u, t, g) => D.layersSlide(g, t, t - Ls(20) + 0.1, { slide: 0 }));
   S(Ls(21) - 0.1, Ls(22) - 0.1, '3D', (u, t) => { show(N.CB); N.carbonSet(t, { build: 1, slide: E.io(clamp((t - Wd(21, 'slide')) / 1.4)) }); const c = L(N.LAY, 8, -4, 0); cam(orbit(c, lerp(52, 46, u), 0.35, 0.42), c, 34, -0.1); rig(c, 60, 1.8); expo = 1.0; });
-  S(Ls(22) - 0.1, Ls(23) - 0.15, '3D', (u, t) => { show(N.CB); N.carbonSet(t, { build: 0 }); const c = L(N.FIB, lerp(-40, 30, u), 4, 0); cam(orbit(c, 70, lerp(0.3, 0.1, u), 0.5), c, 34, 0.1); rig(c, 120, 1.6); expo = 1.0; });
-  S(Ls(23) - 0.15, Ls(25) - 0.15, 'TYPE', (u, t, g) => D.diamondVsGraphite(g, t, t - Ls(23)));
+  S(Ls(22) - 0.1, Ls(23) - 0.15, '3D', (u, t) => { show(N.CB); N.carbonSet(t, { build: 0 }); const c = L(N.FIB, lerp(-40, 30, u), 4, 0); cam(orbit(c, 70, lerp(0.3, 0.1, u), 0.5), c, 34, 0.1); rig(c, 120, 1.3); expo = 0.62; });
+  // L2 (a new shot at least every 8 s): long diagrams are cut in two, the second half is a punch-in on the same drawing
+  const punch = (fn, cx, cy, z) => (u, t, g) => { g.save(); g.translate(cx, cy); g.scale(z, z); g.translate(-cx, -cy); fn(u, t, g); g.restore(); };
+  S(Ls(23) - 0.15, Ls(24) - 0.1, 'TYPE', (u, t, g) => D.diamondVsGraphite(g, t, t - Ls(23)));
+  S(Ls(24) - 0.1, Ls(25) - 0.15, 'TYPE', punch((u, t, g) => D.diamondVsGraphite(g, t, t - Ls(23)), 960, 560, 1.12));
   S(Ls(25) - 0.15, Ls(26) - 0.1, '2D', (u, t, g) => D.crumble(g, t, t - Ls(25)));
   // ---------- CH. 3 ----------
   S(Ls(26) - 0.1, Ls(27) - 0.1, 'ARCH', (u, t, g) => { const a = t - Ls(26), d = Ls(27) - Ls(26);
@@ -99,17 +102,18 @@ export async function build(ctx, script, timing) {
   S(Ls(27) - 0.1, Ls(28) - 0.1, '3D', (u, t) => { show(ST.MIXG); ST.mixerSet(t); const c = L(ST.MXR, 0, 160, 0); cam(c.clone().add(v3(lerp(-300, -240, u), lerp(420, 380, u), lerp(560, 500, u))), c, 34, -0.25); rig(c, 500, 2.3); expo = 1.2; });
   S(Ls(28) - 0.1, Ls(29) - 0.1, '3D', (u, t) => { show(ST.MIXG); ST.extSet(t); const c = L(ST.EXT, lerp(80, 220, E.io(u)), 100, 0); cam(c.clone().add(v3(lerp(260, 220, u), 130, 340)), c, 34, 0.2); rig(c, 400, 2.0); expo = 1.2; });
   S(Ls(29) - 0.1, Ls(30) - 0.1, '2D', (u, t, g) => D.stringsDry(g, t, t - Ls(29) + 0.1));
-  S(Ls(30) - 0.1, Ls(31) - 0.1, '3D', (u, t) => { show(ST.MIXG); ST.kilnSet(t); const c = L(ST.KIL, 0, 300, 450); cam(c.clone().add(v3(lerp(-560, -420, u), 300, lerp(1400, 1250, u))), c, 34, 0.25); rig(c, 900, 1.2); pt(glow, L(ST.KIL, 0, 450, 0), 1600, 3000, 0xFF5A2B); expo = 0.85; });
+  S(Ls(30) - 0.1, Ls(31) - 0.1, '3D', (u, t) => { show(ST.MIXG); ST.kilnSet(t); const c = L(ST.KIL, 0, 300, 450); cam(c.clone().add(v3(lerp(-560, -420, u), 300, lerp(1400, 1250, u))), c, 34, 0.25); rig(c, 900, 1.4); pt(glow, L(ST.KIL, 0, 450, 0), 1600, 3000, 0xFF5A2B); expo = 1.05; });
   S(Ls(31) - 0.1, Ls(32) - 0.1, '3D', (u, t) => { show(ST.MIXG); ST.kilnSet(t); const c = L(ST.KIL, 0, 285, 200); cam(c.clone().add(v3(lerp(220, 150, u), 100, lerp(320, 270, u))), c, 34, -0.2); rig(c, 500, 0.5); pt(glow, L(ST.KIL, 0, 420, 100), 800, 2000, 0xFF5A2B); expo = 0.5; });
   S(Ls(32) - 0.1, Ls(33) - 0.2, '2D', (u, t, g) => D.waxPores(g, t, t - Ls(32) + 0.1));
-  S(Ls(33) - 0.2, Ls(34) - 0.1, 'TYPE', (u, t, g) => { D.bgPaper(g, t, { dark: 0.1 }); twoLines(g, t, t - Ls(33)); });
+  S(Ls(33) - 0.2, Ls(34) - 0.1, 'TYPE', (u, t, g) => { D.bgPaper(g, t); twoLines(g, t, t - Ls(33)); });
   const coreShot = (t, ratio, side) => { show(N.CR); N.coreSet(t, ratio); const c = L(N.CR, 0, 0, 0); cam(orbit(c, 260, 0.3, 0.2), c, 34, side); rig(c, 200, 1.8); expo = 1.1; };
   const rB = (t) => lerp(0.5, 0.88, E.io(clamp((t - Wd(35, 'graphite')) / 0.8))), rH = (t) => lerp(0.88, 0.18, E.io(clamp((t - Wd(36, 'clay')) / 0.8)));
   S(Ls(34) - 0.1, tPB, '3D', (u, t) => coreShot(t, rB(t), 0.25));
   S(tPB, Ls(36) - 0.1, '3D', (u, t) => { show(ST.MIXG); ST.hbSet(t); const c = L(ST.PAP, lerp(-40, 40, E.io(u)), 0, -10); cam(c.clone().add(v3(-40, 260, 230)), c, 34, -0.2); rig(c, 300, 1.4); expo = 1.05; });
   S(Ls(36) - 0.1, tPH, '3D', (u, t) => coreShot(t, rH(t), -0.25));
   S(tPH, Ls(37) - 0.1, '3D', (u, t) => { show(ST.MIXG); ST.hbSet(t); const c = L(ST.PAP, lerp(-60, 60, E.io(u)), 0, 25); cam(c.clone().add(v3(60, 220, 210)), c, 34, 0.2); rig(c, 300, 1.4); expo = 1.05; });
-  S(Ls(37) - 0.1, Ls(39) - 0.2, '2D', (u, t, g) => D.hbScale(g, t, t - Ls(37) + 0.1, { focusHB: clamp((t - Wd(38, 'middle')) / 0.5) }));
+  S(Ls(37) - 0.1, Ls(38) - 0.1, '2D', (u, t, g) => D.hbScale(g, t, t - Ls(37) + 0.1, { focusHB: 0 }));
+  S(Ls(38) - 0.1, Ls(39) - 0.2, '2D', punch((u, t, g) => D.hbScale(g, t, t - Ls(37) + 0.1, { focusHB: clamp((t - Wd(38, 'middle')) / 0.5), z: 1.22 }), 960, 520, 1.22));
   // ---------- CH. 4 ----------
   S(Ls(39) - 0.2, Ls(40) - 0.1, 'TYPE', (u, t, g) => { D.bgGraphite(g, t); ringsBg(g, t, t - Ls(39)); });
   S(Ls(40) - 0.1, Ls(41) - 0.1, 'ARCH', (u, t, g) => D.archival(g, t, t - Ls(40), Ls(41) - Ls(40), { img: 'cedar', mode: 'full', from: [0.5, 0.75, 1.0], to: [0.5, 0.42, 1.18], credit: 'Incense cedar · Geographer (en.wikipedia) · CC BY 1.0',
@@ -131,11 +135,11 @@ export async function build(ctx, script, timing) {
   const ST_fan0 = Wd(54, 'pencils') - 0.45;
   S(Ls(55) - 0.1, Ls(56) - 0.1, 'ARCH', (u, t, g) => D.archival(g, t, t - Ls(55), Ls(56) - Ls(55), { img: 'patent', mode: 'card', cardH: 470, cardX: 860, from: [0.42, 0.62, 1.0], to: [0.5, 0.62, 1.1], credit: 'US Patent 19,783 (1858), H. L. Lipman · public domain',
     notes: [{ px: 0.45, py: 0.86, lx: 1500, ly: 860, text: 'WOOD AROUND A CORE', at: 0.6, bend: 0.15 }] }));
-  S(Ls(56) - 0.1, Ls(57) - 0.15, '3D', (u, t) => { show(N.FAC); N.factorySet(t); const c = L(N.FAC, lerp(-200, 200, u), 760, 0); cam(c.clone().add(v3(-900, 620, 1500)), c, 34, 0.1, 0.1); rig(c, 2500, 2.0); expo = 1.2; });
+  S(Ls(56) - 0.1, Ls(57) - 0.15, '3D', (u, t) => { show(N.FAC); N.factorySet(t); const c = L(N.FAC, lerp(-200, 200, u), 760, 0); cam(c.clone().add(v3(-900, 620, 1500)), c, 34, 0.1, 0.1); rig(c, 2500, 2.4); expo = 1.7; });
   // ---------- CH. 6 ----------
   S(Ls(57) - 0.15, Ls(58) - 0.1, '3D', (u, t) => { show(ST.FIN); ST.dipSet(t); const c = L(ST.TANK, 0, 150, 0); cam(c.clone().add(v3(-140, 110, 260)), c, 34, 0.2); rig(c, 300, 1.5); expo = 0.9; });
   S(Ls(58) - 0.1, Ls(59) - 0.1, '2D', (u, t, g) => D.coats(g, t, t - Ls(58) + 0.1));
-  S(Ls(59) - 0.1, Ls(60) - 0.1, 'ARCH', (u, t, g) => D.archival(g, t, t - Ls(59), Ls(60) - Ls(59), { img: 'patent', mode: 'card', cardH: 520, cardX: 960, from: [0.3, 0.6, 1.25], to: [0.24, 0.62, 1.4], credit: 'US Patent 19,783 (1858), H. L. Lipman · public domain' }));
+  S(Ls(59) - 0.1, Ls(60) - 0.1, 'ARCH', (u, t, g) => D.archival(g, t, t - Ls(59), Ls(60) - Ls(59), { img: 'patent', mode: 'card', cardH: 400, cardX: 960, from: [0.3, 0.6, 1.1], to: [0.24, 0.62, 1.22], credit: 'US Patent 19,783 (1858), H. L. Lipman · public domain' }));
   S(Ls(60) - 0.1, Ls(61) - 0.15, 'ARCH', (u, t, g) => D.archival(g, t, t - Ls(60), Ls(61) - Ls(60), { img: 'patent', mode: 'card', cardH: 470, cardX: 860, from: [0.5, 0.5, 1.0], to: [0.5, 0.45, 1.06], credit: 'US Patent 19,783 (1858), H. L. Lipman · public domain',
     notes: [{ px: 0.9, py: 0.86, lx: 1560, ly: 860, text: 'ERASER', at: 1.2, circle: 70 }, { px: 0.72, py: 0.28, lx: 1560, ly: 250, text: '1858', at: Wd(60, 'eighteen') - Ls(60) + 0.1 }] }));
   S(Ls(61) - 0.15, Ls(62) - 0.1, 'TYPE', (u, t, g) => { D.archival(g, t, t - Ls(60), 8, { img: 'patent', mode: 'card', cardH: 470, cardX: 860, from: [0.5, 0.45, 1.06], to: [0.5, 0.45, 1.1] }); g.fillStyle = 'rgba(14,17,23,0.55)'; g.fillRect(0, 0, W, H); });
@@ -147,7 +151,7 @@ export async function build(ctx, script, timing) {
   S(Ls(65) - 0.2, tPay2, '3D', (u, t) => { const tau = (t - payEnd) + 1 / 30 - 0; macro(tau + 0, lerp(160, 110, E.io(u)), lerp(-0.4, 0.1, u), lerp(0.7, 0.45, u), 30, 0.25); });
   S(tPay2, payEnd, '3D', (u, t) => { const tau = t - payEnd + 1 / 30; const k = E.io(u); macro(tau, lerp(110, HOOK0.r, k), lerp(0.1, HOOK0.az, k), lerp(0.45, HOOK0.el, k), 30, 0.25); });
   // ---------- END SCREEN: quiet factory loop (rendered once: 4.333 s, repeated) ----------
-  const endPlate = (t) => { const lt0 = ((t - payEnd) % LOOPF + LOOPF) % LOOPF; show(N.FAC); N.factorySet(lt0 + 20); const c = L(N.FAC, 0, 760, 0); cam(c.clone().add(v3(-700, 520, 1300)), c, 34, 0, -0.15); rig(c, 2500, 1.6); expo = 0.75; };
+  const endPlate = (t) => { const lt0 = ((t - payEnd) % LOOPF + LOOPF) % LOOPF; show(N.FAC); N.factorySet(lt0 + 20); const c = L(N.FAC, 0, 760, 0); cam(c.clone().add(v3(-700, 520, 1300)), c, 34, 0, -0.15); rig(c, 2500, 2.2); expo = 1.5; };
   S(payEnd, END + 1, '3D', (u, t) => endPlate(t), 0);
   const shotAt = (t) => shots.find(s => t >= s.t0 && t < s.t1) || shots[shots.length - 1];
   function stateAt(t) {
@@ -235,7 +239,7 @@ export async function build(ctx, script, timing) {
   // CH. 5
   T_({ k: 'callout', at: Wd(47, 'Glue') + 0.05, until: Wd(47, 'core') + 0.4, text: 'GLUE', anchor: anchorOf((tt) => L(ST.SW, lerp(-SLAT.L / 2, SLAT.L / 2, clamp((tt - Ls(47) + 0.05) / 0.7)) - 10, SLAT.T + 2, -grooveX(0))), dx: -220, dy: -160 });
   T_({ k: 'callout', at: Wd(47, 'core') + 0.45, until: Ls(48) - 0.15, text: 'CORES', anchor: anchorOf(() => L(ST.SW, 40, SLAT.T + 1, -grooveX(6))), dx: 220, dy: -180 });
-  T_({ k: 'cap', at: Wd(48, 'second'), until: Ls(49) - 0.15, words: [{ t: 'SECOND', k: 'noun' }, { t: 'SLAT', a: true, k: 'noun', at: Wd(48, 'slat') }], y: VY(150), size: 100, hit: { kind: 'wood' } });
+  T_({ k: 'cap', at: Wd(48, 'second'), until: Math.min(Ls(49) - 0.15, Wd(48, 'slat') + 1.7), words: [{ t: 'SECOND', k: 'noun' }, { t: 'SLAT', a: true, k: 'noun', at: Wd(48, 'slat') }], y: VY(150), size: 100, hit: { kind: 'wood' } });
   T_({ k: 'cap', at: Wd(49, 'glue'), until: Ls(50) - 0.2, words: [{ t: 'UNTIL', k: 'noun' }, { t: 'THE GLUE SETS', a: true, k: 'verb', at: Wd(49, 'sets') - 0.2 }], y: VY(150), size: 96 });
   T_({ k: 'strike', at: Ls(50), strikeAt: Wd(51, 'two') - 0.32, until: Ls(52) - 0.15, word: 'ONE PIECE?', repl: 'TWO HALVES.', y: VY(500), cx: VX(620), size: 170, ek: 'q' });
   T_({ k: 'cap', at: Wd(53, 'hexagons'), until: Ls(54) - 0.15, words: [{ t: 'HEXAGONS', a: true, k: 'noun' }], y: VY(860), size: 110 });
@@ -260,7 +264,8 @@ export async function build(ctx, script, timing) {
   // ---------- real-coordinate overlay pieces ----------
   function titleCard(g, t, o) {
     const a = t - o.at, r = o.until - t; if (r < 0) return; const ina = o.at < 0 ? 1 : E.o(clamp(a / 0.4)), out = clamp(r / 0.3);
-    g.save(); g.globalAlpha = out; const x = 90, y = 90 + 20 * (1 - ina);
+    const ph = o.bookend ? t - (payEnd - 1 / 30) : t;   // 0 at frame 0 and at the payoff's last frame
+    g.save(); g.globalAlpha = out; const x = 90 + 6 * ph, y = 90 + 20 * (1 - ina);
     g.fillStyle = D.P.acc; g.fillRect(x, y, 10 * ina, 112); g.font = `400 26px ${D.FONT.mono}`; g.fillStyle = D.P.cream; g.textBaseline = 'top';
     g.fillText('RAW TO REAL', x + 30, y + 4); g.font = `400 70px ${D.FONT.title}`; g.lineWidth = 9; g.strokeStyle = D.P.ink; g.lineJoin = 'round';
     const txt = 'HOW PENCILS ARE MADE', n = o.at < 0 ? txt.length : Math.floor(clamp(a / 0.5) * txt.length); g.strokeText(txt.slice(0, n), x + 28, y + 36); g.fillStyle = D.P.cream; g.fillText(txt.slice(0, n), x + 28, y + 36);
@@ -278,8 +283,10 @@ export async function build(ctx, script, timing) {
   }
   function endScreen(g, t, o) {
     const a = t - o.at; if (a < 0) return;
-    D.label(g, 'NEXT: HOW A BALLPOINT PEN WORKS', 960, 170, a, { size: 52, col: D.P.cream, drift: 0.02 });
-    D.label(g, 'SUBSCRIBE: NEW ONE EVERY WEEK', 960, 280, a - 0.4, { size: 40, col: D.P.acc, drift: 0.02 });
+    const fl = (k) => 5 * Math.sin(t * 1.1 + k), br = 1 + 0.015 * Math.sin(t * 0.9);   // slow float: the end text is never frozen
+    g.save(); g.translate(960, 225); g.scale(br, br); g.translate(-960, -225);
+    D.label(g, 'NEXT: HOW A BALLPOINT PEN WORKS', 960, 170 + fl(0), a, { size: 52, col: D.P.cream, drift: 0 });
+    D.label(g, 'SUBSCRIBE: NEW ONE EVERY WEEK', 960, 280 + fl(1.7), a - 0.4, { size: 40, col: D.P.acc, drift: 0 }); g.restore();
     // soft frames where the YouTube elements will sit (only a faint outline, so the areas stay clean)
     const k = clamp((a - 0.8) / 0.8) * 0.42; g.save(); g.globalAlpha = k; g.fillStyle = '#0B0E13'; D.rr(g, 150, 380, 720, 405, 18); g.fill(); D.rr(g, 1050, 380, 720, 405, 18); g.fill(); g.beginPath(); g.arc(960, 880, 92, 0, Math.PI * 2); g.fill(); g.restore();
   }

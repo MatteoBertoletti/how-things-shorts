@@ -30,7 +30,7 @@ export function buildNew(ctx, S) {
     // ruled lines (cold fill colour, faint)
     pg.save(); pg.globalAlpha = 0.16; pg.strokeStyle = '#7FB3D9'; pg.lineWidth = 3; for (let z = -24; z <= 24; z += 12) { const [, cy] = toC(0, z + 6); pg.beginPath(); pg.moveTo(0, cy); pg.lineTo(2048, cy); pg.stroke(); } pg.restore();
     // the graphite line: many soft dabs (grainy, slightly shiny)
-    pg.save(); const xs = Math.max(-60, x0 - PW / 2 - 2);
+    pg.save(); const xs = Math.max(-112, x0 - PW / 2 - 2);
     for (let x = xs; x <= x1; x += 0.05) { const z = lineZ(x), [cx, cy] = toC(x, z), k = Math.floor(x * 20);
       pg.fillStyle = `rgba(${44 + hash(k) * 20},${47 + hash(k) * 20},${55 + hash(k) * 22},${0.18 + 0.2 * hash(k * 1.7)})`; const w = 0.9 * sx;
       pg.fillRect(cx - 2, cy - w / 2 + (hash(k * 3.1) - 0.5) * 8, 4, w * (0.7 + 0.3 * hash(k * 5.3))); }
@@ -85,7 +85,7 @@ export function buildNew(ctx, S) {
   const CB = station(34000, 760);
   const aGeo = new THREE.SphereGeometry(1, 16, 12), bGeo = new THREE.CylinderGeometry(0.22, 0.22, 1, 8);
   const atomM = new THREE.MeshStandardMaterial({ color: 0x3a3f48, metalness: 0.6, roughness: 0.3, envMapIntensity: 1.5 });
-  const atomTop = new THREE.MeshStandardMaterial({ color: 0xFFD23A, metalness: 0.2, roughness: 0.35, emissive: 0x6a4a00, emissiveIntensity: 0.6 });
+  const atomTop = new THREE.MeshStandardMaterial({ color: 0xFFD23A, metalness: 0.2, roughness: 0.35, emissive: 0x6a4a00, emissiveIntensity: 0.25 });
   const bondM = new THREE.MeshStandardMaterial({ color: 0x7FB3D9, metalness: 0.3, roughness: 0.4, emissive: 0x16324a, emissiveIntensity: 0.6 });
   const s = 1.42;  // bond length (scaled units)
   function sheet(nx, nz, mat) {
@@ -100,10 +100,12 @@ export function buildNew(ctx, S) {
     ai.castShadow = bi.castShadow = true; g.add(ai, bi); return g;
   }
   const LAY = new THREE.Group(); LAY.position.y = 60; CB.add(LAY);
+  const slate = (w, d, col, x, y, z) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshStandardMaterial({ color: col, roughness: 0.85, metalness: 0.05 })); m.rotation.x = -Math.PI / 2; m.position.set(x, y, z); m.receiveShadow = true; return m; };
+  CB.add(slate(700, 500, 0x4a5466, 0, 36, 0), slate(900, 600, 0x8c8578, 400, -3, 0));
   const sheets = [0, 1, 2, 3, 4].map(i => { const sh = sheet(12, 9, i === 0 ? atomTop : atomM); sh.position.set((i % 2) * s * Math.sqrt(3) / 2, -i * 3.35, (i % 2) * s / 2); LAY.add(sh); return sh; });
   // paper fibres + flakes (the line seen from very close)
   const FIB = new THREE.Group(); FIB.position.set(400, 0, 0); CB.add(FIB);
-  const fibM = new THREE.MeshStandardMaterial({ color: 0xE9DFC8, roughness: 0.85, envMapIntensity: 0.4 });
+  const fibM = new THREE.MeshStandardMaterial({ color: 0xC9C0AA, roughness: 0.85, envMapIntensity: 0.4 });
   for (let i = 0; i < 70; i++) { const pts = []; const z0 = (hash(i * 2.1) - 0.5) * 120, y0 = hash(i * 3.3) * 6; for (let k = 0; k <= 6; k++) pts.push(v3(-120 + k * 40, y0 + 2 * Math.sin(k + i), z0 + (hash(i * 7 + k) - 0.5) * 30));
     const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 48, 1.6 + 1.6 * hash(i * 5.5), 8), fibM); tube.castShadow = tube.receiveShadow = true; FIB.add(tube); }
   const flM = new THREE.MeshStandardMaterial({ color: 0x2c3038, metalness: 0.75, roughness: 0.22, envMapIntensity: 1.8 });
@@ -118,9 +120,10 @@ export function buildNew(ctx, S) {
   // ================= CORE: the hardness recipe, a core made of graphite flakes and clay grains (x = 36000) =================
   const CR = station(36000, 760);
   const NC = 1400; const grainGeo = new THREE.IcosahedronGeometry(1, 0);
-  const grainM = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.4, roughness: 0.45, envMapIntensity: 1.2 });
+  const grainM = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.3, roughness: 0.5, envMapIntensity: 0.7 });
   const grains = new THREE.InstancedMesh(grainGeo, grainM, NC); grains.castShadow = true; CR.add(grains);
   const gp = []; { const o = new THREE.Object3D(); for (let i = 0; i < NC; i++) { const r = Math.sqrt(hash(i * 1.3)) * 18, a = hash(i * 2.9) * Math.PI * 2, y = (hash(i * 4.1) - 0.5) * 120; gp.push([Math.cos(a) * r, y, Math.sin(a) * r, hash(i * 6.3)]); o.position.set(Math.cos(a) * r, y, Math.sin(a) * r); o.rotation.set(i, i * 1.3, i * 0.7); o.scale.setScalar(1.6 + 1.6 * hash(i * 9.1)); o.updateMatrix(); grains.setMatrixAt(i, o.matrix); } }
+  CR.add(slate(1200, 900, 0x4a5466, 0, -66, 0)); { const wall = new THREE.Mesh(new THREE.PlaneGeometry(1600, 900), new THREE.MeshStandardMaterial({ color: 0x3e4757, roughness: 0.9 })); wall.position.set(0, 200, -260); CR.add(wall); }
   const glass = new THREE.Mesh(new THREE.CylinderGeometry(19.5, 19.5, 124, 48, 1, true), new THREE.MeshPhysicalMaterial({ color: 0xbfe0ff, roughness: 0.05, transparent: true, opacity: 0.12, depthWrite: false, side: THREE.DoubleSide })); CR.add(glass);
   const cG = new THREE.Color(0x24272d), cC = new THREE.Color(0xA7AEB7);
   let lastR = -1;
@@ -137,7 +140,8 @@ export function buildNew(ctx, S) {
   const ends = new THREE.InstancedMesh(new THREE.CircleGeometry(PEN.core, 16), mt.graphite, NS * 2); FAC.add(ends);
   const capsI = new THREE.InstancedMesh(capGeo, mt.woodEnd, NS * 2); FAC.add(capsI);
   // background machines (generic boxes with warm lights)
-  const mm = M.std(0x2b323c, { roughness: 0.55, metalness: 0.4 });
+  FAC.add(slate(14000, 8000, 0x4b5363, 0, 2, 0));
+  const mm = M.std(0x4a5260, { roughness: 0.55, metalness: 0.4 });
   for (let i = 0; i < 6; i++) { const b = new THREE.Mesh(new THREE.BoxGeometry(500, 700 + 300 * hash(i), 600), mm); b.position.set(-2500 + i * 1000, 400, -1300 - 300 * hash(i * 2)); b.castShadow = b.receiveShadow = true; FAC.add(b);
     const l = new THREE.Mesh(new THREE.BoxGeometry(300, 18, 10), new THREE.MeshBasicMaterial({ color: i % 2 ? 0xFFD23A : 0x7FB3D9 })); l.position.set(b.position.x, 600, b.position.z + 305); FAC.add(l); }
   const lamps = []; for (let i = 0; i < 6; i++) { const p = new THREE.Mesh(new THREE.CylinderGeometry(60, 90, 40, 24, 1, true), M.metal(0x8f98a3, 0.4)); p.position.set(-2500 + i * 1000, 1900, 0); FAC.add(p); }

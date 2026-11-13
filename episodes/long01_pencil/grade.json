@@ -1,0 +1,2 @@
+{"_note": "per-shot gain applied to the plate before the overlay (luma gate 60-140 per second). key = shot/segment index",
+ "2": 1.06, "3": 1.14, "6": 1.06, "12": 1.12, "21": 0.95, "27": 1.13, "55": 1.23}
