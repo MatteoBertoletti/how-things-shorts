@@ -341,5 +341,12 @@
    "shot": "3D"
   }
  ],
- "voice_chain": "new"
+ "voice_chain": "new",
+ "qa": {
+  "twist": [
+   1,
+   "glue"
+  ],
+  "tp_max": -1.5
+ }
 }

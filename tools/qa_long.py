@@ -1,10 +1,11 @@
 """Quality gates for a long-form (16:9) episode, all with numbers.
-usage: python tools/qa_long.py final.mp4 render_dir episode_dir > qa_report.md
+usage: python tools/qa_long.py final.mp4 render_dir episode_dir [new_voice.wav ref_voice.wav] > qa_report.md
+script.json may set "qa": {"twist": [line, word], "tp_max": -1.5}
 Needs render_dir/segs.json, types.json, over/*.png and episode_dir/timing.json, script.json, credits.md, archival/."""
 import sys, json, glob, os, re, subprocess, numpy as np
 from PIL import Image
 
-MP4, R, EP = sys.argv[1:4]
+MP4, R, EP = sys.argv[1:4]; VOX = sys.argv[4:6]
 FPS = 30
 segs = json.load(open(f'{R}/segs.json')); SG = segs['segs']; END = segs['END']
 TY = json.load(open(f'{R}/types.json'))
@@ -46,7 +47,8 @@ for L, t in sh[:-1]: share[t] = share.get(t, 0) + L
 tot = sum(share.values())
 
 # ---- twist, chapters, silence
-w1 = TM['lines'][0]['words']; twist = next(w['e'] for w in w1 if w['w'].lower().startswith('lead'))
+QA = SC.get('qa', {}); TW = QA.get('twist', [1, 'lead']); TPMAX = QA.get('tp_max', -1.0)
+w1 = TM['lines'][TW[0] - 1]['words']; twist = next(w['e'] for w in w1 if w['w'].lower().startswith(TW[1].lower())); twist_txt = TM['lines'][TW[0] - 1]['say']
 chap = []; seen = set()
 for ln, tl in zip(SC['lines'], TM['lines']):
     c = ln.get('chapter')
@@ -90,28 +92,33 @@ lic = []
 for f in arch:
     row = next((l for l in cred.splitlines() if l.startswith('| ' + f)), '')
     lic.append(row.rstrip(' |').split('|')[-1].strip().split(' (')[0] if row else 'NOT LOGGED')
-BR = ['faber', 'castell', 'staedtler', 'ticonderoga', 'dixon', 'pentel', 'tombow', "caran", 'mitsubishi', 'uni-ball', 'pilot', 'bic', 'palomino', 'blackwing',
+BR = ['ykk', 'talon', 'riri', 'optilon', 'opti', 'lampo', 'coats', 'raccagni', 'goodrich', 'hookless fastener', 'universal fastener', 'lightning fastener', 'schott', 'levi', 'patagonia', 'wrangler', 'faber', 'castell', 'staedtler', 'ticonderoga', 'dixon', 'pentel', 'tombow', "caran", 'mitsubishi', 'uni-ball', 'pilot', 'bic', 'palomino', 'blackwing',
       'derwent', 'koh-i-noor', 'lyra', 'musgrave', "general's", 'conte', 'paper mate', 'papermate', 'cretacolor', 'eberhard', 'mars lumograph', 'castell 9000']
-src = ' '.join(open(f'{EP}/{f}').read().lower() for f in ['episode.js', 'd2.js', 'new3d.js', 'stations.js'])
+src = ' '.join(open(f).read().lower() for f in glob.glob(f'{EP}/*.js'))     # every on-screen string of the episode's code
 lits = ' '.join(re.findall(r"'([^']*)'|`([^`]*)`", src) and [x for t in re.findall(r"'([^']*)'|`([^`]*)`", src) for x in t])
+lits += ' ' + ' '.join(l['say'].lower() for l in SC['lines'])          # the narration too
 hits = sorted({b for b in BR if re.search(r'(?<![a-z])' + re.escape(b) + r'(?![a-z])', lits)})
 
 # ---- report
-P(f'# LONG 01 quality gates\n\nFile: `{os.path.basename(MP4)}`, {n} frames, {dur:.2f} s ({int(dur // 60)}:{dur % 60:05.2f}), 1920x1080, 30 fps.\n')
+P(f'# {SC.get("ep", "LONG")} quality gates\n\nFile: `{os.path.basename(MP4)}`, {n} frames, {dur:.2f} s ({int(dur // 60)}:{dur % 60:05.2f}), 1920x1080, 30 fps.\n')
 P('| Gate | Result | Numbers |'); P('|---|---|---|')
 gate('Luma per second 60-140', 60 <= min(per) and max(per) <= 140, f'min {min(per):.1f} (s {int(np.argmin(per))}), max {max(per):.1f} (s {int(np.argmax(per))}), mean {np.mean(per):.1f}')
 gate('Clipped white ≤5% for ≤0.3 s', best / FPS <= 0.3, f'longest run with >5% clipped: {best / FPS:.2f} s; max clipped fraction {clip.max() * 100:.2f}% at {clip.argmax() / FPS:.2f} s')
 gate('Shots per minute / longest shot ≤ 8 s (L2)', max(L for L, _ in body) <= 8, f'{len(sh)} shots in {dur / 60:.2f} min = {len(sh) / (dur / 60):.1f}/min (body {len(body)} shots, {len(body) / ((dur - end_dur) / 60):.1f}/min); longest body shot {sh[long_i][0]:.2f} s (shot {long_i}, {sh[long_i][1]}), mean {np.mean([L for L, _ in body]):.2f} s; end screen {end_dur:.2f} s')
 gate('Shot mix (target ~35/35/15/15)', True, ', '.join(f'{k} {v:.1f} s = {v / tot * 100:.1f}%' for k, v in sorted(share.items(), key=lambda kv: -kv[1])) + f' (over {tot:.1f} s, end screen excluded)', note=True)
-gate('First twist ≤ 8 s', twist <= 8, f'"There is no lead in your pencil": "lead" ends at {twist:.2f} s; motion from frame 0 (frame-0→1 change {d[0]:.2f})')
+gate('First twist ≤ 8 s', twist <= 8, f'"{twist_txt}": "{TW[1]}" ends at {twist:.2f} s; motion from frame 0 (frame-0→1 change {d[0]:.2f})')
 gate('Longest stretch without visual change', still[0] / FPS <= 4, f'{still[0] / FPS:.2f} s (ending {still[1] / FPS:.2f} s), threshold mean |ΔY| < 0.25')
 gate('Longest unchanged text ≤ 2 s', tbest[0] / FPS <= 2, f'{tbest[0] / FPS:.2f} s (ending frame {tbest[1]}, {tbest[1] / FPS:.2f} s)')
 gate('Narration silence < 4 s', gmax[0] < 4, f'longest pause between words {gmax[0]:.2f} s at {gmax[1]:.2f} s')
 gate('Chapter timestamps', chap[0][0] < 1, ' · '.join(f'{int(t // 60)}:{int(t) % 60:02d} {c}' for t, c in [(0, chap[0][1])] + chap[1:]))
-gate('Loudness -14 LUFS, true peak ≤ -1 dBFS, stereo', abs(I + 14) <= 0.5 and TP <= -1 and ch == '2', f'I = {I:.1f} LUFS, true peak = {TP:.1f} dBFS, channels = {ch}')
+gate(f'Loudness -14 LUFS, true peak ≤ {TPMAX} dBFS, stereo', abs(I + 14) <= 0.5 and TP <= TPMAX and ch == '2', f'I = {I:.1f} LUFS, true peak = {TP:.1f} dBFS, channels = {ch}')
 gate('Archival licenses in credits.md', not missing and all(re.search(r'public domain|PD|CC0|CC BY', l, re.I) for l in lic), f'{len(arch)} files, {len(arch) - len(missing)} logged; licenses: {", ".join(lic)}' + (f'; MISSING {missing}' if missing else ''))
-gate('No brand names / logos', not hits, f'{len(BR)} pencil brands searched in every on-screen string: {"none found" if not hits else hits}; no logos in archival set (checked by eye); 3D pencils unbranded')
+gate('No brand names / logos', not hits, f'{len(BR)} brand / maker names searched in every on-screen string and in the narration: {"none found" if not hits else hits}; no logos in the archival set (checked by eye); 3D parts unbranded')
 gate('End screen element areas clean 20 s', slot_max <= 110 and slot_std < 2 and end_dur >= 20, f'{end_dur:.2f} s; in 2 video slots + subscribe circle the overlay alpha stays ≤ {slot_max}/255 (flat dark tint only), colour std {slot_std:.2f} (no text)')
+if VOX:
+    sys.path.insert(0, os.path.dirname(__file__)); from sibilance import ratio
+    rn, rr = ratio(VOX[0]), ratio(VOX[1])
+    gate('Voice sibilance (5-9 kHz / 0.3-3 kHz), new vs LONG 01', rn < rr * 0.85, f'new voice {rn:.4f} ({10 * np.log10(rn):.1f} dB) vs LONG 01 voice {rr:.4f} ({10 * np.log10(rr):.1f} dB): {10 * np.log10(rn / rr):+.1f} dB')
 P(f'\nOverall: {"ALL PASS" if ok_all else "SOME FAIL"}\n')
 P('Luma per second: ' + ' '.join(f'{s}:{v:.0f}' for s, v in enumerate(per)))
 print('\n'.join(out))

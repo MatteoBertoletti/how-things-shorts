@@ -13,6 +13,7 @@ Every episode stands alone. On-screen text and narration in English. Always "Sim
 | 04 | Toy brick 2x4 (red hero, yellow + blue support, no brand, no logo) | Why it sticks (interference fit), then how it's made; twist: no glue, no click, the stud is slightly too big | Plastic | ~32 s | ElevenLabs "Brian" (EN) | Signal red on graphite-blue | Gummy bear / Ballpoint pen |
 | 05 | Ballpoint pen (click pen, round white barrel, blue button and grip ring, no brand) | Why it has a ball, then how it's made; twist: the ball is the cap and the roller in one; callback to EP 04 (injection molding) | Plastic + metal | ~29 s | ElevenLabs "Brian" (EN) | Ink blue & brass on night navy | Crayon / Paper clip |
 | LONG 01 | Pencil (long form 16:9, 4:45) | How pencils are made: no lead, history, graphite layers, core, wood, sandwich, paint/ferrule/eraser | Graphite + wood | 4:44.8 | ElevenLabs "Brian" (EN), stretched 10 % | Graphite / cedar / pencil yellow on slate | — (end screen: next = ballpoint pen) |
+| LONG 02 | Zipper (long form 16:9, 4:20, mechanism video) | How zippers work: offset rows, bump and hollow, the Y channel (x-ray), the wedge, stops and lock pin, three kinds of teeth, short history, failures + verified fixes | Metal + plastic + textile | 4:20.1 | ElevenLabs "Brian" (EN), new settings, no stretch | Graphite / cold blue / yellow on slate; x-ray = blue glass + white-blue glowing Y | — (end screen: next = glass bottle) |
 
 Material rotation: food, plastic, metal, glass, paper, textile, electronics, rubber, ceramics, everyday gadgets.
 EP 04 should not be wood, glass or metal (gummy bear = food, toy brick = plastic; decided by comments).
@@ -117,7 +118,19 @@ Voice: ~665 words for 4:25 of narration. Brian reads ~190 wpm inside sentences e
 Pipeline: `tools/render.py <dir> plate a b` (one MP4 per shot, resumable) + `over` (overlay PNGs) -> `tools/compose_long.py` (per-chapter files chap_NN.mp4 with the overlay, cached, then joined with -c copy + the mix) -> `tools/qa_long.py` (all quality gates with numbers -> qa_report.md). Per-shot luma fixes go in the episode's `grade.json` (gain per shot index, baked into the plate before the overlay), not in the scene. Archival paper scans are multiplied to ~90 % white (no clipping). Delivery: master at CRF 15, then a 2-pass H.264 file under 95 MB (GitHub's 100 MB limit) for the direct link.
 End screen: last 20 s, quiet factory loop, text only in y 120-330, two video slots (150-870 / 1050-1770 x 380-785) and the subscribe circle (960, 880) kept clean and slightly darkened.
 
-## Long-form retention rules L1-L7 (since LONG 01)
+## Voice chain (since LONG 02; replaces the LONG 01 stretch)
+A viewer called the LONG 01 narration "gritty and sharp" (10 % time-stretch + speaker boost + too much 5-9 kHz). From LONG 02 on:
+- No time-stretch. Generate at the target pace (ElevenLabs speed ~0.9); pauses with punctuation, line gaps and `<break time="0.4s"/>` (stripped for captions and alignment by tools/voice_align.py).
+- Settings: stability 0.55-0.65 (0.6), similarity 0.75, style 0, speaker boost OFF. Voice picked blind from a 4-sample test (old chain / new chain / two other premade voices); LONG 02 = Brian, new settings.
+- Chain (tools/voice_chain.py `NEW`, `"voice_chain": "new"` in script.json): highpass 70 Hz, de-esser (i 0.4), -3 dB around 7 kHz (1 octave), light compression (2:1 at -20 dB).
+- Mix (tools/mix.py `"limiter": "soft"` in sound.json): gentle bus compression + soft limiter (no more +8 dB into a hard limiter), loudnorm, then an exact trim to -14.0 LUFS with true peak <= -1.5 dBFS.
+- Gate: sibilance ratio = energy 5-9 kHz / energy 0.3-3 kHz on speech frames (tools/sibilance.py), new voice vs LONG 01 voice, both numbers in qa_report.md. LONG 01 voice 0.046; LONG 02 0.032 (same hook text: old chain 0.070, new 0.034).
+
+## Mechanism videos (since LONG 02)
+When the story is a moving mechanism seen from the inside, the mix shifts to 3D: ~55 % 3D hero shots, ~25 % 2D diagrams, ~5 % archival, ~15 % kinetic type; 45-55 shots, mean 4-5 s, nothing over 8 s (except a slowed macro). At most 5 NEW 3D set-ups per video; everything else re-staged from the Short of the same object (LONG 02 reused js/zipper.js from EP. 01 and added: x-ray slider glass + glowing Y path, coil chain, molded-plastic teeth, lock pin, worn slider). The hook's frame 0 and the payoff's last frame are the same "run" (the slider stays put, the chain slides under it by whole teeth), so the end screen loop is seamless too (4 teeth = 4 s, rendered once and repeated by tools/render.py `endLoop`).
+Thumbnails: the owner makes them; deliver two clean plate PNGs (no overlay) with exact timecodes (`tools/stills.py out p12.5`).
+
+## Long-form retention rules L1-L8 (since LONG 01; L8 since LONG 02)
 - L1. Motion from frame 0 and the twist spoken before 8 s; the first 30 s contain no list (a promise is split into beats, one image each).
 - L2. A visual change at least every 4-6 s, a new shot at least every 8 s; no static slide: every diagram draws itself, moves or counts.
 - L3. Each chapter opens with a question or a surprising visual; one idea per sentence.
@@ -125,3 +138,4 @@ End screen: last 20 s, quiet factory loop, text only in y 120-330, two video slo
 - L5. Numbers appear with their unit and with the image that explains them.
 - L6. No text static for more than 2 s; callouts anchored to the object; captions never cover the subject.
 - L7. Under 4 s of pure silence in the narration, no filler, "subscribe" said once, at the end.
+- L8. The end is short: the last spoken sentence at most 7 words, no long outro (the pencil Short lost ~27 points of viewers in its last 4 s). Studio note: viewers leave 4-12 s after the hook when the narration gives numbers or lists nouns before showing something; one idea revealed step by step holds better than stacked numbers.

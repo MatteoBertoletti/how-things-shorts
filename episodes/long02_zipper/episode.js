@@ -93,13 +93,13 @@ export async function build(ctx, script, timing) {
   S(Ls(21) - 0.15, Ls(22) - 0.1, '3D', (u, t) => { run(t - Ls(21), 1.2, 140); HS.xray = xrIn(t, Ls(21) + 0.1, 1.0); HS.glow = xrIn(t, Wd(21, 'transparent') + 0.3, 0.8); heroSet(); xTop(t, u); });
   S(Ls(22) - 0.1, Ls(23) - 0.1, '2D', (u, t, g) => Z.ySection(g, t, t - Ls(22) + 0.1));
   S(Ls(23) - 0.1, Ls(24) - 0.1, '3D', (u, t) => { run(t - Ls(23), 3.2, 150); HS.xray = 1; HS.glow = 1; heroSet(); const c = sliderW(9, 0);
-    cam(c.clone().add(v3(lerp(-14, -6, u), lerp(30, 26, u), lerp(-18, -10, u))), c, 32, 0.15); rig(c, 40); expo = 0.95; });
+    cam(c.clone().add(v3(lerp(-14, -8, u), lerp(42, 38, u), lerp(-16, -10, u))), c, 32, 0.15); rig(c, 40, 1.6); expo = 0.72; });
   S(Ls(24) - 0.1, Ls(25) - 0.1, '3D', (u, t) => { run(t - Ls(24), 1.6, 165); HS.xray = 1; HS.glow = 1; heroSet(); const c = sliderW(3, 0.3);
-    cam(c.clone().add(v3(lerp(-22, -18, u), 3.5, lerp(-2, 2, u))), c, 30, -0.1); rig(c, 30); expo = 1.0; });
+    cam(c.clone().add(v3(lerp(-34, -30, u), 12, lerp(-6, 0, u))), c, 30, -0.1); rig(c, 30, 1.6); expo = 0.75; });
   S(Ls(25) - 0.1, Ls(26) - 0.1, '2D', (u, t, g) => Z.tiltDiagram(g, t, t - Ls(25) + 0.1));
   const tClick = Wd(26, 'Click');
-  S(Ls(26) - 0.1, Ls(27) - 0.1, '3D', (u, t) => { run(t - Ls(26), 0.8, 180); HS.xray = 0.85; HS.glow = 1 + 2 * Math.exp(-Math.max(0, t - tClick) * 5) * (t > tClick ? 1 : 0); heroSet();
-    const c = sliderW(1.2, 0.2); cam(c.clone().add(v3(lerp(9, 7, u), 7, lerp(5, 4, u))), c, 30, 0.2); rig(c, 15); shake = t > tClick ? 0.08 * Math.exp(-(t - tClick) * 10) : 0; expo = 1.0; });
+  S(Ls(26) - 0.1, Ls(27) - 0.1, '3D', (u, t) => { run(t - Ls(26), 0.8, 180); HS.xray = 0.85; HS.glow = 0.8 + 1.2 * Math.exp(-Math.max(0, t - tClick) * 5) * (t > tClick ? 1 : 0); heroSet();
+    const c = sliderW(1.2, 0.2); cam(c.clone().add(v3(lerp(16, 13, u), 18, lerp(8, 6, u))), c, 30, 0.2); rig(c, 20, 1.6); shake = t > tClick ? 0.08 * Math.exp(-(t - tClick) * 10) : 0; expo = 0.75; });
   S(Ls(27) - 0.1, Ls(28) - 0.1, 'TYPE', (u, t, g) => Z.miniChain(g, t, t - Ls(27), { scroll: 120 }));
   S(Ls(28) - 0.1, Ls(29) - 0.1, '2D', (u, t, g) => Z.yForces(g, t, t - Ls(28) + 0.1));
   S(Ls(29) - 0.1, Ls(30) - 0.15, 'TYPE', (u, t, g) => Z.miniChain(g, t, t - Ls(29), { scroll: 60 }));
@@ -124,12 +124,12 @@ export async function build(ctx, script, timing) {
   const kc = (k) => ZZ.KL(k, 0, 40, 0);
   S(Ls(36) - 0.15, Ls(37) - 0.1, '3D', (u, t) => { ZZ.kindsSet({ c: 70 }); const c = ZZ.KL(1, 0, 40, 0);
     cam(c.clone().add(v3(lerp(-8, 8, u), lerp(96, 88, E.io(u)), lerp(70, 62, u))), c, 34, 0.12); rig(c, 90); expo = 1.0; });
-  S(Ls(37) - 0.1, Ls(38) - 0.1, '3D', (u, t) => { ZZ.kindsSet({ c: 70, build: E.io(clamp((t - Wd(37, 'wound') + 0.2) / 2.4)) * 0.85 + 0.15 }); const c = ZZ.KL(0, 0, lerp(15, 30, E.io(u)), 0);
-    cam(c.clone().add(v3(-16, 20, 14)), c, 32, -0.2); rig(c, 40); expo = 1.25; });
-  S(Ls(38) - 0.1, Ls(39) - 0.1, '3D', (u, t) => { const n = 4 + 26 * E.io(clamp((t - Wd(38, 'formed') + 0.3) / 2.2)); ZZ.kindsSet({ c: 300, moldN: n }); const c = ZZ.KL(1, 0, 22, 0);
-    cam(c.clone().add(v3(14, 24, 20)), c, 32, 0.2); rig(c, 40); expo = 1.25; });
-  S(Ls(39) - 0.1, Ls(40) - 0.1, '3D', (u, t) => { const n = 6 + 22 * clamp((t - Wd(39, 'clamped')) / 2.4); ZZ.kindsSet({ c: 300, metN: n }); const c = ZZ.KL(2, 0, lerp(14, 30, u), 0);
-    cam(c.clone().add(v3(16, 18, 16)), c, 32, -0.2); rig(c, 40); expo = 1.25; });
+  S(Ls(37) - 0.1, Ls(38) - 0.1, '3D', (u, t) => { ZZ.kindsSet({ c: 70, build: E.io(clamp((t - Wd(37, 'wound') + 0.2) / 2.4)) * 0.85 + 0.15 }); const c = ZZ.KL(0, 0, lerp(30, 55, E.io(u)), 0);
+    cam(c.clone().add(v3(-34, 42, 34)), c, 32, -0.15); rig(c, 60); expo = 1.1; });
+  S(Ls(38) - 0.1, Ls(39) - 0.1, '3D', (u, t) => { const n = 4 + 26 * E.io(clamp((t - Wd(38, 'formed') + 0.3) / 2.2)); ZZ.kindsSet({ c: 300, moldN: n }); const c = ZZ.KL(1, 0, Math.max(20, n * PITCH - 10), 0);
+    cam(c.clone().add(v3(26, 36, 30)), c, 32, 0.15); rig(c, 50); expo = 1.1; });
+  S(Ls(39) - 0.1, Ls(40) - 0.1, '3D', (u, t) => { const n = 6 + 22 * clamp((t - Wd(39, 'clamped')) / 2.4); ZZ.kindsSet({ c: 300, metN: n }); const c = ZZ.KL(2, 0, Math.max(20, n * PITCH - 8), 0);
+    cam(c.clone().add(v3(30, 36, 28)), c, 32, -0.15); rig(c, 50); expo = 1.1; });
   S(Ls(40) - 0.1, Ls(41) - 0.1, '2D', (u, t, g) => Z.howMade(g, t, t - Ls(40) + 0.1));
   S(Ls(41) - 0.1, Ls(42) - 0.1, 'ARCH', (u, t, g) => D.archival(g, t, t - Ls(41), Ls(42) - Ls(41), { img: 'judson', mode: 'card', cardH: 640, cardX: 700, from: [0.5, 0.45, 1.0], to: [0.5, 0.4, 1.08],
     credit: 'Clasp locker, US patent 504,038 (1893) · public domain', notes: [{ px: 0.25, py: 0.3, lx: 1400, ly: 330, text: 'HOOKS, FOR SHOES', at: Wd(41, 'hooks') - Ls(41), bend: -0.15 }] }));
@@ -249,9 +249,9 @@ export async function build(ctx, script, timing) {
     const ina = E.o(clamp(a / 0.45)), out = E.i(clamp(1 - r / 0.35)), x = 90, y = 830;
     g.save(); g.font = `400 64px ${D.FONT.title}`; const tw = g.measureText(o.title).width, bw = Math.max(tw, 360) + 70;
     const wipe = bw * ina * (1 - out); g.beginPath(); g.rect(x - 10, y - 20, wipe + 20, 150); g.clip();
-    g.fillStyle = 'rgba(14,17,23,0.78)'; D.rr(g, x, y, bw, 120, 16); g.fill(); g.fillStyle = D.P.acc; g.fillRect(x, y, 12, 120);
+    g.fillStyle = 'rgba(14,17,23,0.78)'; D.rr(g, x, y, bw, 120, 16); g.fill(); g.fillStyle = D.P.acc; g.fillRect(x, y, 12, 120); g.fillStyle = 'rgba(255,210,58,0.5)'; g.fillRect(x + 12, y + 116, (bw - 12) * clamp(a / 3.4), 4);
     g.font = `800 24px ${D.FONT.mono}`; g.fillStyle = D.P.acc; g.textBaseline = 'top'; const lab = `CHAPTER ${o.n}`; const n = Math.floor(clamp((a - 0.15) / 0.3) * lab.length); g.fillText(lab.slice(0, n), x + 34, y + 14);
-    g.font = `400 64px ${D.FONT.title}`; g.fillStyle = D.P.cream; const dy = 30 * (1 - E.back(clamp((a - 0.2) / 0.4))); g.globalAlpha = clamp((a - 0.2) / 0.15); g.fillText(o.title, x + 34 + 3 * clamp(a / 3), y + 42 + dy);
+    g.font = `400 64px ${D.FONT.title}`; g.fillStyle = D.P.cream; const dy = 30 * (1 - E.back(clamp((a - 0.2) / 0.4))); g.globalAlpha = clamp((a - 0.2) / 0.15); g.fillText(o.title, x + 34 + 16 * E.io(clamp(a / 3.4)), y + 42 + dy);
     g.restore();
   }
   function endScreen(g, t, o) {
@@ -269,7 +269,7 @@ export async function build(ctx, script, timing) {
       if (o.k === 'titlecard') titleCard(g, t, o);
       else if (o.k === 'lower') lowerThird(g, t, o);
       else if (o.k === 'end') endScreen(g, t, o);
-      else if (o.k === 'chip') D.chip(g, o.text, o.x, o.y, t - o.at, { size: o.small ? 30 : 44, out: clamp((o.until - t) / 0.12) });
+      else if (o.k === 'chip') D.chip(g, o.text, o.x + 4 * Math.sin((t - o.at) * 1.1), o.y + 7 * Math.sin((t - o.at) * 1.6), t - o.at, { size: o.small ? 30 : 44, out: clamp((o.until - t) / 0.12) });   // chips float: no text frozen > 2 s
       else { g.save(); g.scale(TS, TS);
         if (o.k === 'callout') callout(g, t, o);
         else if (o.k === 'cap') kcap(g, t, { y: VY(150), ...o });

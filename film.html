@@ -17,7 +17,7 @@ const ctx = makeRenderer();
 const mod = await import(`./episodes/${ep}/episode.js`);
 const film = await mod.build(ctx, script, timing);
 const g = document.getElementById('out').getContext('2d');
-window.EPINFO = { END: film.END, sfx: film.sfx, lines: film.lines, shots: film.shots, caps: film.caps, shotTypes: film.shotTypes, chapters: film.chapters };
+window.EPINFO = { END: film.END, sfx: film.sfx, lines: film.lines, shots: film.shots, caps: film.caps, shotTypes: film.shotTypes, chapters: film.chapters, endLoop: film.endLoop };
 window.seek = (t) => { film.seek(t, g); return true; };
 window.frame = (t, qual = 0.92, mode = 'all') => {
   const cv = document.getElementById('out');

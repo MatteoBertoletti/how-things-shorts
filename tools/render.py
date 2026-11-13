@@ -55,9 +55,16 @@ async def main():
             tmp = f'{out}/tmp_{k:03d}.mp4'
             ff = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'image2pipe', '-framerate', str(FPS), '-c:v', 'mjpeg', '-i', '-',
                                    '-c:v', 'libx264', '-crf', '15', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', '-r', str(FPS), '-g', '30', tmp], stdin=subprocess.PIPE)
-            for f in range(f0, f1):
-                d = await pg.evaluate(f"frame({f / FPS:.6f}, 0.93, '{MODE}')")
-                ff.stdin.write(base64.b64decode(d.split(',')[1])); done += 1
+            loop = info.get('endLoop') if MODE == 'plate' else None
+            if loop and f0 == round(loop[0] * FPS) and f1 - f0 > round(loop[1] * FPS):   # end screen: a quiet plate loop, rendered once and repeated
+                LF = round(loop[1] * FPS); cache = []
+                for f in range(f0, f0 + LF):
+                    d = await pg.evaluate(f"frame({f / FPS:.6f}, 0.93, 'plate')"); cache.append(base64.b64decode(d.split(',')[1])); done += 1
+                for f in range(f0, f1): ff.stdin.write(cache[(f - f0) % LF])
+            else:
+                for f in range(f0, f1):
+                    d = await pg.evaluate(f"frame({f / FPS:.6f}, 0.93, '{MODE}')")
+                    ff.stdin.write(base64.b64decode(d.split(',')[1])); done += 1
             ff.stdin.close(); rc = ff.wait()
             if rc == 0: os.rename(tmp, fn)
             el = time.time() - t0

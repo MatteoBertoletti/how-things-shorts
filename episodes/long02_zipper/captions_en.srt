@@ -1,0 +1,292 @@
+1
+00:00:00,250 --> 00:00:03,020
+A zipper has no lock,
+no hook, and no glue.
+
+2
+00:00:03,500 --> 00:00:04,590
+And yet it holds.
+
+3
+00:00:05,140 --> 00:00:08,050
+The secret is hidden
+inside this tiny slider.
+
+4
+00:00:08,570 --> 00:00:12,160
+In four minutes: two rows of
+teeth that never line up...
+
+5
+00:00:12,440 --> 00:00:14,850
+...and one tiny Y that makes them lock.
+
+6
+00:00:15,260 --> 00:00:16,590
+Let's start with the teeth.
+
+7
+00:00:17,890 --> 00:00:22,260
+Open a zipper: two tapes, each
+edged with a row of teeth.
+
+8
+00:00:23,042 --> 00:00:27,992
+Look closely. The two rows don't
+match: one is shifted by half a tooth.
+
+9
+00:00:28,822 --> 00:00:31,552
+So every tooth on one side
+faces a gap on the other.
+
+10
+00:00:32,002 --> 00:00:36,782
+If the teeth lined up, they would hit
+head-on. Shifted, each one slips in between
+
+11
+00:00:36,802 --> 00:00:37,852
+two.
+
+12
+00:00:37,902 --> 00:00:41,712
+Closed, a common chain is only
+about five millimetres wide.
+
+13
+00:00:42,192 --> 00:00:46,282
+Every tooth sits between two neighbours.
+But that alone holds nothing.
+
+14
+00:00:47,662 --> 00:00:49,892
+So what does one tooth actually look like?
+
+15
+00:00:50,262 --> 00:00:53,812
+On top, a small bump.
+Underneath, a hollow.
+
+16
+00:00:54,342 --> 00:00:59,752
+The bump of one tooth drops into the
+hollow of the next, like nested spoons.
+
+17
+00:01:00,282 --> 00:01:04,462
+And the head of each tooth is wider
+than the gap it sits in. Pull the tapes
+
+18
+00:01:04,482 --> 00:01:06,652
+sideways, and nothing slides out.
+
+19
+00:01:07,002 --> 00:01:11,812
+But that same shape causes a problem.
+Push two rows straight together...
+
+20
+00:01:12,092 --> 00:01:15,802
+...and they jam. The wide heads
+can't get past each other.
+
+21
+00:01:16,262 --> 00:01:18,972
+So how does a slider do
+what your fingers can't?
+
+22
+00:01:19,242 --> 00:01:20,532
+Let's look inside one.
+
+23
+00:01:22,177 --> 00:01:26,247
+Make the slider transparent, and
+you find a channel shaped like a Y.
+
+24
+00:01:26,707 --> 00:01:31,537
+Two arms in at the top, one way out at
+the bottom, and a divider in between.
+
+25
+00:01:32,416 --> 00:01:34,966
+Each row of teeth runs down one arm.
+
+26
+00:01:35,426 --> 00:01:40,816
+As the arms close in, the channel bends the
+chain very slightly, and the teeth tilt.
+
+27
+00:01:41,336 --> 00:01:45,756
+That tilt is the whole trick. A tilted
+tooth clears the head of the one ahead of
+
+28
+00:01:45,776 --> 00:01:46,456
+it...
+
+29
+00:01:46,476 --> 00:01:50,366
+...then it straightens, and its
+bump drops into the hollow. Click.
+
+30
+00:01:50,866 --> 00:01:55,396
+Then the next one. And the next.
+Again and again, all the way up.
+
+31
+00:01:55,706 --> 00:02:00,076
+The walls of the Y do the pushing,
+at the same angle, every time.
+
+32
+00:02:00,516 --> 00:02:04,086
+Your fingers can't do that.
+The slider does it for you.
+
+33
+00:02:05,577 --> 00:02:07,547
+So what happens when you pull it down?
+
+34
+00:02:07,997 --> 00:02:12,677
+That divider in the middle is a wedge. It
+pushes between the teeth and pries them
+
+35
+00:02:12,697 --> 00:02:13,737
+apart.
+
+36
+00:02:13,757 --> 00:02:18,597
+And because the wedge has to stay between
+the last two teeth, no zipper is ever
+
+37
+00:02:18,617 --> 00:02:19,827
+completely closed.
+
+38
+00:02:20,717 --> 00:02:23,987
+Stops at both ends keep the
+slider from running off the chain.
+
+39
+00:02:24,507 --> 00:02:29,827
+And the pull tab is more than a handle. On
+many sliders, when it lies flat, a small
+
+40
+00:02:29,847 --> 00:02:32,977
+pin drops between the
+teeth and holds the slider.
+
+41
+00:02:34,016 --> 00:02:37,446
+Up, the Y locks the teeth.
+Down, the wedge opens them.
+
+42
+00:02:39,146 --> 00:02:41,276
+Not every zipper has
+separate teeth, though.
+
+43
+00:02:41,706 --> 00:02:47,146
+Coil zippers, the most common kind, use a
+plastic thread wound into a spiral, one on
+
+44
+00:02:47,166 --> 00:02:48,216
+each tape.
+
+45
+00:02:48,832 --> 00:02:52,922
+Molded zippers have plastic teeth
+formed right onto the edge of the tape.
+
+46
+00:02:53,292 --> 00:02:58,392
+And metal teeth are cut from wire, stamped
+with their bump and hollow, and clamped
+
+47
+00:02:58,412 --> 00:02:59,862
+on, one by one.
+
+48
+00:03:00,698 --> 00:03:03,188
+Three ways to make teeth. One slider.
+
+49
+00:03:03,748 --> 00:03:09,158
+In eighteen ninety-three, a Chicago inventor
+patented a shoe fastener made of hooks.
+
+50
+00:03:09,718 --> 00:03:13,718
+Twenty years later, an engineer swapped
+the hooks for teeth that nest into each
+
+51
+00:03:13,738 --> 00:03:16,548
+other. The patent came
+in nineteen seventeen.
+
+52
+00:03:17,218 --> 00:03:21,708
+The name came in nineteen twenty-three,
+from rubber boots and the sound they made.
+
+53
+00:03:22,258 --> 00:03:23,308
+Zip.
+
+54
+00:03:24,516 --> 00:03:26,026
+So why do zippers fail?
+
+55
+00:03:26,781 --> 00:03:28,291
+Lose a single tooth...
+
+56
+00:03:28,571 --> 00:03:33,641
+...and its neighbours have nothing left to
+hold. The chain opens, tooth after tooth.
+
+57
+00:03:34,472 --> 00:03:39,312
+More often, it's the slider. With wear,
+its mouth spreads a little, and the rows
+
+58
+00:03:39,332 --> 00:03:40,842
+slip apart behind it.
+
+59
+00:03:41,142 --> 00:03:46,352
+The fix: squeeze the slider very gently
+with pliers, until the teeth lock again.
+
+60
+00:03:47,260 --> 00:03:52,410
+Stuck instead? Rub a pencil on the
+teeth. Graphite is a dry lubricant.
+
+61
+00:03:53,620 --> 00:03:55,750
+Two rows, half a tooth apart.
+
+62
+00:03:56,654 --> 00:03:58,644
+One tiny Y. And it holds.
+
+63
+00:04:00,442 --> 00:04:01,982
+Subscribe for a new one every week.
