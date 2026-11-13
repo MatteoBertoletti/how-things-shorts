@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import * as BGU from 'three/addons/utils/BufferGeometryUtils.js';
 import { Brush, Evaluator, SUBTRACTION } from 'three-bvh-csg';
 import { M, shadowed } from './parts.js';
+const lerp = (a, b, u) => a + (b - a) * u;
 
 export const P = 3.2;          // tooth pitch on one side (mm)
 export const BX = 1.85;        // bead x offset when closed
@@ -239,12 +240,13 @@ export class Slider {
   }
   updatePlane() { this.group.updateMatrixWorld(true); this.wplane.copy(this.plane).applyMatrix4(this.group.matrixWorld); }
   // LONG 02 x-ray: the solid body fades to blue-white glass (k 0..1); the wedge can glow (setWedge)
-  setXray(k, tint = 0xCFE6FF) {
+  setXray(k, tint = 0x8FB6DC) {
     if (!this._xr) { this._xr = []; this.group.traverse(o => { if (o.isMesh && o.material && !o.userData.noXray && !Object.values(this.caps).flat().includes(o) && o.material !== this.capMat) {
       const m0 = o.material; if (!this._xr.find(e => e.m0 === m0)) { const m1 = m0.clone(); this._xr.push({ m0, m1, c0: m0.color.clone() }); } o.material = this._xr.find(e => e.m0 === m0).m1; } }); }
-    for (const e of this._xr) { const m = e.m1; m.transparent = k > 0.001; m.opacity = 1 - 0.8 * k; m.depthWrite = k < 0.5; m.color.copy(e.c0).lerp(new THREE.Color(tint), k);
-      m.metalness = (e.m0.metalness ?? 0) * (1 - 0.7 * k); m.roughness = (e.m0.roughness ?? 0.5) * (1 - 0.6 * k); if (m.emissive && e.m0 !== this.wedgeMat) { m.emissive.set(0x7FB3D9); m.emissiveIntensity = 0.12 * k; } }
+    for (const e of this._xr) { const m = e.m1; m.transparent = k > 0.001; m.opacity = 1 - 0.86 * k; m.depthWrite = k < 0.5; m.color.copy(e.c0).lerp(new THREE.Color(tint), k);
+      m.metalness = (e.m0.metalness ?? 0) * (1 - 0.9 * k); m.roughness = lerp(e.m0.roughness ?? 0.5, 0.7, k); if (m.emissive && e.m0 !== this.wedgeMat) { m.emissive.set(0x7FB3D9); m.emissiveIntensity = 0.12 * k; } }
     for (const o of this.group.children) if (o.isMesh) o.castShadow = k < 0.5;
+    if (this.tab) this.tab.visible = k < 0.6; if (this.bridge) this.bridge.visible = k < 0.6;
     this.ghostMat.opacity = 0.9 * k; this.ghost.visible = k > 0.01;
   }
   setWedge(k, col = 0xFFD23A) { const w = this._xr ? this._xr.find(e => e.m0 === this.wedgeMat) : null; const m = w ? w.m1 : this.wedgeMat; if (!m.emissive) return; m.emissive.set(col); m.emissiveIntensity = k; }

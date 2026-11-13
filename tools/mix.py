@@ -69,9 +69,16 @@ mix = v * 1.0 + (fx + bed) * gate
 fe = int((SND.get('tail_fade', 0.12)) * SR); mix[-fe:] *= np.linspace(1, 0, fe)
 sf.write('audio/premix.wav', mix, SR, subtype='FLOAT')
 # loudness -14 LUFS, true peak -1.5 (two-pass)
-r = subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', 'audio/premix.wav', '-af', 'volume=8dB,alimiter=limit=0.55:attack=3:release=60:level=disabled', '-c:a', 'pcm_f32le', 'audio/premix_l.wav'], check=True)
+PRE = {'hard': 'volume=8dB,alimiter=limit=0.55:attack=3:release=60:level=disabled',          # LONG 01 and the Shorts
+       'soft': 'acompressor=threshold=-24dB:ratio=2:attack=12:release=180:knee=8,alimiter=limit=0.7:attack=8:release=120:level=disabled'}   # since LONG 02: gentler
+r = subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', 'audio/premix.wav', '-af', PRE[SND.get('limiter', 'hard')], '-c:a', 'pcm_f32le', 'audio/premix_l.wav'], check=True)
 r = subprocess.run(['ffmpeg', '-hide_banner', '-i', 'audio/premix_l.wav', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json', '-f', 'null', '-'], capture_output=True, text=True).stderr
 js = json.loads(r[r.rindex('{'): r.rindex('}') + 1])
 af = f"loudnorm=I=-14:TP=-1.5:LRA=11:measured_I={js['input_i']}:measured_TP={js['input_tp']}:measured_LRA={js['input_lra']}:measured_thresh={js['input_thresh']}:offset={js['target_offset']}:linear=true"
-subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', 'audio/premix_l.wav', '-af', af, '-ar', str(SR), '-ac', '2', '-c:a', 'pcm_s24le', OUT], check=True)
+subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', 'audio/premix_l.wav', '-af', af, '-ar', str(SR), '-ac', '2', '-c:a', 'pcm_f32le', 'audio/premix_n.wav'], check=True)
+# final trim: land on -14.0 LUFS exactly when the true peak allows it (stays <= -1.5 dBTP)
+m = subprocess.run(['ffmpeg', '-hide_banner', '-nostats', '-i', 'audio/premix_n.wav', '-af', 'ebur128=peak=true', '-f', 'null', '-'], capture_output=True, text=True).stderr
+import re as _re; I0 = float(_re.findall(r'I:\s+(-?[\d.]+) LUFS', m)[-1]); TP0 = float(_re.findall(r'Peak:\s+(-?[\d.]+) dBFS', m)[-1])
+gdb = min(-14.0 - I0, -1.5 - TP0); print(f'trim {gdb:+.2f} dB (I {I0:.2f}, TP {TP0:.2f})')
+subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', 'audio/premix_n.wav', '-af', f'volume={gdb:.3f}dB', '-ar', str(SR), '-ac', '2', '-c:a', 'pcm_s24le', OUT], check=True)
 for t, nme, i in log: print(f'{t:6.2f} {nme:12s} {i}')

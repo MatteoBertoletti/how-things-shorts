@@ -35,7 +35,7 @@ const bg = (g, t, o) => bgGraphite(g, t, o);
 // ---------- HOOK promise beat: two short rows slide in, shifted ----------
 export function promiseRows(g, t, a) {
   bg(g, t); const k = E.o(clamp(a / 0.9)), sh = 0.5 * E.io(clamp((a - 0.9) / 0.8));
-  rows(g, 1300, 300, 8, { open: lerp(400, 60, k), shift: sh, scroll: a * 10 });
+  rows(g, 1250, 230, 8, { p: 70, reach: 170, open: lerp(420, 40, k), shift: sh, scroll: a * 10 });
 }
 // ---------- CH. 1 offset diagram: the right row slides by half a step until every tooth faces a gap ----------
 export function offsetRows(g, t, a) {
@@ -59,7 +59,7 @@ export function headOn(g, t, a, { shiftAt = 2.4 } = {}) {
 export function miniChain(g, t, a, { y = 760, scroll = 40 } = {}) {
   bg(g, t, { tone: 1 }); g.save(); g.translate(960, y); g.rotate(-Math.PI / 2); g.translate(-960, -y); g.globalAlpha = 0.85;
   rows(g, 960, y - 900, 40, { p: 44, open: 0, shift: 0.5, reach: 110, scroll: t * scroll }); g.restore();
-  g.fillStyle = 'rgba(30,36,46,0.45)'; g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(30,36,46,0.12)'; g.fillRect(0, 0, W, H);
 }
 // ---------- CH. 2 why it holds: the head is wider than the gap it sits in; sideways pull, nothing moves ----------
 export function holdSideways(g, t, a) {

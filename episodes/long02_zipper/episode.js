@@ -53,11 +53,11 @@ export async function build(ctx, script, timing) {
   S(Ls(2) - 0.05, Ls(3) - 0.1, '3D', (u, t) => { run(t); heroSet(); const c = sliderW(-6, 0.5); cam(c.clone().add(v3(lerp(-30, -24, u), 6, lerp(-10, -6, u))), c, 30, -0.2, 0.05); rig(c, 50); expo = 1.25; });
   const xrIn = (t, t0, d = 0.9) => E.io(clamp((t - t0) / d));
   S(Ls(3) - 0.1, Ls(4) - 0.1, '3D', (u, t) => { run(t); HS.xray = xrIn(t, Wd(3, 'inside') - 0.2); HS.glow = HS.xray; heroSet(); const c = sliderW(5, 0.5);
-    cam(c.clone().add(v3(lerp(10, 4, u), lerp(34, 40, E.io(u)), lerp(14, 6, u))), c, 30, 0.2, 0, UP_CH); rig(c, 40); expo = 1.0; });
+    cam(c.clone().add(v3(lerp(10, 4, u), lerp(34, 40, E.io(u)), lerp(14, 6, u))), c, 30, 0.2, 0, UP_CH); rig(c, 40, 1.6); expo = lerp(1.15, 0.72, HS.xray); });
   S(Ls(4) - 0.1, Ls(5) - 0.1, 'TYPE', (u, t, g) => Z.promiseRows(g, t, t - Ls(4) + 0.1));
   const tY = Wd(5, 'Y');
-  S(Ls(5) - 0.1, Ls(6) - 0.1, '3D', (u, t) => { run(t); HS.xray = 1; HS.glow = 1 + 1.5 * Math.exp(-Math.max(0, t - Wd(5, 'lock')) * 5) * (t > Wd(5, 'lock') ? 1 : 0); heroSet(); const c = sliderW(6, 0);
-    cam(c.clone().add(v3(0, 0, 0)).add(v3(0, lerp(80, 26, E.io(u)), 0.01)), c, 34, 0, 0, UP_CH); rig(c, 40); expo = 0.95; });
+  S(Ls(5) - 0.1, Ls(6) - 0.1, '3D', (u, t) => { run(t); HS.xray = 1; HS.glow = 0.8 + 0.8 * Math.exp(-Math.max(0, t - Wd(5, 'lock')) * 5) * (t > Wd(5, 'lock') ? 1 : 0); heroSet(); const c = sliderW(6, 0);
+    cam(c.clone().add(v3(0, lerp(80, 26, E.io(u)), 0.01)), c, 34, 0, 0, UP_CH); rig(c, 40, 1.6); expo = 0.72; });
   S(Ls(6) - 0.1, Ls(7) - 0.15, 'TYPE', (u, t, g) => Z.miniChain(g, t, t - Ls(6)));
   // ---------- CH. 1 ----------
   S(Ls(7) - 0.15, Ls(8) - 0.1, '3D', (u, t) => { HS.c = 22; HS.gap = (s, y) => { const g = sliderGap(y - 22)[0]; return [g * 1.6, 0]; };
@@ -68,7 +68,7 @@ export async function build(ctx, script, timing) {
   S(Ls(9) - 0.1, Ls(10) - 0.1, '2D', (u, t, g) => Z.offsetRows(g, t, t - Ls(9) + 0.1));
   S(Ls(10) - 0.1, Ls(11) - 0.1, '2D', (u, t, g) => Z.headOn(g, t, t - Ls(10) + 0.1, { shiftAt: Wd(10, 'Shifted') - Ls(10) + 0.1 }));
   S(Ls(11) - 0.1, Ls(12) - 0.1, '3D', (u, t) => { HS.c = 230; HS.dim = (t - Wd(11, 'five') + 0.1) / 0.3; heroSet(); const c = HL(0, 190, 0);
-    cam(c.clone().add(v3(0, lerp(52, 44, E.io(u)), 0.01)), c, 34, -0.2, 0, UP_CH); rig(c, 40); expo = 1.25; });
+    cam(c.clone().add(v3(0, lerp(52, 44, E.io(u)), 0.01)), c, 34, -0.2, 0, UP_CH); rig(c, 40, 1.8); expo = 1.0; });
   S(Ls(12) - 0.1, Ls(13) - 0.15, 'TYPE', (u, t, g) => Z.miniChain(g, t, t - Ls(12), { scroll: 25 }));
   // ---------- CH. 2 ----------
   S(Ls(13) - 0.15, Ls(14) - 0.1, '3D', (u, t) => { ZZ.toothSet(0.35 + 0.3 * Math.sin(t * 0.8), lerp(-1.4, 0.4, E.io(u)), 0, 0); const c = ZZ.toothG.position.clone();
@@ -117,7 +117,7 @@ export async function build(ctx, script, timing) {
   S(Ls(34) - 0.1, tPin, '3D', (u, t) => { HS.c = C_LOCK; HS.tab = lerp(0.1, -0.9, E.io(clamp((t - Wd(34, 'handle') + 0.2) / 0.6))); heroSet(); const c = sliderW(-2, 2);
     cam(c.clone().add(v3(lerp(26, 22, u), 18, lerp(-6, -2, u))), c, 32, -0.2); rig(c, 40); expo = 1.25; });
   S(tPin, Ls(35) - 0.1, '3D', (u, t) => { HS.c = C_LOCK; const flat = E.io(clamp((t - Wd(34, 'flat') + 0.1) / 0.5)), lift = E.io(clamp((t - Wd(34, 'holds') - 0.4) / 0.5));
-    HS.tab = lerp(-0.9, 0.1, flat) + lerp(0, -0.9, lift) * 0; HS.xray = 0.75; HS.pin = Math.max(0.02, flat); heroSet(); const c = sliderW(2.2, 0.5);
+    HS.tab = lerp(-0.9, 0.1, flat) + lerp(0, -0.9, lift) * 0; HS.xray = 0.55; HS.pin = Math.max(0.02, flat); heroSet(); const c = sliderW(2.2, 0.5);
     cam(c.clone().add(v3(lerp(-30, -24, u), lerp(30, 26, u), lerp(18, 14, u))), c, 30, 0.2); rig(c, 30); expo = 1.0; });
   S(Ls(35) - 0.1, Ls(36) - 0.15, 'TYPE', (u, t, g) => Z.upDown(g, t, t - Ls(35) + 0.1, { downAt: Wd(35, 'Down') - Ls(35) + 0.1 }));
   // ---------- CH. 5 ----------

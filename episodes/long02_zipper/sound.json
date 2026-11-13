@@ -1,0 +1,119 @@
+{
+ "map": {
+  "zip_long": [
+   3115,
+   -15,
+   "peak",
+   null
+  ],
+  "zip_open": [
+   3115,
+   -13,
+   "peak",
+   null
+  ],
+  "zip_short": [
+   3115,
+   -16,
+   "peak",
+   0.6
+  ],
+  "scribble": [
+   2369,
+   -12,
+   "onset",
+   0.55
+  ],
+  "pencil_scribble": [
+   2369,
+   -13,
+   "onset",
+   0.8
+  ],
+  "xray_hit": [
+   2903,
+   -14,
+   "peak",
+   null
+  ],
+  "pop": [
+   2568,
+   -16,
+   "onset",
+   null
+  ],
+  "click": [
+   2857,
+   -12,
+   "onset",
+   0.2
+  ],
+  "swipe": [
+   1490,
+   -15,
+   "peak",
+   null
+  ],
+  "ui_tick": [
+   2577,
+   -19,
+   "onset",
+   0.15
+  ],
+  "hit": [
+   2182,
+   -15,
+   "onset",
+   null
+  ],
+  "whoosh_soft": [
+   1489,
+   -16,
+   "peak",
+   null
+  ],
+  "metal_jam": [
+   835,
+   -12,
+   "onset",
+   null
+  ],
+  "swell": [
+   2626,
+   -13,
+   "onset",
+   null
+  ],
+  "metal_tap": [
+   2858,
+   -14,
+   "onset",
+   null
+  ],
+  "metal_ping": [
+   2183,
+   -12,
+   "onset",
+   null
+  ],
+  "crimp": [
+   2858,
+   -12,
+   "onset",
+   null
+  ],
+  "whoosh": [
+   1490,
+   -12,
+   "peak",
+   null
+  ]
+ },
+ "bed_file": "audio/long02/bed.wav",
+ "bed_filter": "highpass=f=60,lowpass=f=7000",
+ "bed_db_voice": -21,
+ "ticks": false,
+ "repeat": {},
+ "tail_fade": 1.5,
+ "limiter": "soft"
+}
