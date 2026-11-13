@@ -58,6 +58,14 @@ for k, L in enumerate(S['lines']):
     for blk in sm.get_matching_blocks():
         for j in range(blk.size): mp[blk.a + j] = blk.b + j
     ratio = sm.ratio()
+    if ratio < 0.8:   # the prompt can make whisper skip a sentence: try again without it and keep the better match
+        segs2, _ = model.transcribe(a16, word_timestamps=True, language='en', beam_size=5)
+        hw2 = [(w.word.strip(), w.start, w.end) for s in segs2 for w in s.words]; b2 = [norm(w[0]) for w in hw2]
+        sm2 = difflib.SequenceMatcher(None, a, b2, autojunk=False)
+        if sm2.ratio() > ratio:
+            hw, b, sm, ratio = hw2, b2, sm2, sm2.ratio(); mp = {}
+            for blk in sm.get_matching_blocks():
+                for j in range(blk.size): mp[blk.a + j] = blk.b + j
     words = []
     for i, w in enumerate(sw):
         if i in mp: s0, e0 = hw[mp[i]][1], hw[mp[i]][2]

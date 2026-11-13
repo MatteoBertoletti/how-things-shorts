@@ -31,9 +31,10 @@ async def main():
         print('load %.1fs' % (time.time() - t0))
         info = await pg.evaluate('JSON.stringify(EPINFO)'); json.dump(json.loads(info), open(f'{out}/info.json', 'w'), indent=1)
         for a in sys.argv[2:]:
-            t = float(a); t1 = time.time()
-            d = await pg.evaluate(f'frame({t})')
-            open(f'{out}/s_{t:06.2f}.jpg', 'wb').write(base64.b64decode(d.split(',')[1]))
+            plate = a.startswith('p'); t = float(a.lstrip('p')); t1 = time.time()   # 'p12.5' = clean plate (no overlay), PNG
+            d = await pg.evaluate(f"frame({t}, 0.95, 'plate')") if plate else await pg.evaluate(f'frame({t})')
+            if plate: d = await pg.evaluate("document.getElementById('out').toDataURL('image/png')")
+            open(f'{out}/{"plate" if plate else "s"}_{t:06.2f}.{"png" if plate else "jpg"}', 'wb').write(base64.b64decode(d.split(',')[1]))
             print('t=%.2f %.1fs' % (t, time.time() - t1))
         await b.close()
 asyncio.run(main())

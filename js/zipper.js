@@ -64,10 +64,10 @@ export function sliderGap(d) {
 }
 
 export class Chain {
-  constructor({ N = 52, tapeW = 10, toothMat, tapeMat, stops = true, pad = 8 } = {}) {
+  constructor({ N = 52, tapeW = 10, toothMat, tapeMat, stops = true, pad = 8, geo = null } = {}) {
     this.N = N; this.tapeW = tapeW; this.pad = pad;
     this.group = new THREE.Group();
-    const geo = toothGeometry().full;
+    geo = geo || toothGeometry().full;
     this.teeth = [-1, 1].map(() => { const m = new THREE.InstancedMesh(geo, toothMat, N); m.castShadow = m.receiveShadow = true; m.frustumCulled = false; this.group.add(m); return m; });
     this.hidden = new Set();
     this.y0 = -pad; this.y1 = (N - 1) * P + P / 2 + pad;
@@ -133,6 +133,56 @@ export class Chain {
     }
     this.locked = locked; return locked;
   }
+  // per-tooth brightness (LONG 02 x-ray: teeth glow while they pass through the slider). f(side, y) -> 0..k
+  glow(f, base = new THREE.Color(1, 1, 1), hot = new THREE.Color(0.75, 0.9, 1.0)) {
+    const c = this._c || (this._c = new THREE.Color());
+    for (const [si, side] of [[0, -1], [1, 1]]) {
+      const im = this.teeth[si];
+      for (let i = 0; i < this.N; i++) { const k = f(side, this.toothY(side, i)); c.copy(base).lerp(hot, Math.min(1, k)).multiplyScalar(1 + 0.6 * k); im.setColorAt(i, c); }
+      im.instanceColor.needsUpdate = true;
+    }
+  }
+}
+
+// LONG 02: molded-plastic tooth: a chunky symmetric element (stem + rounded head) with the same nib / scoop logic
+let _molded = null;
+export function moldedToothGeometry() {
+  if (_molded) return _molded;
+  const prof = roundedShape([V(-0.9, -0.75), V(1.7, -0.75), V(1.95, -1.0), V(3.25, -1.0), V(3.25, 1.0), V(1.95, 1.0), V(1.7, 0.75), V(-0.9, 0.75)], [0.3, 0.12, 0.25, 0.5, 0.5, 0.25, 0.12, 0.3]);
+  let g = new THREE.ExtrudeGeometry(prof, { depth: T - 0.24, bevelEnabled: true, bevelThickness: 0.12, bevelSize: 0.1, bevelSegments: 3, curveSegments: 8 });
+  g.rotateX(-Math.PI / 2); g.translate(0, -(T - 0.24) / 2, 0);
+  let nib = new THREE.SphereGeometry(0.42, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2); nib.rotateX(-Math.PI / 2); nib.rotateX(Math.PI); nib.translate(HEAD + 0.35, T / 2 + 0.02, 0);
+  nib = nib.toNonIndexed(); nib.deleteAttribute('uv'); g = g.toNonIndexed(); g.deleteAttribute('uv');
+  _molded = BGU.mergeGeometries([g, nib]); _molded.computeVertexNormals();
+  return _molded;
+}
+
+// LONG 02: coil chain: one plastic thread wound into a spiral along each tape edge (the two spirals interlock when closed).
+// build(prog) reveals the winding (drawRange) so the coil can "wind" on screen.
+export class CoilChain {
+  constructor({ N = 40, mat, tapeMat, r = 1.05, tube = 0.36 } = {}) {
+    this.N = N; this.group = new THREE.Group(); this.coils = [];
+    for (const side of [-1, 1]) {
+      const pts = [], turns = N, per = 24;
+      for (let i = 0; i <= turns * per; i++) {
+        const th = i / per * Math.PI * 2, y = i / per * P + (side > 0 ? P / 2 : 0);
+        // a flattened loop: reaches across to the chain centre at the top of each turn (the "head"), back over the tape edge
+        const c = Math.cos(th), sn = Math.sin(th);
+        pts.push(new THREE.Vector3(side * (BX + 0.2 - (HEAD - 0.1) * 0.5 * (1 + c)), y + 0.25 * sn, r * sn * 0.9));
+      }
+      const curve = new THREE.CatmullRomCurve3(pts);
+      const geo = new THREE.TubeGeometry(curve, turns * per, tube, 8, false);
+      const m = new THREE.Mesh(geo, mat); m.castShadow = m.receiveShadow = true; m.userData = { side, total: geo.index.count };
+      this.group.add(m); this.coils.push(m);
+    }
+    this.chain = new Chain({ N, toothMat: mat, tapeMat, stops: false, pad: 6 });
+    this.chain.teeth.forEach(t => t.visible = false); this.group.add(this.chain.group);
+  }
+  layout(gap) {   // same gap function as Chain: each coil is moved as a whole (good enough for the open/close shots)
+    this.chain.layout(gap);
+    for (const m of this.coils) { const [g] = gap(m.userData.side, (this.N * P) / 2); m.position.x = m.userData.side * g; }
+  }
+  build(prog) { for (const m of this.coils) m.geometry.setDrawRange(0, Math.floor(m.userData.total * Math.min(1, Math.max(0, prog)) / 3) * 3); }
 }
 
 export class Slider {
@@ -188,4 +238,14 @@ export class Slider {
     this.ghostMat.opacity = ghost; this.ghost.visible = ghost > 0.01;
   }
   updatePlane() { this.group.updateMatrixWorld(true); this.wplane.copy(this.plane).applyMatrix4(this.group.matrixWorld); }
+  // LONG 02 x-ray: the solid body fades to blue-white glass (k 0..1); the wedge can glow (setWedge)
+  setXray(k, tint = 0xCFE6FF) {
+    if (!this._xr) { this._xr = []; this.group.traverse(o => { if (o.isMesh && o.material && !o.userData.noXray && !Object.values(this.caps).flat().includes(o) && o.material !== this.capMat) {
+      const m0 = o.material; if (!this._xr.find(e => e.m0 === m0)) { const m1 = m0.clone(); this._xr.push({ m0, m1, c0: m0.color.clone() }); } o.material = this._xr.find(e => e.m0 === m0).m1; } }); }
+    for (const e of this._xr) { const m = e.m1; m.transparent = k > 0.001; m.opacity = 1 - 0.8 * k; m.depthWrite = k < 0.5; m.color.copy(e.c0).lerp(new THREE.Color(tint), k);
+      m.metalness = (e.m0.metalness ?? 0) * (1 - 0.7 * k); m.roughness = (e.m0.roughness ?? 0.5) * (1 - 0.6 * k); if (m.emissive && e.m0 !== this.wedgeMat) { m.emissive.set(0x7FB3D9); m.emissiveIntensity = 0.12 * k; } }
+    for (const o of this.group.children) if (o.isMesh) o.castShadow = k < 0.5;
+    this.ghostMat.opacity = 0.9 * k; this.ghost.visible = k > 0.01;
+  }
+  setWedge(k, col = 0xFFD23A) { const w = this._xr ? this._xr.find(e => e.m0 === this.wedgeMat) : null; const m = w ? w.m1 : this.wedgeMat; if (!m.emissive) return; m.emissive.set(col); m.emissiveIntensity = k; }
 }
