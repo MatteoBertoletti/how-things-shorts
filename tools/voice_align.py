@@ -8,9 +8,11 @@ EP, AD = sys.argv[1], sys.argv[2]; SR = 48000
 S = json.load(open(f'{EP}/script.json'))
 GAPS = S.get('gaps', {})             # extra pause BEFORE a line id, seconds (on top of the natural one)
 MIN_GAP = S.get('min_gap', 0.28)     # minimum silence between lines
-TEMPO = S.get('tempo')               # optional calmer delivery without a new take: rubberband time-stretch, pitch kept
+TEMPO = S.get('tempo')               # LONG 01 only (old): rubberband time-stretch. Since LONG 02: no stretch, "voice_chain": "new"
+sys.path.insert(0, os.path.dirname(__file__)); from voice_chain import NEW as CHAIN_NEW
 def load(fn):
     af = ['-af', f'rubberband=tempo={TEMPO}:pitch=1:formant=preserved:pitchq=quality:window=standard'] if TEMPO else []
+    if S.get('voice_chain') == 'new': af = ['-af', CHAIN_NEW]
     x = subprocess.run(['ffmpeg', '-v', 'error', '-i', fn, *af, '-ac', '1', '-ar', str(SR), '-f', 'f32le', '-'], capture_output=True, check=True).stdout
     return np.frombuffer(x, np.float32).copy()
 def trim(x, thr=-46):
@@ -25,6 +27,8 @@ def norm(w): w = w.lower().replace('millimeters', 'millimetres'); w = re.sub(r"[
 model = WhisperModel('small.en', device='cpu', compute_type='int8')
 out, t, report = [], 0.25, []
 wav = np.zeros(int(SR * S.get("max_len", 80)), np.float32)
+TAG = re.compile(r'\s*<[^>]+>\s*')
+for L in S['lines']: L['say_tts'] = L['say']; L['say'] = TAG.sub(' ', L['say']).strip()   # break tags only matter to the TTS
 for k, L in enumerate(S['lines']):
     x = load(f'{AD}/raw/{L["id"]:02d}.mp3'); y, off = trim(x)
     MP = S.get('max_pause')
