@@ -1,0 +1,344 @@
+{
+ "ep": "LONG 02",
+ "title": "How Zippers Work: The Tiny Y That Locks Every Tooth",
+ "lang": "en",
+ "format": "16x9",
+ "tail": 1.0,
+ "min_gap": 0.5,
+ "gaps": {
+  "7": 0.85,
+  "13": 0.85,
+  "21": 0.85,
+  "30": 0.85,
+  "36": 0.85,
+  "44": 0.85,
+  "50": 0.85,
+  "52": 0.85
+ },
+ "max_pause": 0.45,
+ "max_len": 360,
+ "hud": false,
+ "chapters": {
+  "CH1": "TWO ROWS, HALF A TOOTH APART",
+  "CH2": "THE BUMP AND THE HOLLOW",
+  "CH3": "INSIDE THE SLIDER",
+  "CH4": "GOING THE OTHER WAY",
+  "CH5": "THREE KINDS OF TEETH",
+  "CH6": "WHEN A ZIPPER FAILS"
+ },
+ "note": "No time-stretch (voice generated at the target pace). say may contain <break time=\"...\"/> tags: strip them for captions and alignment.",
+ "lines": [
+  {
+   "id": 1,
+   "say": "A zipper has no lock, no hook, and no glue.",
+   "chapter": "HOOK",
+   "shot": "3D"
+  },
+  {
+   "id": 2,
+   "say": "And yet it holds.",
+   "chapter": "HOOK",
+   "shot": "3D"
+  },
+  {
+   "id": 3,
+   "say": "The secret is hidden inside this tiny slider.",
+   "chapter": "HOOK",
+   "shot": "3D"
+  },
+  {
+   "id": 4,
+   "say": "In four minutes: two rows of teeth that never line up...",
+   "chapter": "HOOK",
+   "shot": "TYPE"
+  },
+  {
+   "id": 5,
+   "say": "...and one tiny Y that makes them lock.",
+   "chapter": "HOOK",
+   "shot": "3D"
+  },
+  {
+   "id": 6,
+   "say": "Let's start with the teeth.",
+   "chapter": "HOOK",
+   "shot": "TYPE"
+  },
+  {
+   "id": 7,
+   "say": "Open a zipper: two tapes, each edged with a row of teeth.",
+   "chapter": "CH1",
+   "shot": "3D"
+  },
+  {
+   "id": 8,
+   "say": "Look closely. <break time=\"0.4s\"/> The two rows don't match: one is shifted by half a tooth.",
+   "chapter": "CH1",
+   "shot": "3D"
+  },
+  {
+   "id": 9,
+   "say": "So every tooth on one side faces a gap on the other.",
+   "chapter": "CH1",
+   "shot": "2D"
+  },
+  {
+   "id": 10,
+   "say": "If the teeth lined up, they would hit head-on. <break time=\"0.4s\"/> Shifted, each one slips in between two.",
+   "chapter": "CH1",
+   "shot": "2D"
+  },
+  {
+   "id": 11,
+   "say": "Closed, a common chain is only about five millimetres wide.",
+   "chapter": "CH1",
+   "shot": "3D"
+  },
+  {
+   "id": 12,
+   "say": "Every tooth sits between two neighbours. But that alone holds nothing.",
+   "chapter": "CH1",
+   "shot": "TYPE"
+  },
+  {
+   "id": 13,
+   "say": "So what does one tooth actually look like?",
+   "chapter": "CH2",
+   "shot": "3D"
+  },
+  {
+   "id": 14,
+   "say": "On top, a small bump. <break time=\"0.4s\"/> Underneath, a hollow.",
+   "chapter": "CH2",
+   "shot": "3D"
+  },
+  {
+   "id": 15,
+   "say": "The bump of one tooth drops into the hollow of the next, like nested spoons.",
+   "chapter": "CH2",
+   "shot": "3D"
+  },
+  {
+   "id": 16,
+   "say": "And the head of each tooth is wider than the gap it sits in. <break time=\"0.4s\"/> Pull the tapes sideways, and nothing slides out.",
+   "chapter": "CH2",
+   "shot": "2D"
+  },
+  {
+   "id": 17,
+   "say": "But that same shape causes a problem. Push two rows straight together...",
+   "chapter": "CH2",
+   "shot": "2D"
+  },
+  {
+   "id": 18,
+   "say": "...and they jam. The wide heads can't get past each other.",
+   "chapter": "CH2",
+   "shot": "3D"
+  },
+  {
+   "id": 19,
+   "say": "So how does a slider do what your fingers can't?",
+   "chapter": "CH2",
+   "shot": "TYPE"
+  },
+  {
+   "id": 20,
+   "say": "Let's look inside one.",
+   "chapter": "CH2",
+   "shot": "3D"
+  },
+  {
+   "id": 21,
+   "say": "Make the slider transparent, and you find a channel shaped like a Y.",
+   "chapter": "CH3",
+   "shot": "3D"
+  },
+  {
+   "id": 22,
+   "say": "Two arms in at the top, one way out at the bottom, and a divider in between.",
+   "chapter": "CH3",
+   "shot": "2D"
+  },
+  {
+   "id": 23,
+   "say": "Each row of teeth runs down one arm.",
+   "chapter": "CH3",
+   "shot": "3D"
+  },
+  {
+   "id": 24,
+   "say": "As the arms close in, the channel bends the chain very slightly, and the teeth tilt.",
+   "chapter": "CH3",
+   "shot": "3D"
+  },
+  {
+   "id": 25,
+   "say": "That tilt is the whole trick. <break time=\"0.4s\"/> A tilted tooth clears the head of the one ahead of it...",
+   "chapter": "CH3",
+   "shot": "2D"
+  },
+  {
+   "id": 26,
+   "say": "...then it straightens, and its bump drops into the hollow. <break time=\"0.4s\"/> Click.",
+   "chapter": "CH3",
+   "shot": "3D"
+  },
+  {
+   "id": 27,
+   "say": "Then the next one. And the next. Again and again, all the way up.",
+   "chapter": "CH3",
+   "shot": "TYPE"
+  },
+  {
+   "id": 28,
+   "say": "The walls of the Y do the pushing, at the same angle, every time.",
+   "chapter": "CH3",
+   "shot": "2D"
+  },
+  {
+   "id": 29,
+   "say": "Your fingers can't do that. The slider does it for you.",
+   "chapter": "CH3",
+   "shot": "TYPE"
+  },
+  {
+   "id": 30,
+   "say": "So what happens when you pull it down?",
+   "chapter": "CH4",
+   "shot": "3D"
+  },
+  {
+   "id": 31,
+   "say": "That divider in the middle is a wedge. <break time=\"0.4s\"/> It pushes between the teeth and pries them apart.",
+   "chapter": "CH4",
+   "shot": "3D"
+  },
+  {
+   "id": 32,
+   "say": "And because the wedge has to stay between the last two teeth, no zipper is ever completely closed.",
+   "chapter": "CH4",
+   "shot": "2D"
+  },
+  {
+   "id": 33,
+   "say": "Stops at both ends keep the slider from running off the chain.",
+   "chapter": "CH4",
+   "shot": "3D"
+  },
+  {
+   "id": 34,
+   "say": "And the pull tab is more than a handle. <break time=\"0.4s\"/> On many sliders, when it lies flat, a small pin drops between the teeth and holds the slider.",
+   "chapter": "CH4",
+   "shot": "3D"
+  },
+  {
+   "id": 35,
+   "say": "Up, the Y locks the teeth. <break time=\"0.4s\"/> Down, the wedge opens them.",
+   "chapter": "CH4",
+   "shot": "TYPE"
+  },
+  {
+   "id": 36,
+   "say": "Not every zipper has separate teeth, though.",
+   "chapter": "CH5",
+   "shot": "3D"
+  },
+  {
+   "id": 37,
+   "say": "Coil zippers, the most common kind, use a plastic thread wound into a spiral, one on each tape.",
+   "chapter": "CH5",
+   "shot": "3D"
+  },
+  {
+   "id": 38,
+   "say": "Molded zippers have plastic teeth formed right onto the edge of the tape.",
+   "chapter": "CH5",
+   "shot": "3D"
+  },
+  {
+   "id": 39,
+   "say": "And metal teeth are cut from wire, stamped with their bump and hollow, and clamped on, one by one.",
+   "chapter": "CH5",
+   "shot": "3D"
+  },
+  {
+   "id": 40,
+   "say": "Three ways to make teeth. One slider.",
+   "chapter": "CH5",
+   "shot": "2D"
+  },
+  {
+   "id": 41,
+   "say": "In eighteen ninety-three, a Chicago inventor patented a shoe fastener made of hooks.",
+   "chapter": "CH5",
+   "shot": "ARCH"
+  },
+  {
+   "id": 42,
+   "say": "Twenty years later, an engineer swapped the hooks for teeth that nest into each other. The patent came in nineteen seventeen.",
+   "chapter": "CH5",
+   "shot": "ARCH"
+  },
+  {
+   "id": 43,
+   "say": "The name came in nineteen twenty-three, from rubber boots <break time=\"0.4s\"/> and the sound they made. Zip.",
+   "chapter": "CH5",
+   "shot": "2D"
+  },
+  {
+   "id": 44,
+   "say": "So why do zippers fail?",
+   "chapter": "CH6",
+   "shot": "3D"
+  },
+  {
+   "id": 45,
+   "say": "Lose a single tooth...",
+   "chapter": "CH6",
+   "shot": "3D"
+  },
+  {
+   "id": 46,
+   "say": "...and its neighbours have nothing left to hold. The chain opens, tooth after tooth.",
+   "chapter": "CH6",
+   "shot": "2D"
+  },
+  {
+   "id": 47,
+   "say": "More often, it's the slider. With wear, its mouth spreads a little, and the rows slip apart behind it.",
+   "chapter": "CH6",
+   "shot": "3D"
+  },
+  {
+   "id": 48,
+   "say": "The fix: squeeze the slider very gently with pliers, until the teeth lock again.",
+   "chapter": "CH6",
+   "shot": "2D"
+  },
+  {
+   "id": 49,
+   "say": "Stuck instead? Rub a pencil on the teeth. Graphite is a dry lubricant.",
+   "chapter": "CH6",
+   "shot": "TYPE"
+  },
+  {
+   "id": 50,
+   "say": "Two rows, half a tooth apart.",
+   "chapter": "PAY",
+   "shot": "3D"
+  },
+  {
+   "id": 51,
+   "say": "One tiny Y. And it holds.",
+   "chapter": "PAY",
+   "shot": "3D"
+  },
+  {
+   "id": 52,
+   "say": "Subscribe for a new one every week.",
+   "chapter": "END",
+   "shot": "3D"
+  }
+ ]
+}

@@ -1,4 +1,4 @@
-# LONG 02 — How Zippers Work (working title): step 1 (fact sheet, outline, render estimate, new 3D shots) — waiting for OK
+# LONG 02 — How Zippers Work (working title): step 1 approved 2026-11-13; step 2 (script, titles, plate frames, character count) — waiting for OK
 
 16:9, 1920x1080, 30 fps. Planned running time 4:19.5 (body 3:59.5 + 20 s end screen; target 3:45-4:30, hard max 4:45). Mechanism video: mostly 3D.
 The brief's chapter clock adds up to 4:35, over the 4:30 target, so every chapter is a few seconds shorter here; the real times come from the voice.
@@ -147,3 +147,96 @@ S24 iFixit, Repairing zipper slider: https://www.ifixit.com/Guide/Repairing+Zipp
 S25 wikiHow, Fix a separated zipper: https://www.wikihow.com/Fix-a-Separated-Zipper
 S27 MasterClass, how to fix a broken zipper: https://www.masterclass.com/articles/how-to-fix-a-broken-zipper
 S28 Bob Vila, how to fix a stuck zipper: https://www.bobvila.com/articles/how-to-fix-a-stuck-zipper
+
+## Step 2 — script (627 words, 52 lines; 3,489 characters sent to ElevenLabs incl. the break tags, 3,279 spoken), waiting for OK
+Shot type next to every sentence (3D / 2D / ARCH / TYPE). Numbers are written as words. Pauses are punctuation, line gaps and a few <break time="0.4s"/> tags: no time-stretch.
+Estimated voice length at ~150 wpm with the pauses: about 4:05 up to the last payoff line, so the film runs about 4:25 with the 20 s end screen (max 4:45).
+Brand check: no company or product names in the script (searched).
+
+**HOOK** (46 words)
+
+1. `3D` A zipper has no lock, no hook, and no glue.
+2. `3D` And yet it holds.
+3. `3D` The secret is hidden inside this tiny slider.
+4. `TYPE` In four minutes: two rows of teeth that never line up...
+5. `3D` ...and one tiny Y that makes them lock.
+6. `TYPE` Let's start with the teeth.
+
+**CH. 1 TWO ROWS, HALF A TOOTH APART** (75 words)
+
+7. `3D` Open a zipper: two tapes, each edged with a row of teeth.
+8. `3D` Look closely. <break time="0.4s"/> The two rows don't match: one is shifted by half a tooth.
+9. `2D` So every tooth on one side faces a gap on the other.
+10. `2D` If the teeth lined up, they would hit head-on. <break time="0.4s"/> Shifted, each one slips in between two.
+11. `3D` Closed, a common chain is only about five millimetres wide.
+12. `TYPE` Every tooth sits between two neighbours. But that alone holds nothing.
+
+**CH. 2 THE BUMP AND THE HOLLOW** (90 words)
+
+13. `3D` So what does one tooth actually look like?
+14. `3D` On top, a small bump. <break time="0.4s"/> Underneath, a hollow.
+15. `3D` The bump of one tooth drops into the hollow of the next, like nested spoons.
+16. `2D` And the head of each tooth is wider than the gap it sits in. <break time="0.4s"/> Pull the tapes sideways, and nothing slides out.
+17. `2D` But that same shape causes a problem. Push two rows straight together...
+18. `3D` ...and they jam. The wide heads can't get past each other.
+19. `TYPE` So how does a slider do what your fingers can't?
+20. `3D` Let's look inside one.
+
+**CH. 3 INSIDE THE SLIDER** (122 words)
+
+21. `3D` Make the slider transparent, and you find a channel shaped like a Y.
+22. `2D` Two arms in at the top, one way out at the bottom, and a divider in between.
+23. `3D` Each row of teeth runs down one arm.
+24. `3D` As the arms close in, the channel bends the chain very slightly, and the teeth tilt.
+25. `2D` That tilt is the whole trick. <break time="0.4s"/> A tilted tooth clears the head of the one ahead of it...
+26. `3D` ...then it straightens, and its bump drops into the hollow. <break time="0.4s"/> Click.
+27. `TYPE` Then the next one. And the next. Again and again, all the way up.
+28. `2D` The walls of the Y do the pushing, at the same angle, every time.
+29. `TYPE` Your fingers can't do that. The slider does it for you.
+
+**CH. 4 GOING THE OTHER WAY** (93 words)
+
+30. `3D` So what happens when you pull it down?
+31. `3D` That divider in the middle is a wedge. <break time="0.4s"/> It pushes between the teeth and pries them apart.
+32. `2D` And because the wedge has to stay between the last two teeth, no zipper is ever completely closed.
+33. `3D` Stops at both ends keep the slider from running off the chain.
+34. `3D` And the pull tab is more than a handle. <break time="0.4s"/> On many sliders, when it lies flat, a small pin drops between the teeth and holds the slider.
+35. `TYPE` Up, the Y locks the teeth. <break time="0.4s"/> Down, the wedge opens them.
+
+**CH. 5 THREE KINDS OF TEETH** (113 words)
+
+36. `3D` Not every zipper has separate teeth, though.
+37. `3D` Coil zippers, the most common kind, use a plastic thread wound into a spiral, one on each tape.
+38. `3D` Molded zippers have plastic teeth formed right onto the edge of the tape.
+39. `3D` And metal teeth are cut from wire, stamped with their bump and hollow, and clamped on, one by one.
+40. `2D` Three ways to make teeth. One slider.
+41. `ARCH` In eighteen ninety-three, a Chicago inventor patented a shoe fastener made of hooks.
+42. `ARCH` Twenty years later, an engineer swapped the hooks for teeth that nest into each other. The patent came in nineteen seventeen.
+43. `2D` The name came in nineteen twenty-three, from rubber boots <break time="0.4s"/> and the sound they made. Zip.
+
+**CH. 6 WHEN A ZIPPER FAILS** (69 words)
+
+44. `3D` So why do zippers fail?
+45. `3D` Lose a single tooth...
+46. `2D` ...and its neighbours have nothing left to hold. The chain opens, tooth after tooth.
+47. `3D` More often, it's the slider. With wear, its mouth spreads a little, and the rows slip apart behind it.
+48. `2D` The fix: squeeze the slider very gently with pliers, until the teeth lock again.
+49. `TYPE` Stuck instead? Rub a pencil on the teeth. Graphite is a dry lubricant.
+
+**PAYOFF** (12 words)
+
+50. `3D` Two rows, half a tooth apart.
+51. `3D` One tiny Y. And it holds.
+
+**END SCREEN** (7 words)
+
+52. `3D` Subscribe for a new one every week.
+
+## Titles (the exact phrase "How Zippers Work", no brands)
+1. How Zippers Work: The Tiny Y That Locks Every Tooth  <- recommended
+2. How Zippers Work (No Lock, No Hook, No Glue)
+3. How Zippers Work: X-Ray Animation of the Slider
+
+## Plate frames for your thumbnails (clean plate, no overlay, PNG 1920x1080)
+- A, macro of the slider closing the chain: 0:02.00 (frame 60) — the hook starts at 0, so this frame is fixed.
+- B, x-ray cutaway of the Y channel: 2.0 s after the first CH. 3 line ("Make the slider transparent...") starts, when the body is fully glass and the Y is lit; planned 1:33.50. The exact frame is fixed by the voice timing and confirmed with the stills in step 4.
