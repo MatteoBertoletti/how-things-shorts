@@ -139,3 +139,26 @@ Thumbnails: the owner makes them; deliver two clean plate PNGs (no overlay) with
 - L6. No text static for more than 2 s; callouts anchored to the object; captions never cover the subject.
 - L7. Under 4 s of pure silence in the narration, no filler, "subscribe" said once, at the end.
 - L8. The end is short: the last spoken sentence at most 7 words, no long outro (the pencil Short lost ~27 points of viewers in its last 4 s). Studio note: viewers leave 4-12 s after the hook when the narration gives numbers or lists nouns before showing something; one idea revealed step by step holds better than stacked numbers.
+
+## Performance log and experiment plan (since 20 Nov 2026)
+Views read with vidIQ on 20 Nov 2026 (flat vs 18 Nov: every Short is still between 1.4k and 1.9k, none above 3,000).
+
+| Video | Views | Likes | Comments |
+|-------|-------|-------|----------|
+| EP 05 ballpoint pen (29 s) | 1,914 | 19 | 0 |
+| EP 04 toy brick (33 s) | 1,380 | 23 | 0 |
+| EP 03 pencil (39 s) | 1,686 | 32 | 1 |
+| EP 02 glass bottle (45 s) | 1,580 | 38 | 0 |
+| EP 01 zipper (50 s) | 1,515 | 27 | 2 |
+| LONG 01 pencil (4:45) | 168 | 5 | 2 |
+| LONG 02 zipper (4:21) | 11 | 0 | 0 |
+
+What we learned: the five Shorts sit in a narrow band (1.4k-1.9k) whatever the length (29-50 s) or the object, so the format is stable but not breaking out; the shortest Short (EP 05, 29 s) is the best so far, which supports shorter and simpler. Likes are 1-2 % of views, comments almost none (the "comment below" end card is not working). Long form is not pulling anything (168 and 11): no long on the bottle until a Short passes 3,000 views.
+Rule: a Short above 3,000 views -> repeat its format with another object. Long on the bottle only after that.
+
+Experiment calendar (one variable at a time, one video a day):
+- E1 EP 06 paper clip. Structure A: step-by-step transformation (wire -> straighten -> bend -> bend -> clip), answer only in the last third, NO jargon before the answer, ~22 s. Variable: structure + length.
+- E2 same structure A, another object.
+- E3-E4 Shorts with no voice: on-screen text and music only.
+- E5-E6 loops of 12-15 s with no end card.
+- Reading each result: viewed vs swiped away (was 47-59 %) and average view duration, 48 h after upload.
