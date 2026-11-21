@@ -12,6 +12,7 @@ Every episode stands alone. On-screen text and narration in English. Always "Sim
 | 03 | Pencil (hexagonal, yellow, HB, no brand) | How it's made (tree → pencil); twist: no lead, two halves glued | Wood + mineral | ~38 s | ElevenLabs "Brian" (EN) | Cedar & Graphite | Gummy bear / Toy brick |
 | 04 | Toy brick 2x4 (red hero, yellow + blue support, no brand, no logo) | Why it sticks (interference fit), then how it's made; twist: no glue, no click, the stud is slightly too big | Plastic | ~32 s | ElevenLabs "Brian" (EN) | Signal red on graphite-blue | Gummy bear / Ballpoint pen |
 | 05 | Ballpoint pen (click pen, round white barrel, blue button and grip ring, no brand) | Why it has a ball, then how it's made; twist: the ball is the cap and the roller in one; callback to EP 04 (injection molding) | Plastic + metal | ~29 s | ElevenLabs "Brian" (EN) | Ink blue & brass on night navy | Crayon / Paper clip |
+| 06 | Paper clip (galvanized steel wire, no brand) | How one wire becomes a paper clip: straighten, cut, three bends (structure A, answer only in the last third); twist: no glue, the steel springs back and that is the grip | Metal wire | 23.95 s | ElevenLabs "Brian" (EN), speed 0.9, new chain | Night navy + signal orange | Crayon / Rubber band |
 | LONG 01 | Pencil (long form 16:9, 4:45) | How pencils are made: no lead, history, graphite layers, core, wood, sandwich, paint/ferrule/eraser | Graphite + wood | 4:44.8 | ElevenLabs "Brian" (EN), stretched 10 % | Graphite / cedar / pencil yellow on slate | — (end screen: next = ballpoint pen) |
 | LONG 02 | Zipper (long form 16:9, 4:20, mechanism video) | How zippers work: offset rows, bump and hollow, the Y channel (x-ray), the wedge, stops and lock pin, three kinds of teeth, short history, failures + verified fixes | Metal + plastic + textile | 4:20.1 | ElevenLabs "Brian" (EN), new settings, no stretch | Graphite / cold blue / yellow on slate; x-ray = blue glass + white-blue glowing Y | — (end screen: next = glass bottle) |
 
@@ -58,6 +59,7 @@ Studio data read for EP 05: EP 01 and EP 02 both hold above 100 % for the first 
 - R3. Frame 0 is already in motion (mid-fall, mid-press, mid-swing), never a settled pose, and the title is readable on it. The loop frames replay the motion so the last frame lands exactly on frame 0.
 - R4. Payoff in the last 4 s, end card at most 2.5 s, last spoken sentence at most 7 words, no extra stat before the comment question.
 - R5. Nothing between 4 and 12 s is a list; something visually new every 1.2-2.0 s there.
+- R7 (since EP 06). No jargon, numbers or names before the answer; the answer comes in the last third (EP 06: 14.70 s of 23.95 s). R1 was overridden for EP 06 only (structure A has no early twist).
 - R6 (since EP 05). One idea per line of narration, and every line shows a cause or an action on screen (something moves or changes), never only a label.
 - Length now 28-32 s (EP 05; hard max 36 s). If the voice comes out short, stretch the pauses between lines (script.json `gaps`), never pay for a second take.
 
@@ -96,6 +98,7 @@ EP 03: no hands at all (owner's call: "la mano iniziale è brutta"). The hook sh
 | 01 | Navy `#0E1A2B` | Brass lamp `#FFC777` | Cyan `#5EC8E5` | Safety orange `#FF5A1F` | Brass teeth `#D9A441`, nickel slider `#C9CED6`, denim tape `#2E4A6B` |
 | 04 | Graphite-blue `#10151D` | `#FFB26B` | `#6FA8FF` | Signal red `#FF4B3E` | Glossy ABS (red `#E8261C`, yellow, blue `#2F6BFF`), x-ray = opaque horizontal section with bright cut faces + translucent ghost of the removed half + cyan edges, stress glow where it bends; brushed steel mould (CSG cavity); melt = `hotMat` |
 | 05 | Night navy `#0F1420` | `#FFC27A` | `#7FB0FF` | Ink blue `#2F7BFF` | Textured carbide-grey ball `#8E9AA8`, brass socket `#C9A24B` with pale cut faces, glossy blue oil paste with a stringy stretch, cream paper `#F2E8D5` with a wet line that dulls as it dries; x-ray = section in the plane of motion through tip, barrel and refill + translucent brass ghost + cyan outline; ENLARGED tag while the tip is enlarged |
+| 06 | Night navy `#0F1420` | `#FFC27A` | `#7FB0FF` | Signal orange `#FF7A3D` | Galvanized steel wire `#B9C0C8` (radius 0.5 mm, real scale), black rollers with spoke caps, cyan reference line, translucent paper sheet for the grip, exposure x1.22 plus a gamma 1.15-1.35 grade on the dark shots (luma 63-102) |
 | 03 | Graphite `#14181F` | Cedar amber `#E39A52` | `#7FB3D9` | Pencil yellow `#FFD23A` | Cedar with growth rings, graphite (matte black, metallic sheen), clay grey, cream glue, yellow lacquer, brushed ferrule, pink eraser; kiln = furnaceMouth with a redder `hotMat` |
 | 02 | Slate `#0F1A21` | Furnace ember `#FF8A2B` | Cyan `#6FD0E6` | Molten gold `#FFB62E` | Soda-lime glass `#9ADBC0`; hot ramp `#FFE9A8` (1,550 °C) → `#FF8A2B` (1,100 °C) → `#B8330F` (~580 °C) → clear |
 
@@ -162,3 +165,5 @@ Experiment calendar (one variable at a time, one video a day):
 - E3-E4 Shorts with no voice: on-screen text and music only.
 - E5-E6 loops of 12-15 s with no end card.
 - Reading each result: viewed vs swiped away (was 47-59 %) and average view duration, 48 h after upload.
+
+EP 06 (E1) uploaded: reading rule. 48 h after upload compare with EP 05 (29 s, 1,914 views, swiped away 49 %): viewed vs swiped away, average view duration, views. Above 3,000 views -> repeat structure A with another object (crayon or rubber band, chosen by the end card). Between 1.4k and 2.5k -> length/structure is not the lever, go to E3 (no voice). Below 1.4k -> structure A hurts, drop it. EP 06 specs: 23.95 s, 16 shots, 9 text events, voice 197 characters, last frame = frame 0 (loop), end card 2.5 s, loudness -14.0 LUFS, true peak -3.1 dBFS, sibilance ratio 0.0176.

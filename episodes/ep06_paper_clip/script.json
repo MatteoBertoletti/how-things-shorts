@@ -3,19 +3,55 @@
  "title": "How One Wire Becomes a Paper Clip",
  "lang": "en",
  "lines": [
-  { "id": 1, "say": "How does one wire become a paper clip?" },
-  { "id": 2, "say": "Pull it straight." },
-  { "id": 3, "say": "Cut it." },
-  { "id": 4, "say": "Bend." },
-  { "id": 5, "say": "Bend again." },
-  { "id": 6, "say": "Once more." },
-  { "id": 7, "say": "One wire. Three bends. No glue." },
-  { "id": 8, "say": "The steel springs back. That's the grip." },
-  { "id": 9, "say": "Crayon, or rubber band? Comment below." }
+  {
+   "id": 1,
+   "say": "How does one wire become a paper clip?"
+  },
+  {
+   "id": 2,
+   "say": "Pull it straight."
+  },
+  {
+   "id": 3,
+   "say": "Cut it."
+  },
+  {
+   "id": 4,
+   "say": "Bend."
+  },
+  {
+   "id": 5,
+   "say": "Bend again."
+  },
+  {
+   "id": 6,
+   "say": "Once more."
+  },
+  {
+   "id": 7,
+   "say": "One wire. Three bends. No glue."
+  },
+  {
+   "id": 8,
+   "say": "The steel springs back. That's the grip."
+  },
+  {
+   "id": 9,
+   "say": "Crayon, or rubber band? Comment below."
+  }
  ],
  "tail": 0.9,
  "min_gap": 0.18,
- "gaps": { "2": 0.5, "3": 0.9, "4": 0.9, "5": 0.9, "6": 0.9, "7": 0.9, "8": 0.4, "9": 0.4 },
+ "gaps": {
+  "2": 1.09,
+  "3": 1.26,
+  "4": 1.35,
+  "5": 1.38,
+  "6": 1.19,
+  "7": 1.16,
+  "8": 0.12,
+  "9": 0.12
+ },
  "max_pause": 0.35,
  "voice_chain": "new",
  "hud": false
