@@ -57,7 +57,7 @@ def rms_active(x):
     m = len(x) // 19200; r = np.sqrt((x[:m * 19200].reshape(m, 19200) ** 2).mean(1)); r = r[r > 1e-3]; return np.sqrt((r ** 2).mean())
 if 'bed_db_voice' in SND:   # long form: the bed sits a fixed level under the voice and ducks a little more while it speaks
     bed *= (rms_active(v) * 10 ** (SND['bed_db_voice'] / 20)) / (np.sqrt((bed ** 2).mean()) + 1e-9); bed *= np.pad(np.repeat(1 - (1 - 10 ** (-5 / 20)) * env, w), (0, N - n * w), constant_values=1)
-else: bed *= (rms_active(fx) * 10 ** (-13 / 20)) / (np.sqrt((bed ** 2).mean()) + 1e-9)
+else: bed *= (rms_active(fx) * 10 ** (SND.get('bed_db_fx', -13) / 20)) / (np.sqrt((bed ** 2).mean()) + 1e-9)
 # dips: fx + bed fall away just before the twist and the payoff
 gate = np.ones(N, np.float32)
 for e in ev['sfx']:

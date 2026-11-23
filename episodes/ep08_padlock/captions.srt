@@ -1,0 +1,31 @@
+1
+00:00:00,250 --> 00:00:02,950
+How does a lock know your key?
+
+2
+00:00:03,200 --> 00:00:05,250
+Pins block the way.
+
+3
+00:00:05,600 --> 00:00:08,150
+Wrong key: stuck.
+
+4
+00:00:09,200 --> 00:00:10,950
+Right key.
+
+5
+00:00:11,600 --> 00:00:13,650
+Each pin lifts.
+
+6
+00:00:15,400 --> 00:00:17,650
+Gaps line up. It turns.
+
+7
+00:00:18,000 --> 00:00:19,580
+Five pins. One line.
+
+8
+00:00:19,600 --> 00:00:21,400
+Crayon or gummy bear? Comment below.

@@ -1,0 +1,40 @@
+{
+ "ep": "EP. 08",
+ "title": "How a Lock Knows Your Key",
+ "format": "9x16",
+ "voice": false,
+ "lines": [
+  {
+   "id": 1,
+   "say": "How does a lock know your key?"
+  },
+  {
+   "id": 2,
+   "say": "Pins block the way."
+  },
+  {
+   "id": 3,
+   "say": "Wrong key: stuck."
+  },
+  {
+   "id": 4,
+   "say": "Right key."
+  },
+  {
+   "id": 5,
+   "say": "Each pin lifts."
+  },
+  {
+   "id": 6,
+   "say": "Gaps line up. It turns."
+  },
+  {
+   "id": 7,
+   "say": "Five pins. One line."
+  },
+  {
+   "id": 8,
+   "say": "Crayon or gummy bear? Comment below."
+  }
+ ]
+}
