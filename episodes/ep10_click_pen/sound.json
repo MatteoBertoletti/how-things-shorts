@@ -119,5 +119,9 @@
  "ticks": false,
  "repeat": {},
  "limiter": "soft",
- "bed_db_fx": -7
+ "bed_db_fx": -4,
+ "bed_file": "audio/bed_pen.wav",
+ "bed_filter": "anull",
+ "bed_loop": true,
+ "tail_fade": 0.02
 }

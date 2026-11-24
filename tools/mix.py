@@ -52,7 +52,8 @@ fx *= duck
 # bed: low, clean industrial hum, filtered, ~13 dB under the effects
 BEDSRC = SND.get('bed_file') or f"audio/sfx/{SND.get('bed', 2504)}.mp3"
 bed = np.frombuffer(subprocess.run(['ffmpeg', '-v', 'error', '-i', BEDSRC, '-af', SND.get('bed_filter', 'highpass=f=45,lowpass=f=1600'), '-ac', '1', '-ar', str(SR), '-f', 'f32le', '-'], capture_output=True, check=True).stdout, np.float32).copy()
-bed = np.tile(bed, 2)[:N]; fad = int(0.6 * SR); bed[:fad] *= np.linspace(0, 1, fad); bed[-fad:] *= np.linspace(1, 0, fad)
+bed = np.tile(bed, 2)[:N]; fad = int(0.6 * SR)
+if not SND.get('bed_loop'): bed[:fad] *= np.linspace(0, 1, fad); bed[-fad:] *= np.linspace(1, 0, fad)
 def rms_active(x):
     m = len(x) // 19200; r = np.sqrt((x[:m * 19200].reshape(m, 19200) ** 2).mean(1)); r = r[r > 1e-3]; return np.sqrt((r ** 2).mean())
 if 'bed_db_voice' in SND:   # long form: the bed sits a fixed level under the voice and ducks a little more while it speaks
