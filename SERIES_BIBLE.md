@@ -181,3 +181,14 @@ Outlier research 23 Nov (vidIQ outliers, Shorts, channels <20-30k subs, last 3 m
 - Our 22-24 s Shorts sit between the two. "How X is made" is nearly absent among outliers; "how X works / hidden mechanism / why does X" dominates.
 - Keyword: "how locks work" ~32k searches/month (+38 %), "how a key works" ~8k.
 - Next batch: A = 10 s silent loops (reuse padlock cutaway), B = 40-55 s voiced mystery explainer. Compare 48 h reads.
+
+
+## Loop experiment log (updated Thu 26 Nov)
+| EP | object | views | note |
+|---|---|---|---|
+| 09 | padlock loop | 14.4K (52 likes) | engagement 66.3% stayed / 33.7% swiped, avg view 0:13 on 10 s (121.6%, loops are rewatched). Cover: whole padlock + key + glowing pins fill the frame |
+| 10 | click pen | 1.1K | flat since Wed evening. Frame 0 = small pen in empty dark space |
+| 11 | combination lock | 542 in 27 h | same family as padlock, so topic alone is not the driver. Frame 0 = small lock low in frame |
+Hypothesis: frame 0 must be a big, recognisable, full-bleed object. Outliers: KnowFrame door latch 370K (11 s), padlock mechanism 119K, EngineeredWithin hair clipper 138K (1K-sub channel).
+Plan: Fri 27 Nov 2 loops/day (12:00 door latch with full-bleed door, 18:00 hair clipper). Decision rule after 10 loops: >=3 above 5K views -> continue, none above 3K -> change mechanism type.
+Music: tools/loopmusic.py (96 BPM, seamless 10 s, optional transpose arg).

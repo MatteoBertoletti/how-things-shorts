@@ -3,7 +3,8 @@ usage: python tools/loopmusic.py out.wav"""
 import sys, numpy as np, soundfile as sf
 from scipy.signal import lfilter, butter, sosfilt
 SR = 48000; N = 10 * SR; BEAT = 0.625; rng = np.random.default_rng(3)
-mid = lambda m: 440 * 2 ** ((m - 69) / 12)
+SH = int(sys.argv[2]) if len(sys.argv) > 2 else 0
+mid = lambda m: 440 * 2 ** ((m + SH - 69) / 12)
 out = np.zeros(N)
 def add(x, t):  # circular add so tails wrap around the loop point
     i = int(t * SR) % N; n = len(x); idx = (np.arange(n) + i) % N; np.add.at(out, idx, x)
