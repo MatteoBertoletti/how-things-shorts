@@ -37,17 +37,23 @@ export async function build(ctx, script, timing) {
   const shellMats = []; const sh = m => { m.transparent = true; shellMats.push(m); return m; };
   const steel = M.metal(0xC9D0D8, 0.22, {}), brass = M.metal(0xE0AE48, 0.26, {}), dark = M.metal(0x6b7686, 0.35, {});
   const chrome = sh(M.metal(0xDDE3EA, 0.14, {}));
+  const hw = sh(M.metal(0xE8B85A, 0.2, { envMapIntensity: 1.5 }));
   // wood texture
   const woodTex = (() => {
     const cv = document.createElement('canvas'); cv.width = 256; cv.height = 512; const g = cv.getContext('2d');
-    g.fillStyle = '#a8713f'; g.fillRect(0, 0, 256, 512);
+    g.fillStyle = '#6a4228'; g.fillRect(0, 0, 256, 512);
     let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
-    for (let i = 0; i < 160; i++) { const x = rnd() * 256, w = 0.5 + rnd() * 2.2, a = 0.05 + rnd() * 0.18; g.strokeStyle = (rnd() > 0.5 ? 'rgba(92,56,26,' : 'rgba(206,150,92,') + a + ')'; g.lineWidth = w; g.beginPath(); g.moveTo(x, 0); for (let y = 0; y <= 512; y += 32) g.lineTo(x + Math.sin(y * 0.02 + i) * 3, y); g.stroke(); }
+    for (let i = 0; i < 160; i++) { const x = rnd() * 256, w = 0.5 + rnd() * 2.2, a = 0.05 + rnd() * 0.18; g.strokeStyle = (rnd() > 0.5 ? 'rgba(38,22,10,' : 'rgba(150,100,60,') + a + ')'; g.lineWidth = w; g.beginPath(); g.moveTo(x, 0); for (let y = 0; y <= 512; y += 32) g.lineTo(x + Math.sin(y * 0.02 + i) * 3, y); g.stroke(); }
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
   })();
-  const doorM = sh(new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.5, metalness: 0.0, envMapIntensity: 0.6 }));
+  const doorM = sh(new THREE.MeshPhysicalMaterial({ map: woodTex, roughness: 0.42, metalness: 0.0, clearcoat: 0.35, clearcoatRoughness: 0.3, envMapIntensity: 0.7 }));
   const paintM = sh(new THREE.MeshStandardMaterial({ color: 0xE3DED2, roughness: 0.5, envMapIntensity: 0.5 }));
   const door = new THREE.Mesh(new THREE.BoxGeometry(60, 120, 20), doorM); door.position.set(30, 0, 0); L.add(door);
+  const panelM = sh(new THREE.MeshPhysicalMaterial({ map: woodTex, roughness: 0.4, clearcoat: 0.35, clearcoatRoughness: 0.3, color: 0xe0c4a8, envMapIntensity: 0.7 }));
+  const trimM = sh(new THREE.MeshStandardMaterial({ color: 0x2b1a0e, roughness: 0.5 }));
+  [[32, 34, 38, 30], [32, -34, 38, 30]].forEach(([cx, cy, w, h]) => {
+    const pn = new THREE.Mesh(new THREE.BoxGeometry(w, h, 1.2), panelM); pn.position.set(cx - 2, cy, 10.5); L.add(pn);
+    [[0, h / 2 + 0.6, w + 2.4, 1.2], [0, -h / 2 - 0.6, w + 2.4, 1.2], [-w / 2 - 0.6, 0, 1.2, h], [w / 2 + 0.6, 0, 1.2, h]].forEach(([dx, dy, tw, th]) => { const t = new THREE.Mesh(new THREE.BoxGeometry(tw, th, 1.6), trimM); t.position.set(cx - 2 + dx, cy + dy, 10.4); L.add(t); }); });
   const jamb = new THREE.Mesh(new THREE.BoxGeometry(24, 120, 20), paintM); jamb.position.set(-14, 0, 0); L.add(jamb);
   const strike = new THREE.Mesh(new THREE.BoxGeometry(0.8, 26, 8), chrome); strike.position.set(-2.4, 0, 0); L.add(strike);
   const lineM = new THREE.LineBasicMaterial({ color: 0x9fc4ff, transparent: true, opacity: 0 });
@@ -69,13 +75,15 @@ export async function build(ctx, script, timing) {
   const spring = new THREE.Mesh(helix, M.metal(0xC4CCD8, 0.25, {})); spring.rotation.z = -Math.PI / 2; spring.castShadow = true; L.add(spring);
   // spindle + cam arm + lever + rose
   const spG = new THREE.Group(); spG.position.set(30, 0, 0); L.add(spG);
-  { const sp = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.2, 26), steel); sp.castShadow = true; spG.add(sp);
+  { const sp = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.8, 22), dark); sp.castShadow = true; spG.add(sp);
     const lobeG = new THREE.BoxGeometry(2.4, 12, 3); lobeG.translate(0, -6, 0); const lobe = new THREE.Mesh(lobeG, brass); lobe.castShadow = true; spG.add(lobe);
     const tip = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 3, 16), brass); tip.rotation.x = Math.PI / 2; tip.position.y = -12; spG.add(tip);
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(3.6, 3.6, 3, 28), chrome); hub.rotation.x = Math.PI / 2; hub.position.z = 12.5; spG.add(hub);
-    const arm = new THREE.Mesh(new THREE.BoxGeometry(26, 4.2, 3.4), chrome); arm.position.set(-13, 0, 12.5); arm.castShadow = true; spG.add(arm);
-    const grip = new THREE.Mesh(new THREE.SphereGeometry(2.6, 20, 14), chrome); grip.scale.set(1, 0.85, 0.8); grip.position.set(-26, 0, 12.5); spG.add(grip); }
-  const rose = new THREE.Mesh(new THREE.CylinderGeometry(8.5, 8.5, 1.6, 40), chrome); rose.rotation.x = Math.PI / 2; rose.position.set(30, 0, 10.8); L.add(rose);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(3.6, 3.6, 3, 28), hw); hub.rotation.x = Math.PI / 2; hub.position.z = 12.5; spG.add(hub);
+    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(2.1, 23, 10, 20), hw); arm.rotation.z = Math.PI / 2; arm.position.set(-14.5, 0, 12.5); arm.castShadow = true; spG.add(arm);
+     }
+  const rose = new THREE.Mesh(new THREE.CylinderGeometry(8.5, 8.5, 1.6, 48), hw); rose.rotation.x = Math.PI / 2; rose.position.set(30, 0, 10.8); L.add(rose);
+  const roseR = new THREE.Mesh(new THREE.TorusGeometry(7.0, 0.5, 12, 56), hw); roseR.position.set(30, 0, 11.6); L.add(roseR);
+  const roseB = new THREE.Mesh(new THREE.CylinderGeometry(5.6, 6.2, 1.0, 40), hw); roseB.rotation.x = Math.PI / 2; roseB.position.set(30, 0, 11.8); L.add(roseB);
   scene.updateMatrixWorld(true);
 
   // ---------------- one latch cycle (CP = 2.5 s = 4 beats) ----------------
